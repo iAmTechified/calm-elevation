@@ -4,6 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { useRouter } from 'expo-router';
 import { ArrowLeft, HelpCircle } from 'lucide-react-native';
+import HeroHeader from '../../components/HeroHeader';
 
 export default function SelfHealingScreen() {
     const router = useRouter();
@@ -20,28 +21,24 @@ export default function SelfHealingScreen() {
             <StatusBar style="dark" />
 
             {/* Header */}
-            <View className="px-6 py-4 flex-row items-center justify-between relative">
-                <TouchableOpacity
-                    onPress={() => router.back()}
-                    className="w-10 h-10 bg-white rounded-full items-center justify-center z-10 shadow-sm"
-                >
-                    <ArrowLeft color="#1E293B" size={24} />
-                </TouchableOpacity>
-                <Text className="text-3xl font-bold text-slate-800 absolute w-full text-center text-[#1E3A8A]">Visualize</Text>
-                <TouchableOpacity className="w-10 h-10 bg-white rounded-full items-center justify-center shadow-sm">
-                    <HelpCircle color="#1E3A8A" size={24} />
-                </TouchableOpacity>
-            </View>
-
             <ScrollView className="flex-1 bg-white mt-4 rounded-t-[40px]" contentContainerStyle={{ paddingBottom: 100 }}>
 
-                {/* Hero Section - Overlapping into the background */}
-                <View className="items-center justify-center -mt-16 mb-6">
-                    {/* Placeholder for Meditating Monster */}
+                <HeroHeader
+                    rightElement={
+                        <TouchableOpacity className="w-10 h-10 bg-white rounded-full items-center justify-center shadow-sm">
+                            <HelpCircle color="#1E3A8A" size={24} />
+                        </TouchableOpacity>
+                    }
+                >
+                    {/* Meditating Monster Placeholder */}
                     <View className="w-48 h-48 bg-teal-400 rounded-full items-center justify-center border-4 border-white shadow-sm relative">
                         <View className="w-32 h-20 bg-white/30 rounded-full absolute bottom-4" />
                         <Text className="text-white font-bold">Meditate</Text>
                     </View>
+                </HeroHeader>
+
+                <View className="px-6 mb-6">
+                    <Text className="text-3xl font-bold text-slate-800 text-center text-[#1E3A8A]">Visualize</Text>
                 </View>
 
                 {/* Description */}

@@ -4,6 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { useRouter } from 'expo-router';
 import { ArrowLeft, HelpCircle } from 'lucide-react-native';
+import HeroHeader from '../../components/HeroHeader';
 
 export default function SleepScreen() {
     const router = useRouter();
@@ -44,31 +45,22 @@ export default function SleepScreen() {
             <StatusBar style="light" />
 
             {/* Header */}
-            <View className="px-6 py-4 flex-row items-center justify-between relative z-10">
-                <TouchableOpacity
-                    onPress={() => router.back()}
-                    className="w-10 h-10 bg-white/20 rounded-full items-center justify-center"
-                >
-                    <ArrowLeft color="#FFF" size={24} />
-                </TouchableOpacity>
-                <Text className="text-3xl font-bold text-white absolute w-full text-center">Sleep</Text>
-                <TouchableOpacity className="w-10 h-10 bg-white/20 rounded-full items-center justify-center">
-                    <HelpCircle color="#FFF" size={24} />
-                </TouchableOpacity>
-            </View>
-
             <ScrollView className="flex-1 bg-white mt-4 rounded-t-[40px]" contentContainerStyle={{ paddingBottom: 100 }}>
 
-                {/* Hero Section - overlap with header bg but inside scrollview? 
-                    Actually the design shows the image overlapping the top edge or sitting on it.
-                    Let's just put the image at the top of the white section, slightly offset upwards if needed.
-                */}
-                <View className="items-center justify-center -mt-24 mb-6 relative z-0 pointer-events-none">
-                    <Image
-                        source={require('../../assets/cal_sleeping_moon.png')}
-                        style={{ width: 280, height: 280 }}
-                        resizeMode="contain"
-                    />
+                <HeroHeader
+                    image={require('../../assets/cal_sleeping_moon.png')}
+                    iconColor="#FFF"
+                    backButtonStyle="bg-white/20"
+                    rightElement={
+                        <TouchableOpacity className="w-10 h-10 bg-white/20 rounded-full items-center justify-center">
+                            <HelpCircle color="#FFF" size={24} />
+                        </TouchableOpacity>
+                    }
+                    imageResizeMode="contain"
+                />
+
+                <View className="px-6 mb-6">
+                    <Text className="text-3xl font-bold text-slate-800 text-center">Sleep</Text>
                 </View>
 
                 {/* Description */}

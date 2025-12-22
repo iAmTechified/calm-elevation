@@ -4,6 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { X, Star, ChevronLeft, ChevronRight, Check, Mic } from 'lucide-react-native';
 import { StatusBar } from 'expo-status-bar';
+import ProgressHeader from '../../components/ProgressHeader';
 
 const questions = [
     {
@@ -68,23 +69,22 @@ export default function JournalEntryScreen() {
             <StatusBar style="dark" />
 
             {/* Header */}
-            <View className="flex-row items-center justify-between px-6 py-4">
-                <TouchableOpacity onPress={() => router.back()} className="w-10 h-10 items-center justify-center rounded-full bg-white shadow-sm">
-                    <X color="#334155" size={24} />
-                </TouchableOpacity>
-
-                {/* Progress Bar */}
-                <View className="flex-1 mx-4 h-3 bg-white rounded-full overflow-hidden shadow-sm">
-                    <View
-                        className="h-full bg-teal-300 rounded-full"
-                        style={{ width: `${((currentStep + 1) / questions.length) * 100}%` }}
-                    />
-                </View>
-
-                <TouchableOpacity className="w-10 h-10 items-center justify-center rounded-full bg-white shadow-sm">
-                    <Star color="#F59E0B" size={24} fill="#F59E0B" />
-                </TouchableOpacity>
-            </View>
+            <ProgressHeader
+                progress={((currentStep + 1) / questions.length) * 100}
+                containerStyle="flex-row items-center justify-between px-6 py-4"
+                trackStyle="mx-4 h-3 bg-white rounded-full shadow-sm"
+                progressStyle="bg-teal-300"
+                leftElement={
+                    <TouchableOpacity onPress={() => router.back()} className="w-10 h-10 items-center justify-center rounded-full bg-white shadow-sm">
+                        <X color="#334155" size={24} />
+                    </TouchableOpacity>
+                }
+                rightElement={
+                    <TouchableOpacity className="w-10 h-10 items-center justify-center rounded-full bg-white shadow-sm">
+                        <Star color="#F59E0B" size={24} fill="#F59E0B" />
+                    </TouchableOpacity>
+                }
+            />
 
             <KeyboardAvoidingView
                 behavior={Platform.OS === 'ios' ? 'padding' : 'height'}

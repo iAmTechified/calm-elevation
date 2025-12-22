@@ -19,9 +19,10 @@ import Animated, {
     FadeIn,
     withDelay
 } from 'react-native-reanimated';
+import Back from '../../components/Back';
 
 // Assets
-const IMG_YOGA = require('../../assets/cal_yoga.png');
+const IMG_YOGA = require('../../assets/breathr.jpeg');
 const IMG_MEDITATE = require('../../assets/cal_meditate.png');
 const IMG_SUCCESS = require('../../assets/cal_success.png');
 const IMG_INHALE = require('../../assets/cal_inhale.png');
@@ -186,11 +187,9 @@ export default function BreatheScreen() {
 
                 <SafeAreaView className="flex-1" edges={['top', 'bottom']}>
                     {/* Top Bar */}
-                    <View className="px-6 py-2 flex-row items-center justify-between z-10">
-                        <TouchableOpacity onPress={() => router.back()} className="w-10 h-10 bg-white/60 rounded-full items-center justify-center border border-white">
-                            <ArrowLeft size={24} color="#0f766e" />
-                        </TouchableOpacity>
-                        <Text className="text-lg font-semibold text-teal-900 tracking-wide">BREATHR</Text>
+                    <View className="px-6 py-4 flex-row items-center justify-between z-10">
+                        <Back onPress={()=>router.back()} style='bg-white' iconColor='#000' />
+                        <Text className="text-2xl font-sans font-semibold text-primaryLight tracking-wide">Breathr</Text>
                         <View className="w-10" />
                     </View>
 

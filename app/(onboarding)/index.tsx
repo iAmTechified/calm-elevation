@@ -4,10 +4,10 @@ import { StatusBar } from 'expo-status-bar';
 import { useState, useRef, useEffect } from 'react';
 import { router, Stack } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
-import Animated, { useSharedValue, useAnimatedStyle, withTiming, withSpring } from 'react-native-reanimated';
 import { ArrowLeft, ChevronLeft, Star, StarIcon } from 'lucide-react-native';
 import Button from '../../components/Button';
 import Back from '../../components/Back';
+import ProgressHeader from '../../components/ProgressHeader';
 
 const { width } = Dimensions.get('window');
 
@@ -37,18 +37,6 @@ const steps = [
 
 export default function OnboardingFlow() {
     const [currentStep, setCurrentStep] = useState(0);
-    const progress = useSharedValue(33); // Start at ~33%
-
-    useEffect(() => {
-        progress.value = withTiming(((currentStep + 1) / steps.length) * 100, { duration: 500 });
-    }, [currentStep]);
-
-    const animatedProgressStyle = useAnimatedStyle(() => {
-        return {
-            width: `${progress.value}%`,
-        };
-    });
-
     const handleNext = () => {
         if (currentStep < steps.length - 1) {
             setCurrentStep(currentStep + 1);
@@ -82,19 +70,15 @@ export default function OnboardingFlow() {
             >
             </LinearGradient>
             {/* Header / Progress */}
-            <View className="w-full flex flex-row justify-between items-center gap-3 px-6 pt-4 pb-2">
-                <Back onPress={handleBack} />
-
-                <View className="h-[30px] p-2 bg-[#70C6C9] rounded-full overflow-hidden flex-1 justify-center items-start">
-                    <Animated.View
-                        className="h-[20px] bg-[#FFFD54] rounded-full"
-                        style={animatedProgressStyle}
-                    />
-                </View>
-                <TouchableOpacity onPress={() => router.replace('/(tabs)')} className="p-2 bg-[#70C6C9] rounded-full">
-                    <Star size={23} stroke="none" fill="#FFFD54" />
-                </TouchableOpacity>
-            </View>
+            <ProgressHeader
+                progress={((currentStep + 1) / steps.length) * 100}
+                leftElement={<Back onPress={handleBack} />}
+                rightElement={
+                    <TouchableOpacity onPress={() => router.replace('/(tabs)')} className="p-2 bg-[#70C6C9] rounded-full">
+                        <Star size={23} stroke="none" fill="#FFFD54" />
+                    </TouchableOpacity>
+                }
+            />
 
             {/* Content */}
             <View className="flex-1 items-center justify-center px-8">

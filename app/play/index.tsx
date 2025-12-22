@@ -4,6 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { useRouter } from 'expo-router';
 import { ArrowLeft, Wind, Sparkles, Zap, Layers, Play } from 'lucide-react-native';
+import HeroHeader from '../../components/HeroHeader';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import { LinearGradient } from 'expo-linear-gradient';
 
@@ -77,26 +78,17 @@ export default function PlayScreen() {
             <View className="absolute top-40 left-0 w-40 h-40 bg-teal-50 rounded-full -ml-20 opacity-50" />
 
             <SafeAreaView className="flex-1" edges={['top']}>
-                {/* Header */}
-                <View className="px-6 py-4 flex-row items-center justify-between z-10">
-                    <TouchableOpacity
-                        onPress={() => router.back()}
-                        className="w-12 h-12 bg-white rounded-2xl items-center justify-center shadow-sm border border-slate-100"
-                    >
-                        <ArrowLeft color="#1E293B" size={24} />
-                    </TouchableOpacity>
-                    <Image
-                        source={require('../../assets/cal.png')}
-                        className="w-10 h-10"
-                        resizeMode="contain"
-                    />
-                </View>
-
                 <ScrollView
                     className="flex-1"
                     contentContainerStyle={{ paddingBottom: 100, paddingTop: 10 }}
                     showsVerticalScrollIndicator={false}
                 >
+                    <HeroHeader
+                        image={require('../../assets/cal.png')}
+                        onBack={() => router.back()}
+                        imageResizeMode="contain"
+                    />
+
                     <View className="px-6 mb-8">
                         <Text className="text-4xl font-bold text-slate-800 tracking-tight">
                             Playground

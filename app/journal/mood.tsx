@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, Dimensions } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, Dimensions, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { ArrowLeft, X, Star } from 'lucide-react-native';
@@ -7,26 +7,48 @@ import { StatusBar } from 'expo-status-bar';
 
 const { width } = Dimensions.get('window');
 
+// Mood images mapping to ensure static analysis works
+const moodImages: Record<string, any> = {
+    sad: require('../../assets/moods/sad.png'),
+    determined: require('../../assets/moods/determined.png'),
+    angry: require('../../assets/moods/angry.png'),
+    relaxed: require('../../assets/moods/relaxed.png'),
+    worried: require('../../assets/moods/worried.png'),
+    frightened: require('../../assets/moods/frightened.png'),
+    unmotivated: require('../../assets/moods/unmotivated.png'),
+    hungry: require('../../assets/moods/hungry.png'),
+    strong: require('../../assets/moods/strong.png'),
+    indifferent: require('../../assets/moods/indifferent.png'),
+    sleepy: require('../../assets/moods/sleepy.png'),
+    calm: require('../../assets/moods/calm.png'),
+    crying: require('../../assets/moods/crying.png'),
+    depressed: require('../../assets/moods/depressed.png'),
+    dizzy: require('../../assets/moods/dizzy.png'),
+    happy: require('../../assets/moods/happy.png'),
+    overwhelmed: require('../../assets/moods/overwhelmed.png'),
+    stressed: require('../../assets/moods/stressed.png'),
+};
+
 // Mood data with emojis
 const moods = [
-    { id: 'sad', label: 'sad', emoji: '😞', color: '#B2EBF2' },
-    { id: 'determined', label: 'determined', emoji: '😤', color: '#B2EBF2' },
-    { id: 'angry', label: 'angry', emoji: '😠', color: '#B2EBF2' },
-    { id: 'relaxed', label: 'relaxed', emoji: '😌', color: '#B2EBF2' },
-    { id: 'worried', label: 'worried', emoji: '😟', color: '#B2EBF2' },
-    { id: 'frightened', label: 'frightened', emoji: '😨', color: '#B2EBF2' },
-    { id: 'unmotivated', label: 'unmotivated', emoji: '😶', color: '#B2EBF2' },
-    { id: 'hungry', label: 'hungry', emoji: '😋', color: '#B2EBF2' }, // Or appropriate icon
-    { id: 'strong', label: 'strong', emoji: '💪', color: '#B2EBF2' },
-    { id: 'indifferent', label: 'indifferent', emoji: '😐', color: '#B2EBF2' },
-    { id: 'sleepy', label: 'sleepy', emoji: '😴', color: '#B2EBF2' },
-    { id: 'calm', label: 'calm', emoji: '😇', color: '#B2EBF2' },
-    { id: 'crying', label: 'crying', emoji: '😢', color: '#B2EBF2' },
-    { id: 'depressed', label: 'depressed', emoji: '😣', color: '#B2EBF2' },
-    { id: 'dizzy', label: 'dizzy', emoji: '😵', color: '#B2EBF2' },
-    { id: 'happy', label: 'happy', emoji: '🙂', color: '#B2EBF2' },
-    { id: 'overwhelmed', label: 'overwhelmed', emoji: '😩', color: '#B2EBF2' },
-    { id: 'stressed', label: 'stressed', emoji: '😫', color: '#B2EBF2' },
+    { id: 'sad', label: 'sad', color: '#B2EBF2' },
+    { id: 'determined', label: 'determined', color: '#B2EBF2' },
+    { id: 'angry', label: 'angry', color: '#B2EBF2' },
+    { id: 'relaxed', label: 'relaxed', color: '#B2EBF2' },
+    { id: 'worried', label: 'worried', color: '#B2EBF2' },
+    { id: 'frightened', label: 'frightened', color: '#B2EBF2' },
+    { id: 'unmotivated', label: 'unmotivated', color: '#B2EBF2' },
+    { id: 'hungry', label: 'hungry', color: '#B2EBF2' }, // Or appropriate icon
+    { id: 'strong', label: 'strong', color: '#B2EBF2' },
+    { id: 'indifferent', label: 'indifferent', color: '#B2EBF2' },
+    { id: 'sleepy', label: 'sleepy', color: '#B2EBF2' },
+    { id: 'calm', label: 'calm', color: '#B2EBF2' },
+    { id: 'crying', label: 'crying', color: '#B2EBF2' },
+    { id: 'depressed', label: 'depressed', color: '#B2EBF2' },
+    { id: 'dizzy', label: 'dizzy', color: '#B2EBF2' },
+    { id: 'happy', label: 'happy', color: '#B2EBF2' },
+    { id: 'overwhelmed', label: 'overwhelmed', color: '#B2EBF2' },
+    { id: 'stressed', label: 'stressed', color: '#B2EBF2' },
 ];
 
 export default function MoodSelectionScreen() {
@@ -77,8 +99,12 @@ export default function MoodSelectionScreen() {
                                 onPress={() => setSelectedMood(mood.id)}
                                 className={`w-[30%] aspect-square items-center justify-center mb-6 rounded-full ${isSelected ? 'bg-teal-200' : 'bg-transparent'}`}
                             >
-                                <View className={`w-16 h-16 rounded-full items-center justify-center ${isSelected ? 'bg-teal-400' : 'bg-slate-100 border border-slate-200'}`}>
-                                    <Text className="text-3xl">{mood.emoji}</Text>
+                                <View className={`w-16 h-16 rounded-full items-center justify-center ${isSelected ? 'bg-teal-400' : 'bg-slate-100 border border-slate-200'} overflow-hidden`}>
+                                    <Image
+                                        source={moodImages[mood.id]}
+                                        className="w-full h-full"
+                                        resizeMode="cover"
+                                    />
                                 </View>
                                 <Text className="text-slate-600 text-center mt-2 font-medium bg-transparent">
                                     {mood.label}
