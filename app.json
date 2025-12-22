@@ -1,0 +1,39 @@
+{
+  "expo": {
+    "name": "Calm Elevation",
+    "slug": "calm-elevation",
+    "icon": "./assets/cal-cloud.png",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "automatic",
+    "splash": {
+      "image": "./assets/cal-cloud.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.calmelevation.app"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/cal-cloud.png",
+        "backgroundColor": "#ffffff"
+      },
+      "package": "com.calmelevation.app"
+    },
+    "web": {
+      "favicon": "./assets/cal-cloud.png",
+      "bundler": "metro"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-web-browser",
+      "expo-font"
+    ],
+    "scheme": "calm-elevation",
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}
