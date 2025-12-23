@@ -13,12 +13,12 @@ import { useFocusEffect } from 'expo-router';
 import { useStats } from '../../hooks/useStats';
 
 const DATA = [
-    { id: '1', title: 'Learn', route: '/learn', imagePlaceholderColor: 'bg-blue-200', imagePlaceholder: require('../../assets/learn.jpeg') },
-    { id: '2', title: 'Breathe', route: '/breathe', imagePlaceholderColor: 'bg-emerald-200', imagePlaceholder: require('../../assets/breathe.jpeg') },
-    { id: '3', title: 'Play', route: '/play', imagePlaceholderColor: 'bg-pink-200', imagePlaceholder: require('../../assets/play.jpeg') },
-    { id: '4', title: 'Journal', route: '/journal', imagePlaceholderColor: 'bg-orange-200', imagePlaceholder: require('../../assets/journal.jpeg') },
-    { id: '5', title: 'Sleep', route: '/sleep', imagePlaceholderColor: 'bg-indigo-300', imagePlaceholder: require('../../assets/night.jpeg') },
-    { id: '6', title: 'Self-healing', route: '/self-healing', imagePlaceholderColor: 'bg-lime-200', imagePlaceholder: require('../../assets/visualize.jpeg') },
+    { id: '1', title: 'Self-healing', route: '/self-healing', imagePlaceholderColor: 'bg-lime-200', imagePlaceholder: require('../../assets/visualize.jpeg') },
+    { id: '2', title: 'Learn', route: '/learn', imagePlaceholderColor: 'bg-blue-200', imagePlaceholder: require('../../assets/learn.jpeg') },
+    { id: '3', title: 'Breathe', route: '/breathe', imagePlaceholderColor: 'bg-emerald-200', imagePlaceholder: require('../../assets/breathe.jpeg') },
+    { id: '4', title: 'Play', route: '/play', imagePlaceholderColor: 'bg-pink-200', imagePlaceholder: require('../../assets/play.jpeg') },
+    { id: '5', title: 'Journal', route: '/journal', imagePlaceholderColor: 'bg-orange-200', imagePlaceholder: require('../../assets/journal.jpeg') },
+    { id: '6', title: 'Sleep', route: '/sleep', imagePlaceholderColor: 'bg-indigo-300', imagePlaceholder: require('../../assets/night.jpeg') },
 ] as const;
 
 export default function HomeScreen() {

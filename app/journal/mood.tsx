@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, Dimensions, Image, Pressable } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { ArrowLeft, X, Star } from 'lucide-react-native';
 import { StatusBar } from 'expo-status-bar';
@@ -59,6 +59,7 @@ export default function MoodSelectionScreen() {
     const params = useLocalSearchParams();
     const { getEntryById } = useJournal();
     const [selectedMood, setSelectedMood] = useState<string | null>(null);
+    const insets = useSafeAreaInsets();
 
     useEffect(() => {
         if (params.id) {
@@ -107,7 +108,7 @@ export default function MoodSelectionScreen() {
                                 onPress={() => setSelectedMood(mood.id)}
                                 className={`w-[30%] aspect-square items-center justify-center mb-6 rounded-3xl pt-2 ${isSelected ? 'bg-teal-100 dark:bg-teal-900/30' : 'bg-transparent'}`}
                             >
-                                <View className={`w-16 h-16 rounded-full items-center justify-center p-2 ${isSelected ? 'bg-black/20 border border-teal-400' : 'border border-slate-200 dark:border-slate-700'} overflow-hidden`}>
+                                <View className={`w-16 h-16 rounded-full items-center justify-center ${isSelected ? 'bg-black/20 border border-teal-400' : 'border border-slate-200 dark:border-slate-700'} overflow-hidden`}>
                                     <Image
                                         source={moodImages[mood.id]}
                                         className="w-full h-full"
@@ -124,7 +125,10 @@ export default function MoodSelectionScreen() {
             </ScrollView>
 
             {/* Bottom Bar */}
-            <View className="absolute bottom-0 w-full p-6 bg-white/90 dark:bg-slate-900/90 blur-sm border-t border-slate-100 dark:border-slate-800">
+            <View
+                className="absolute bottom-0 w-full px-6 pt-6 bg-white/90 dark:bg-slate-900/90 blur-sm border-t border-slate-100 dark:border-slate-800"
+                style={{ paddingBottom: insets.bottom + 24 }}
+            >
                 <TouchableOpacity
                     onPress={handleContinue}
                     disabled={!selectedMood}

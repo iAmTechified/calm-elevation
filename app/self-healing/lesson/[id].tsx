@@ -1,6 +1,6 @@
 
 import { View, Text, TouchableOpacity, ScrollView, Dimensions, TextInput } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { useLocalSearchParams, useRouter, Redirect } from 'expo-router';
 import { ChevronLeft, Star, ArrowRight, CheckCircle } from 'lucide-react-native';
@@ -23,6 +23,7 @@ export default function LessonScreen() {
     const { colorScheme } = useColorScheme();
     const [currentPage, setCurrentPage] = useState(0);
     const [isCheckInVisible, setIsCheckInVisible] = useState(false);
+    const insets = useSafeAreaInsets();
 
     const lesson = healingLessons.find(l => l.id === id);
 
@@ -59,7 +60,7 @@ export default function LessonScreen() {
     };
 
     return (
-        <SafeAreaView className="flex-1 bg-slate-50 dark:bg-slate-900">
+        <SafeAreaView className="h-full bg-slate-50 dark:bg-slate-900" edges={['top', 'left', 'right']}>
             <StatusBar style="auto" />
 
             {/* Header */}
@@ -90,7 +91,7 @@ export default function LessonScreen() {
             </View>
 
             {/* Footer Controls */}
-            <View className="px-6 py-4 mb-2">
+            <View className="px-6 py-4" style={{ marginBottom: insets.bottom }}>
                 <LessonNavigationControls
                     currentPage={currentPage}
                     totalPages={pages.length}

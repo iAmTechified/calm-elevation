@@ -45,10 +45,16 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
     const [subscription, setSubscription] = useState<SubscriptionState>(DEFAULT_SUBSCRIPTION);
     const [loading, setLoading] = useState(true);
     const [offerings, setOfferings] = useState<PurchasesOffering | null>(null);
+    const [isConfigured, setIsConfigured] = useState(false);
 
     // Sync RevenueCat status to our local state
     const updateSubscriptionStatus = useCallback(async (customerInfo?: CustomerInfo) => {
         try {
+            if (!isConfigured) {
+                await checkLocalTrialEligibility();
+                return;
+            }
+
             const info = customerInfo || await Purchases.getCustomerInfo();
             // 'Calmelevation Pro' is the identifier for the Entitlement in RevenueCat.
             const entitlement: PurchasesEntitlementInfo | undefined = info.entitlements.active['Calmelevation Pro'] || info.entitlements.active['Calmelevation Pro'];
@@ -132,14 +138,21 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
                         Purchases.configure({ apiKey: API_KEYS.google });
                     }
 
-                    // 3. Load offerings
+                    // Verify configuration by trying to get offerings (ignoring result)
+                    // If configure failed silently or threw catchable error, this helps confirm.
+                    // But actually, configure stays synchronous mostly, but let's assume if we reached here we are good.
+                    // However, we should be careful. 'configure' is void.
+
+                    // We immediately try to get offerings to confirm connectivity/config
                     const offers = await Purchases.getOfferings();
-                    // offers.current is PurchasesOffering (singular)
                     if (offers.current) {
                         setOfferings(offers.current);
                     }
+                    setIsConfigured(true); // Mark as successful
+
                 } catch (rcError) {
-                    console.log("RevenueCat configuration failed or offerings empty:", rcError);
+                    console.log("RevenueCat configuration or offerings fetch failed (expected in Expo Go):", rcError);
+                    setIsConfigured(false);
                 }
             }
 
@@ -160,14 +173,23 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
 
     // Listen for RC updates
     useEffect(() => {
+        if (!isConfigured) return;
+
         const listener = (info: CustomerInfo) => {
             updateSubscriptionStatus(info);
         };
-        Purchases.addCustomerInfoUpdateListener(listener);
+        try {
+            Purchases.addCustomerInfoUpdateListener(listener);
+        } catch (e) {
+            console.log("Failed to add RevenueCat listener", e);
+        }
         return () => {
-            Purchases.removeCustomerInfoUpdateListener(listener);
+            // Safe to call remove even if it wasn't added? Usually yes.
+            try {
+                Purchases.removeCustomerInfoUpdateListener(listener);
+            } catch (e) { /* ignore */ }
         };
-    }, [updateSubscriptionStatus]);
+    }, [updateSubscriptionStatus, isConfigured]);
 
     const checkExpiry = useCallback(async () => {
         await updateSubscriptionStatus();
@@ -185,6 +207,11 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
     const purchase = async (sku: 'monthly' | 'yearly') => {
         setLoading(true);
         try {
+            if (!isConfigured) {
+                Alert.alert("Development Mode", "In-app purchases are not available in Expo Go. You are in a local trial state.");
+                return false;
+            }
+
             if (!offerings) {
                 // If no offerings (perhaps API key is invalid)
                 Alert.alert("Configuration Error", "No offerings available. Please check configuration.");
@@ -229,6 +256,11 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
     const restore = async () => {
         setLoading(true);
         try {
+            if (!isConfigured) {
+                Alert.alert("Development Mode", "Restore is not available in Expo Go.");
+                return false;
+            }
+
             const customerInfo = await Purchases.restorePurchases();
             if (customerInfo.entitlements.active['Calmelevation Pro']) {
                 Alert.alert("Success", "Purchases restored!");
