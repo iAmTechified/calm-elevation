@@ -30,7 +30,7 @@ const games = [
         id: 'blocks',
         title: 'Blocks',
         route: '/play/blocks',
-        image: require('../../assets/play-blocks.png'),
+        image: require('../../assets/play-blocks.jpeg'),
     },
 ];
 
@@ -43,7 +43,7 @@ export default function PlayScreen() {
             <StatusBar style="auto" />
 
             <HeroHeader
-                image={require('../../assets/play-header.png')}
+                image={require('../../assets/play.jpeg')}
                 onBack={() => router.back()}
             />
 

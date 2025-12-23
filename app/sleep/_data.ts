@@ -15,7 +15,7 @@ export const sleepTracks: SleepTrack[] = [
         id: 'night',
         title: 'Deep Night',
         duration: '10 hrs',
-        image: require('../../assets/sleep_lullaby.png'),
+        image: require('../../assets/sleep_lullaby.jpeg'),
         audioSource: require('../../assets/sounds/night.mp3'),
         category: 'Nature',
         totalDurationSeconds: 36000
@@ -70,7 +70,7 @@ export const sleepTracks: SleepTrack[] = [
         id: 'body-scan',
         title: 'Body Scan',
         duration: '15 min',
-        image: require('../../assets/sleep_lullaby.png'),
+        image: require('../../assets/sleep_lullaby.jpeg'),
         audioSource: require('../../assets/sounds/night.mp3'), // Placeholder audio
         category: 'Wind Down',
         totalDurationSeconds: 900

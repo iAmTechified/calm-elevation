@@ -370,7 +370,7 @@ export default function StatsScreen() {
                     {/* Time Cards */}
                     <View className="bg-white dark:bg-slate-800 rounded-3xl p-4 mb-4 flex-row items-center justify-between shadow-sm border border-slate-100 dark:border-slate-700 min-h-[100px]">
                         <View className="w-20 items-center justify-center">
-                            <Image source={require('../../../assets/cal_meditate.png')} className="w-16 h-16" resizeMode="contain" />
+                            <Image source={require('../../../assets/cal_meditate.jpeg')} className="w-16 h-16" resizeMode="contain" />
                         </View>
                         <View className="flex-1 items-end">
                             <Text className="text-slate-500 dark:text-slate-400 font-medium text-right text-base mb-1">Time in Breathr</Text>

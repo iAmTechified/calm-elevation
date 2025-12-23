@@ -25,6 +25,9 @@
         "foregroundImage": "./assets/cal-cloud.png",
         "backgroundColor": "#ffffff"
       },
+      "packagerOpts": {
+        "assetExts": ["png", "jpg", "jpeg", "webp", "gif", "svg"]
+      },
       "package": "com.calmelevation.app"
     },
     "web": {

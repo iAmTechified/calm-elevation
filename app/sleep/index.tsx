@@ -24,9 +24,9 @@ export default function SleepScreen() {
             <StatusBar style="light" />
 
             <HeroHeader
-                image={require('../../assets/cal_sleeping_moon.png')}
+                image={require('../../assets/night.jpeg')}
                 onBack={() => router.back()}
-                imageResizeMode="contain"
+                imageResizeMode="cover"
             />
 
             <SafeAreaView edges={['top']} className="flex-0 h-full z-10">

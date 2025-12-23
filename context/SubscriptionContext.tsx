@@ -10,7 +10,7 @@ const INSTALL_DATE_KEY = 'calm_elevation_install_date';
 // TODO: Replace with your actual RevenueCat API Keys
 const API_KEYS = {
     apple: 'test_DHXyHqKbjlkIFjisNvgRxaTcvny',
-    google: 'goog_szhLnedmzOwWQrAvtUqVzloAOJW'
+    google: process.env.PAYMENT_API_KEY
 };
 
 export interface SubscriptionState {

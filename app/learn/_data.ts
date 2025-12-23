@@ -34,7 +34,7 @@ export const COURSES: Record<string, Course> = {
         id: 'understanding-anxiety',
         title: 'Understanding Anxiety',
         description: 'Find peace of mind by learning what anxiety actually is, how your body experiences a panic attack, and why it happens. Knowledge is power.',
-        image: require('../../assets/images/learn/banner_understanding.png'),
+        image: require('../../assets/images/learn/banner_understanding.jpeg'),
         color: 'bg-violet-100',
         lessonIds: ['1', '2', '3', '4', '5', '6']
     },
@@ -63,7 +63,7 @@ export const LESSONS: Lesson[] = [
         courseId: 'understanding-anxiety',
         title: 'What is Anxiety?',
         icon: null,
-        iconSource: require('../../assets/images/learn/icon_anxiety.png'),
+        iconSource: require('../../assets/images/learn/icon_anxiety.jpeg'),
         color: 'bg-teal-100',
         duration: '5 min',
         content: [
@@ -131,7 +131,7 @@ export const LESSONS: Lesson[] = [
         courseId: 'understanding-anxiety',
         title: 'Causes & Theories',
         icon: null,
-        iconSource: require('../../assets/images/learn/icon_causes.png'),
+        iconSource: require('../../assets/images/learn/icon_causes.jpeg'),
         color: 'bg-blue-100',
         duration: '7 min',
         content: [

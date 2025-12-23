@@ -1,0 +1,27 @@
+npm verbose cli C:\nvm4w\nodejs\node.exe C:\nvm4w\nodejs\node_modules\npm\bin\npm-cli.js
+npm info using npm@11.6.2
+npm info using node@v25.2.0
+npm verbose title npm install
+npm verbose argv "install" "--loglevel" "verbose"
+npm verbose logfile logs-max:10 dir:C:\Users\Ruby Adimchinobi\AppData\Local\npm-cache\_logs\2025-12-23T18_05_20_151Z-
+npm verbose logfile C:\Users\Ruby Adimchinobi\AppData\Local\npm-cache\_logs\2025-12-23T18_05_20_151Z-debug-0.log
+npm http cache https://registry.npmjs.org/@babel%2ftypes 34ms (cache hit)
+npm verbose stack TypeError: Invalid Version: 
+npm verbose stack     at new SemVer (C:\Users\Ruby Adimchinobi\AppData\Local\nvm\v25.2.0\node_modules\npm\node_modules\semver\classes\semver.js:40:13)
+npm verbose stack     at compare (C:\Users\Ruby Adimchinobi\AppData\Local\nvm\v25.2.0\node_modules\npm\node_modules\semver\functions\compare.js:5:32)
+npm verbose stack     at Object.eq (C:\Users\Ruby Adimchinobi\AppData\Local\nvm\v25.2.0\node_modules\npm\node_modules\semver\functions\eq.js:4:29)
+npm verbose stack     at Node.canDedupe (C:\Users\Ruby Adimchinobi\AppData\Local\nvm\v25.2.0\node_modules\npm\node_modules\@npmcli\arborist\lib\node.js:1140:32)
+npm verbose stack     at PlaceDep.pruneDedupable (C:\Users\Ruby Adimchinobi\AppData\Local\nvm\v25.2.0\node_modules\npm\node_modules\@npmcli\arborist\lib\place-dep.js:426:14)
+npm verbose stack     at PlaceDep.pruneDedupable (C:\Users\Ruby Adimchinobi\AppData\Local\nvm\v25.2.0\node_modules\npm\node_modules\@npmcli\arborist\lib\place-dep.js:444:14)
+npm verbose stack     at PlaceDep.pruneDedupable (C:\Users\Ruby Adimchinobi\AppData\Local\nvm\v25.2.0\node_modules\npm\node_modules\@npmcli\arborist\lib\place-dep.js:444:14)
+npm verbose stack     at new PlaceDep (C:\Users\Ruby Adimchinobi\AppData\Local\nvm\v25.2.0\node_modules\npm\node_modules\@npmcli\arborist\lib\place-dep.js:219:12)
+npm verbose stack     at #buildDepStep (C:\Users\Ruby Adimchinobi\AppData\Local\nvm\v25.2.0\node_modules\npm\node_modules\@npmcli\arborist\lib\arborist\build-ideal-tree.js:945:18)
+npm verbose stack     at async Arborist.buildIdealTree (C:\Users\Ruby Adimchinobi\AppData\Local\nvm\v25.2.0\node_modules\npm\node_modules\@npmcli\arborist\lib\arborist\build-ideal-tree.js:182:7)
+npm error Invalid Version: 
+npm verbose cwd C:\Users\Ruby Adimchinobi\Desktop\calm elevation
+npm verbose os Windows_NT 10.0.19044
+npm verbose node v25.2.0
+npm verbose npm  v11.6.2
+npm verbose exit 1
+npm verbose code 1
+npm error A complete log of this run can be found in: C:\Users\Ruby Adimchinobi\AppData\Local\npm-cache\_logs\2025-12-23T18_05_20_151Z-debug-0.log

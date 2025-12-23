@@ -28,8 +28,6 @@ import { CheckInModal } from '../../components/CheckInModal';
 const IMG_YOGA = require('../../assets/breathr.jpeg');
 const IMG_MEDITATE = require('../../assets/cal-cloud.png');
 const IMG_SUCCESS = require('../../assets/cal_success.png');
-const IMG_INHALE = require('../../assets/cal_inhale.png');
-const IMG_EXHALE = require('../../assets/cal_exhale.png');
 
 const { width, height } = Dimensions.get('window');
 
