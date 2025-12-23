@@ -86,7 +86,6 @@ export const Stateometer: React.FC<StateometerProps> = ({ score = 85 }) => {
         // Start at 180 (bottom), end at 0 (top).
         // For score 0, rotation is 90. For score 100, rotation is -90.
         const rotationDeg = 90 - (progress.value / 100) * 180;
-        console.log(rotationDeg, score)
         return {
             transform: [
                 { rotate: `${rotationDeg}deg` } // Rotate around (0,0) which is center due to <G x={cx} y={cy}>
