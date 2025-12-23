@@ -5,16 +5,17 @@ interface ButtonProps {
     text: string;
     style?: string;
     textStyle?: string;
+    disabled?: boolean;
 }
 
-export default function Button({ onPress, text, style, textStyle }: ButtonProps) {
+export default function Button({ onPress, text, style, textStyle, disabled }: ButtonProps) {
     return (
         <Pressable
             onPress={onPress}
-            className={`py-5 px-6 rounded-3xl bg-primary w-full shadow-[5px_5px_5px_0px] ${style}`}
+            disabled={disabled}
+            className={`py-5 px-6 rounded-3xl bg-primary w-full shadow-[5px_5px_5px_0px] ${style} ${disabled ? 'opacity-50' : ''}`}
             style={({ pressed }) => ({
-                transform: [{ scale: pressed ? 0.8 : 1 }],
-                transition: "all ease-in-out 0.2s"
+                transform: [{ scale: pressed ? 0.98 : 1 }],
             })}
         >
             <Text className={`font-semibold font-sans text-lg tracking-wide text-center ${textStyle}`}>

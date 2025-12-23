@@ -4,6 +4,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { ArrowLeft, Trash2 } from 'lucide-react-native';
 import Svg, { Path, G } from 'react-native-svg';
+import { useColorScheme } from 'nativewind';
+import { useStats } from '../../hooks/useStats';
 
 const { width } = Dimensions.get('window');
 const GRID_SIZE = 5;
@@ -19,6 +21,9 @@ const LAYER_HEIGHT = 15; // pixels to shift up per layer
 
 export default function BlocksScreen() {
     const router = useRouter();
+    const { colorScheme } = useColorScheme();
+    const isDark = colorScheme === 'dark';
+    const { updateEmotionalState } = useStats();
     // Grid of heights
     const [grid, setGrid] = useState<number[][]>(
         Array(GRID_SIZE).fill(0).map(() => Array(GRID_SIZE).fill(0))
@@ -29,6 +34,7 @@ export default function BlocksScreen() {
             const newGrid = [...prev].map(r => [...r]);
             if (newGrid[row][col] < 8) { // Max height 8
                 newGrid[row][col] = newGrid[row][col] + 1;
+                updateEmotionalState(0.01); // Small +0.01 for building
             } else {
                 newGrid[row][col] = 0; // Reset
             }
@@ -103,21 +109,21 @@ export default function BlocksScreen() {
     cellsToRender.sort((a, b) => (a.r + a.c) - (b.r + b.c));
 
     return (
-        <SafeAreaView className="flex-1 bg-rose-50" edges={['top']}>
+        <SafeAreaView className="flex-1 bg-rose-50 dark:bg-slate-900" edges={['top']}>
             {/* Header */}
             <View className="px-6 py-4 flex-row items-center justify-between z-10">
                 <TouchableOpacity
                     onPress={() => router.back()}
-                    className="w-10 h-10 bg-white/80 rounded-full items-center justify-center shadow-sm"
+                    className="w-10 h-10 bg-white/80 dark:bg-slate-800/80 rounded-full items-center justify-center shadow-sm"
                 >
-                    <ArrowLeft color="#1E293B" size={24} />
+                    <ArrowLeft color={isDark ? '#e2e8f0' : '#1E293B'} size={24} />
                 </TouchableOpacity>
-                <Text className="text-xl font-bold text-slate-800">Builder</Text>
+                <Text className="text-xl font-bold text-slate-800 dark:text-white">Builder</Text>
                 <TouchableOpacity
                     onPress={clearBlocks}
-                    className="w-10 h-10 bg-white/80 rounded-full items-center justify-center shadow-sm"
+                    className="w-10 h-10 bg-white/80 dark:bg-slate-800/80 rounded-full items-center justify-center shadow-sm"
                 >
-                    <Trash2 color="#1E293B" size={20} />
+                    <Trash2 color={isDark ? '#e2e8f0' : '#1E293B'} size={20} />
                 </TouchableOpacity>
             </View>
 
@@ -154,7 +160,7 @@ export default function BlocksScreen() {
                                 const topParams = `M 0 -${hh} L ${w} 0 L 0 ${hh} L -${w} 0 Z`;
                                 elements.push(
                                     <G x={centerX + x} y={centerY + y} key={`base-${cell.r}-${cell.c}`} onPress={() => handleTap(cell.r, cell.c)}>
-                                        <Path d={topParams} fill="#E2E8F0" stroke="#CBD5E1" strokeWidth={1} />
+                                        <Path d={topParams} fill={isDark ? "#334155" : "#E2E8F0"} stroke={isDark ? "#475569" : "#CBD5E1"} strokeWidth={1} />
                                     </G>
                                 );
                             }
@@ -164,7 +170,7 @@ export default function BlocksScreen() {
                 </Svg>
 
                 <View className="absolute bottom-12 w-full items-center">
-                    <Text className="text-slate-500 font-medium">Tap empty spots to build. Tap blocks to grow.</Text>
+                    <Text className="text-slate-500 dark:text-slate-400 font-medium">Tap empty spots to build. Tap blocks to grow.</Text>
                 </View>
             </View>
 

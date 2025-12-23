@@ -1,118 +1,101 @@
-
 import { View, Text, ScrollView, TouchableOpacity, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { useRouter } from 'expo-router';
-import { ArrowLeft, HelpCircle } from 'lucide-react-native';
+import { Heart, Lock } from 'lucide-react-native';
 import HeroHeader from '../../components/HeroHeader';
+import { useStats } from '../../hooks/useStats';
+import { useAccess } from '../../hooks/useAccess';
+
+
+
+import { sleepTracks } from './_data';
 
 export default function SleepScreen() {
     const router = useRouter();
+    const { updateEmotionalState } = useStats();
+    const { isLocked } = useAccess();
 
-    const tracks = [
-        {
-            id: 1,
-            title: 'Crackling Fire',
-            duration: '10 hr 1 min',
-            image: require('../../assets/sleep_fireplace.png'),
-            audioUrl: 'https://assets.mixkit.co/active_storage/sfx/2019/2019-preview.mp3' // Fire sound
-        },
-        {
-            id: 2,
-            title: 'Night Ambience',
-            duration: '10 hrs',
-            image: require('../../assets/sleep_lullaby.png'),
-            audioUrl: 'https://assets.mixkit.co/active_storage/sfx/61/61-preview.mp3' // Crickets/Night
-        },
-        {
-            id: 3,
-            title: 'Gentle Ocean',
-            duration: '10 hrs',
-            image: require('../../assets/sleep_ocean.png'),
-            audioUrl: 'https://assets.mixkit.co/active_storage/sfx/243/243-preview.mp3' // Gentle waves
-        },
-        {
-            id: 4,
-            title: 'Soft Rain',
-            duration: '10 hr 2 mins',
-            image: require('../../assets/sleep_ocean.png'), // Keeping placeholder image for now
-            audioUrl: 'https://assets.mixkit.co/active_storage/sfx/113/113-preview.mp3' // Light rain
-        },
-    ];
+
+    const tracks = sleepTracks;
 
     return (
-        <SafeAreaView className="flex-1 bg-[#1e1b4b]" edges={['top']}>
+        <View className="flex-1 font-sans bg-[#1e1b4b]">
             <StatusBar style="light" />
 
-            {/* Header */}
-            <ScrollView className="flex-1 bg-white mt-4 rounded-t-[40px]" contentContainerStyle={{ paddingBottom: 100 }}>
+            <HeroHeader
+                image={require('../../assets/cal_sleeping_moon.png')}
+                onBack={() => router.back()}
+                imageResizeMode="contain"
+            />
 
-                <HeroHeader
-                    image={require('../../assets/cal_sleeping_moon.png')}
-                    iconColor="#FFF"
-                    backButtonStyle="bg-white/20"
-                    rightElement={
-                        <TouchableOpacity className="w-10 h-10 bg-white/20 rounded-full items-center justify-center">
-                            <HelpCircle color="#FFF" size={24} />
-                        </TouchableOpacity>
-                    }
-                    imageResizeMode="contain"
-                />
+            <SafeAreaView edges={['top']} className="flex-0 h-full z-10">
+                <ScrollView className="pb-20">
+                    <View className="flex-1 bg-white dark:bg-slate-900 rounded-t-[40px] h-full px-8 pt-10 mt-[200px] z-[999] shadow-sm">
+                        <Text className="text-3xl font-semibold font-sans text-slate-800 dark:text-white text-center mb-4">
+                            Sleep Sounds
+                        </Text>
 
-                <View className="px-6 mb-6">
-                    <Text className="text-3xl font-bold text-slate-800 text-center">Sleep</Text>
-                </View>
+                        <Text className="text-lg font-sans text-slate-600 dark:text-slate-300 text-center leading-6 mb-8 px-2">
+                            Drift off with high-quality, loopable sounds. Accessible offline.
+                        </Text>
 
-                {/* Description */}
-                <View className="px-8 mb-8 -mt-4">
-                    <Text className="text-slate-600 text-center leading-relaxed text-lg font-medium">
-                        Make bedtime a relaxing, anxiety-free time, with calming sounds from nature, music, and more.
-                    </Text>
-                </View>
+                        <View className="flex-row flex-wrap justify-between gap-y-6 pb-20">
+                            {tracks.map((track) => {
+                                const locked = isLocked('sleep-track', { trackId: track.id });
+                                return (
+                                    <TouchableOpacity
+                                        key={track.id}
+                                        activeOpacity={0.9}
+                                        onPress={() => {
+                                            if (locked) {
+                                                router.push('/paywall');
+                                            } else {
+                                                updateEmotionalState(0.05);
+                                                router.push({
+                                                    pathname: '/sleep/[id]',
+                                                    params: {
+                                                        id: track.id
+                                                    }
+                                                });
+                                            }
+                                        }}
+                                        className="w-[48%] bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 pb-3 overflow-hidden relative"
+                                    >
+                                        <View className="h-28 w-full bg-slate-100 dark:bg-slate-700 mb-3 relative">
+                                            <Image
+                                                source={track.image}
+                                                className={`w-full h-full ${locked ? 'opacity-50' : ''}`}
+                                                resizeMode="cover"
+                                            />
+                                            {locked && (
+                                                <View className="absolute inset-0 items-center justify-center bg-black/10">
+                                                    <Lock color="#fff" size={24} />
+                                                </View>
+                                            )}
+                                        </View>
+                                        <View className="px-3">
+                                            <Text className="text-slate-800 dark:text-gray-100 font-bold text-base leading-tight mb-1">
+                                                {track.title}
+                                            </Text>
+                                            <Text className="text-slate-400 dark:text-slate-500 text-xs font-medium uppercase tracking-wide">
+                                                {track.duration}
+                                            </Text>
+                                        </View>
 
-                {/* Tracks Grid */}
-                <View className="px-6 flex-row flex-wrap justify-between gap-y-6">
-                    {tracks.map((track) => (
-                        <TouchableOpacity
-                            key={track.id}
-                            onPress={() => router.push({
-                                pathname: '/sleep/[id]',
-                                params: {
-                                    id: track.id,
-                                    title: track.title,
-                                    audioUrl: track.audioUrl,
-                                    // We can't pass require() result easily params sometimes, usually pass ID and require in the other file.
-                                    // But here we'll just pass ID and look it up there. 
-                                    // For simplicity let's only pass serializable data.
-                                    // We will redefine the data in the details screen or export it.
-                                }
+                                        {locked && (
+                                            <View className="absolute top-2 right-2 bg-amber-500 px-2 py-0.5 rounded-full z-10">
+                                                <Text className="text-white text-[10px] font-bold">PREMIUM</Text>
+                                            </View>
+                                        )}
+                                    </TouchableOpacity>
+                                );
                             })}
-                            className="w-[48%] bg-white rounded-2xl shadow-sm border border-slate-100 pb-3 overflow-hidden"
-                        >
-                            <View className="h-32 w-full bg-slate-100 mb-3 relative">
-                                <Image
-                                    source={track.image}
-                                    className="w-full h-full"
-                                    resizeMode="cover"
-                                />
-                                {/* Optional Heart Icon */}
-                                {/* <View className="absolute top-2 right-2 w-8 h-8 bg-black/30 rounded-full items-center justify-center">
-                                    <Heart color="#FFF" size={16} />
-                                </View> */}
-                            </View>
-                            <View className="px-3">
-                                <Text className="text-slate-800 font-bold text-base leading-tight">
-                                    {track.title}
-                                </Text>
-                                <Text className="text-slate-400 text-sm mt-1">
-                                    {track.duration}
-                                </Text>
-                            </View>
-                        </TouchableOpacity>
-                    ))}
-                </View>
+                        </View>
 
-            </ScrollView>
-        </SafeAreaView>
+                    </View>
+                </ScrollView>
+            </SafeAreaView>
+        </View>
     );
 }

@@ -25,10 +25,10 @@ export default function LessonCard({
     return (
         <Pressable
             onPress={onPress}
-            className={`bg-white rounded-[32px] overflow-hidden shadow-sm border border-slate-100 active:opacity-95 w-full mb-4 ${style}`}
+            className={`bg-white dark:bg-slate-800 rounded-[32px] overflow-hidden shadow-sm border border-slate-100 dark:border-slate-700 active:opacity-95 w-full mb-4 ${style}`}
         >
             {/* Image Placeholder Section */}
-            <View className={`h-28 w-full ${!imageSource ? imagePlaceholderColor : 'bg-white'} items-center justify-center relative`}>
+            <View className={`h-28 w-full ${!imageSource ? imagePlaceholderColor : 'bg-white dark:bg-slate-800'} items-center justify-center relative`}>
                 {imageSource ? (
                     <Image source={imageSource} className="w-full h-full" resizeMode="cover" />
                 ) : (
@@ -38,18 +38,18 @@ export default function LessonCard({
 
             {/* Content Section */}
             <View className="p-5 py-2 pt-4">
-                <Text className="text-slate-500 font-bold font-sans text-sm mb-1 tracking-wide">
+                <Text className="text-slate-500 dark:text-slate-400 font-bold font-sans text-sm mb-1 tracking-wide">
                     {completedLessons}/{totalLessons} Completed
                 </Text>
 
-                <Text className="text-slate-800 text-xl font-bold font-sans mb-2 tracking-tight">
+                <Text className="text-slate-800 dark:text-gray-100 text-xl font-bold font-sans mb-2 tracking-tight">
                     {title}
                 </Text>
 
                 {/* Progress Bar */}
-                <View className="h-[15px] p-1 mb-2 justify-center items-start bg-slate-100 rounded-full w-full overflow-hidden">
+                <View className="h-[15px] p-1 mb-2 justify-center items-start bg-slate-100 dark:bg-slate-700 rounded-full w-full overflow-hidden">
                     <View
-                        className="h-[10px] bg-emerald-300 rounded-full"
+                        className="h-[10px] bg-emerald-400 rounded-full"
                         style={{ width: `${progress}%` }}
                     />
                 </View>

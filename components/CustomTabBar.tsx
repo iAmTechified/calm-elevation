@@ -3,8 +3,10 @@ import { View, StyleSheet, Text, TouchableOpacity, Dimensions } from 'react-nati
 import { BottomTabBarProps } from '@react-navigation/bottom-tabs';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Animated, { useAnimatedStyle, useSharedValue, withSequence, withSpring } from 'react-native-reanimated';
-import { Plus } from 'lucide-react-native';
-import ChatModal from './ChatModal';
+import { Plus, Sparkles } from 'lucide-react-native';
+import { useRouter } from 'expo-router';
+import { useColorScheme } from 'nativewind';
+import Colors from '../constants/Colors';
 
 const AnimatedTouchableOpacity = Animated.createAnimatedComponent(TouchableOpacity);
 
@@ -53,8 +55,18 @@ function TabButton({
             activeOpacity={0.8}
         >
             <View className="items-center justify-center gap-1">
-                {Icon && <Icon color={isFocused ? '#334155' : '#94a3b8'} size={28} fill={isFocused ? '#334155' : '#94a3b8'} strokeWidth={isFocused ? 5 : 4} />}
-                <Text className={`text-sm font-semibold`} style={{ color: isFocused ? '#334155' : '#94a3b8' }}>
+                {Icon && <Icon
+                    color={isFocused ? (descriptor.options.tabBarActiveTintColor || Colors.light.text) : (descriptor.options.tabBarInactiveTintColor || Colors.light.textSecondary)}
+                    size={28}
+                    fill={isFocused ? (descriptor.options.tabBarActiveTintColor || Colors.light.text) : (descriptor.options.tabBarInactiveTintColor || Colors.light.textSecondary)}
+                    strokeWidth={isFocused ? 5 : 4}
+                />}
+                <Text
+                    className={`text-sm font-semibold`}
+                    style={{
+                        color: isFocused ? (descriptor.options.tabBarActiveTintColor || Colors.light.text) : (descriptor.options.tabBarInactiveTintColor || Colors.light.textSecondary)
+                    }}
+                >
                     {label}
                 </Text>
             </View>
@@ -64,18 +76,27 @@ function TabButton({
 
 export default function CustomTabBar({ state, descriptors, navigation }: BottomTabBarProps) {
     const insets = useSafeAreaInsets();
-    const [chatVisible, setChatVisible] = useState(false);
+    const router = useRouter();
+    const { colorScheme } = useColorScheme();
+    const colors = Colors[colorScheme === 'dark' ? 'dark' : 'light'];
 
     // We assume 2 tabs: Index 0 (Journey) and Index 1 (Stats).
     // Center button sits in between.
 
     return (
         <>
-            <View style={[styles.container, { paddingBottom: insets.bottom }]}>
+            <View style={[styles.container, { paddingBottom: insets.bottom, backgroundColor: colors.background, borderTopColor: colors.border }]}>
                 {/* Left Tab (Journey) */}
                 {state.routes[0] && (
                     <TabButton
-                        descriptor={descriptors[state.routes[0].key]}
+                        descriptor={{
+                            ...descriptors[state.routes[0].key],
+                            options: {
+                                ...descriptors[state.routes[0].key].options,
+                                tabBarActiveTintColor: colors.text,
+                                tabBarInactiveTintColor: colors.textSecondary,
+                            }
+                        }}
                         isFocused={state.index === 0}
                         onPress={() => {
                             const event = navigation.emit({
@@ -95,12 +116,14 @@ export default function CustomTabBar({ state, descriptors, navigation }: BottomT
                 <View style={styles.centerParams}>
                     <TouchableOpacity
                         activeOpacity={0.9}
-                        onPress={() => setChatVisible(true)}
+                        onPress={() => router.push('/chat')}
                         style={styles.centerButtonContainer}
                     >
                         {/* 3D Effect Layers */}
                         <View style={styles.buttonShadow} />
-                        <View style={styles.buttonBody} />
+                        <View style={[styles.buttonBody, { justifyContent: 'center', alignItems: 'center' }]}>
+                            <Sparkles size={32} color="white" />
+                        </View>
                         <View style={styles.buttonShine} />
                     </TouchableOpacity>
                 </View>
@@ -108,7 +131,14 @@ export default function CustomTabBar({ state, descriptors, navigation }: BottomT
                 {/* Right Tab (Stats) */}
                 {state.routes[1] && (
                     <TabButton
-                        descriptor={descriptors[state.routes[1].key]}
+                        descriptor={{
+                            ...descriptors[state.routes[1].key],
+                            options: {
+                                ...descriptors[state.routes[1].key].options,
+                                tabBarActiveTintColor: colors.text,
+                                tabBarInactiveTintColor: colors.textSecondary,
+                            }
+                        }}
                         isFocused={state.index === 1}
                         onPress={() => {
                             const event = navigation.emit({
@@ -124,8 +154,6 @@ export default function CustomTabBar({ state, descriptors, navigation }: BottomT
                     />
                 )}
             </View>
-
-            <ChatModal visible={chatVisible} onClose={() => setChatVisible(false)} />
         </>
     );
 }
@@ -136,7 +164,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#FFF',
         borderTopWidth: 1,
         borderTopColor: '#F1F5F9', // slate-100
-        height: 90, // Fixed height to accommodate button
+        height: 100, // Fixed height to accommodate button
         alignItems: 'center',
         justifyContent: 'space-between',
         paddingHorizontal: 20,
@@ -146,8 +174,8 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         height: '100%',
-        paddingTop: 10,
-        paddingBottom: 10,
+        paddingTop: 20,
+        paddingBottom: 20,
     },
     centerParams: {
         width: 80,
@@ -178,10 +206,10 @@ const styles = StyleSheet.create({
         left: 0,
         right: 0,
         height: 60, // Taller body
-        backgroundColor: '#ef4444', // red-500
+        backgroundColor: '#3A8E91', // primary
         borderRadius: 35,
         borderBottomWidth: 12,
-        borderBottomColor: '#b91c1c', // red-700 (Darker red side)
+        borderBottomColor: '#254F51', // primaryLight (darker shade)
         zIndex: 2,
     },
     buttonShine: {

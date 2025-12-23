@@ -2,89 +2,157 @@ import { View, Text, Image, TouchableOpacity, ActivityIndicator } from 'react-na
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
-import { X, Play, Pause, SkipBack, SkipForward } from 'lucide-react-native';
-import { useState, useEffect, useRef } from 'react';
+import { X, Play, Pause } from 'lucide-react-native';
+import { useState, useEffect } from 'react';
+import { useAudioPlayer } from 'expo-audio';
 import { Audio } from 'expo-av';
+import { CheckInModal } from '../../components/CheckInModal';
+
+import { sleepTracks } from './_data';
+import { useStats } from '../../hooks/useStats';
 
 export default function SleepPlayerScreen() {
     const router = useRouter();
-    const { id, title, audioUrl } = useLocalSearchParams();
+    const { id } = useLocalSearchParams();
+    const { updateEmotionalState } = useStats();
+
+    const track = sleepTracks.find(t => t.id === id);
+    const audioSource = track?.audioSource;
+
+    // Initialize player with the source
+    const player = useAudioPlayer(audioSource);
+
+    const [currentTime, setCurrentTime] = useState(0);
+    const [duration, setDuration] = useState(0);
     const [isPlaying, setIsPlaying] = useState(false);
-    const [sound, setSound] = useState<Audio.Sound | null>(null);
     const [isLoading, setIsLoading] = useState(true);
-    const [position, setPosition] = useState(0);
-    const [duration, setDuration] = useState(600 * 60 * 1000); // Default 10 hours ish
 
-    // Load Sound
+    const [sessionTime, setSessionTime] = useState(0); // Time elapsed in this session
+    const totalDuration = track?.totalDurationSeconds || 3600; // Default 1 hour if missing
+
+    // Provide immediate feedback when player is ready and setup background audio
     useEffect(() => {
-        async function loadSound() {
+        const setupAudio = async () => {
             try {
-                // If audioUrl is string constraint, ensure it's not array
-                const url = Array.isArray(audioUrl) ? audioUrl[0] : audioUrl;
-
-                if (!url) {
-                    setIsLoading(false);
-                    return;
-                }
-
-                console.log('Loading Sound:', url);
-                const { sound: newSound } = await Audio.Sound.createAsync(
-                    { uri: url },
-                    { shouldPlay: true, isLooping: true },
-                    onPlaybackStatusUpdate
-                );
-                setSound(newSound);
-                setIsPlaying(true);
-                setIsLoading(false);
-            } catch (error) {
-                console.error('Error loading sound', error);
-                setIsLoading(false);
-            }
-        }
-
-        loadSound();
-
-        return () => {
-            if (sound) {
-                console.log('Unloading Sound');
-                sound.unloadAsync();
+                await Audio.setAudioModeAsync({
+                    staysActiveInBackground: true,
+                    playsInSilentModeIOS: true,
+                    shouldDuckAndroid: true,
+                    playThroughEarpieceAndroid: false
+                });
+            } catch (e) {
+                console.log('Error setting audio mode', e);
             }
         };
-    }, [audioUrl]);
+        setupAudio();
 
-    const onPlaybackStatusUpdate = (status: any) => {
-        if (status.isLoaded) {
-            setPosition(status.positionMillis);
-            setDuration(status.durationMillis || duration);
-            setIsPlaying(status.isPlaying);
+        if (player) {
+            // Configure player to loop infinitely
+            player.loop = true;
+            player.play();
+            setIsPlaying(true);
+            setIsLoading(false);
         }
-    };
+    }, [player]);
 
-    const togglePlayback = async () => {
-        if (!sound) return;
+    // Track session time (fake progress for the user)
+    useEffect(() => {
+        let interval: any;
         if (isPlaying) {
-            await sound.pauseAsync();
+            interval = setInterval(() => {
+                setSessionTime(prev => {
+                    const next = prev + 1;
+                    if (next >= totalDuration) {
+                        // Optional: Stop player if session complete? 
+                        // For now, let it loop, just cap the visual progress or wrap?
+                        // "loop for duration" usually means stop after duration.
+                        // Let's stop.
+                        if (player) player.pause();
+                        setIsPlaying(false);
+
+                        // Reward user for completing the "session" (even if looping usually, here it ends)
+                        // +0.2 (20 pts) for a full sleep session
+                        updateEmotionalState(0.2);
+                        setIsCheckInVisible(true);
+
+                        return totalDuration;
+                    }
+
+                    // Logic: Every minute, give small boost?
+                    // Maybe every 5 minutes +0.05
+                    // Let's do it on completion for now to avoid complexity or abuse, 
+                    // or ideally check milestones. 
+                    if (next % 300 === 0) { // Every 5 mins
+                        updateEmotionalState(0.05);
+                    }
+
+                    return next;
+                });
+            }, 1000);
+        }
+        return () => clearInterval(interval);
+    }, [isPlaying, totalDuration, player, updateEmotionalState]);
+
+    const togglePlayback = () => {
+        if (!player) return;
+
+        if (player.playing) {
+            player.pause();
+            setIsPlaying(false);
         } else {
-            await sound.playAsync();
+            player.play();
+            setIsPlaying(true);
         }
     };
 
-    const formatTime = (millis: number) => {
-        const totalSeconds = Math.floor(millis / 1000);
-        const minutes = Math.floor(totalSeconds / 60);
-        const seconds = totalSeconds % 60;
-        return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+    const formatTime = (seconds: number) => {
+        const h = Math.floor(seconds / 3600);
+        const m = Math.floor((seconds % 3600) / 60);
+        const s = seconds % 60;
+        if (h > 0) {
+            return `${h}:${m < 10 ? '0' : ''}${m}:${s < 10 ? '0' : ''}${s}`;
+        }
+        return `${m}:${s < 10 ? '0' : ''}${s}`;
+    };
+
+    // Calculate progress percentage based on session time relative to total desired duration
+    const progress = totalDuration > 0 ? (sessionTime / totalDuration) * 100 : 0;
+
+    // CheckIn handling
+    const [isCheckInVisible, setIsCheckInVisible] = useState(false);
+    const { recordMood } = useStats();
+
+    const handleCheckIn = async (moodScore: number) => {
+        await recordMood(moodScore);
+        setIsCheckInVisible(false);
+        router.back();
     };
 
     return (
         <SafeAreaView className="flex-1 bg-[#1e1b4b]">
             <StatusBar style="light" />
 
+            <CheckInModal
+                visible={isCheckInVisible}
+                onClose={() => {
+                    setIsCheckInVisible(false);
+                    router.back();
+                }}
+                onMoodSelect={handleCheckIn}
+            />
+
             {/* Header */}
-            <View className="px-6 py-4 flex-row items-center justify-between">
+            <View
+                className="px-6 py-4 flex-row items-center justify-between"
+                style={{ zIndex: 100, elevation: 10, position: 'relative' }}
+            >
                 <TouchableOpacity
-                    onPress={() => router.back()}
-                    className="w-10 h-10 bg-white/20 rounded-full items-center justify-center"
+                    onPress={() => {
+                        if (player) player.pause();
+                        router.back();
+                    }}
+                    className="w-20 h-20 bg-white/20 rounded-full items-center justify-center"
+                    style={{ zIndex: 101, elevation: 11 }}
                 >
                     <X color="#FFF" size={24} />
                 </TouchableOpacity>
@@ -92,9 +160,9 @@ export default function SleepPlayerScreen() {
                 <View className="w-10" />
             </View>
 
-            <View className="flex-1 items-center justify-center -mt-20">
-                {/* Rings Animation (Static for now, could be animated) */}
-                <View className="items-center justify-center relative">
+            <View className="flex-1 items-center justify-center -mt-20" pointerEvents="box-none">
+                {/* Rings Animation (Static for now) */}
+                <View className="items-center justify-center relative" pointerEvents="none">
                     <View className="absolute w-[500px] h-[500px] rounded-full border border-white/5" />
                     <View className="absolute w-[400px] h-[400px] rounded-full border border-white/10" />
                     <View className="absolute w-[300px] h-[300px] rounded-full border border-white/20" />
@@ -126,22 +194,22 @@ export default function SleepPlayerScreen() {
                 </TouchableOpacity>
 
                 <Text className="text-white/80 text-xl font-medium mb-8 text-center">
-                    {title || 'Sleep Sound'}
+                    {track?.title || 'Sleep Sound'}
                 </Text>
 
-                {/* Slider / Progress Bar Placeholder */}
+                {/* Slider / Progress Bar */}
                 <View className="w-full flex-row items-center gap-3">
                     <Text className="text-white/60 text-sm font-medium w-12 text-right">
-                        {formatTime(position)}
+                        {formatTime(sessionTime)}
                     </Text>
                     <View className="flex-1 h-1.5 bg-white/20 rounded-full overflow-hidden">
                         <View
                             className="h-full bg-teal-300 rounded-full"
-                            style={{ width: duration > 0 ? `${(position / duration) * 100}%` : '0%' }}
+                            style={{ width: `${progress}%` }}
                         />
                     </View>
                     <Text className="text-white/60 text-sm font-medium w-12 text-right">
-                        {formatTime(duration)}
+                        {formatTime(totalDuration)}
                     </Text>
                 </View>
             </View>

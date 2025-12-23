@@ -1,0 +1,124 @@
+On branch main
+Your branch is up to date with 'origin/main'.
+
+Changes not staged for commit:
+  (use "git add/rm <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+	modified:   .expo/settings.json
+	modified:   .expo/types/router.d.ts
+	deleted:    .expo/web/cache/production/images/favicon/favicon-429c653762465f749d6c393275bf1218c6d6e63205eb444777fc77abd23df0ed-contain-transparent/favicon-48.png
+	modified:   .gitignore
+	modified:   app.json
+	modified:   app/(onboarding)/index.tsx
+	modified:   app/(tabs)/index.tsx
+	modified:   app/(tabs)/settings/index.tsx
+	modified:   app/_layout.tsx
+	modified:   app/breathe/index.tsx
+	modified:   app/index.tsx
+	modified:   app/journal/entry.tsx
+	modified:   app/journal/index.tsx
+	modified:   app/journal/mood.tsx
+	modified:   app/learn/course/[id].tsx
+	modified:   app/learn/index.tsx
+	modified:   app/learn/lesson/[id].tsx
+	modified:   app/play/blocks.tsx
+	modified:   app/play/bubble-pop.tsx
+	modified:   app/play/index.tsx
+	modified:   app/play/mindful-maze.tsx
+	modified:   app/play/zen-garden.tsx
+	modified:   app/self-healing/index.tsx
+	modified:   app/sleep/[id].tsx
+	modified:   app/sleep/index.tsx
+	modified:   assets/cal-cloud.png
+	modified:   assets/cal_success.png
+	deleted:    assets/moods/angry.png
+	deleted:    assets/moods/cal.png
+	deleted:    assets/moods/calm.png
+	deleted:    assets/moods/crying.png
+	deleted:    assets/moods/depressed.png
+	deleted:    assets/moods/determined.png
+	deleted:    assets/moods/dizzy.png
+	deleted:    assets/moods/frightened.png
+	deleted:    assets/moods/happy.png
+	deleted:    assets/moods/hungry.png
+	deleted:    assets/moods/indifferent.png
+	deleted:    assets/moods/overwhelmed.png
+	deleted:    assets/moods/relaxed.png
+	deleted:    assets/moods/sad.png
+	deleted:    assets/moods/sleepy.png
+	deleted:    assets/moods/stressed.png
+	deleted:    assets/moods/strong.png
+	deleted:    assets/moods/unmotivated.png
+	deleted:    assets/moods/worried.png
+	modified:   components/Back.tsx
+	modified:   components/Button.tsx
+	modified:   components/ChatModal.tsx
+	modified:   components/CustomTabBar.tsx
+	modified:   components/LessonCard.tsx
+	modified:   components/PressableCard.tsx
+	modified:   components/Stateometer.tsx
+	new file:   eas.json
+	modified:   package-lock.json
+	modified:   package.json
+	modified:   tailwind.config.js
+	modified:   tsconfig.json
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	.agent/
+	.env
+	.vscode/
+	app/(onboarding)/steps.tsx
+	app/app-settings/
+	app/chat/
+	app/journal/[id].tsx
+	app/learn/_data.ts
+	app/paywall.tsx
+	app/play/inner-balance/
+	app/self-healing/_data.ts
+	app/self-healing/lesson/
+	app/sleep/_data.ts
+	app/visualize/
+	assets/60_Days_of_Healing_Styled_DeepIntro.pdf
+	assets/determined.png
+	assets/dizzy.png
+	assets/happy.png
+	assets/moods/angry.jpeg
+	assets/moods/calm.jpeg
+	assets/moods/crying.jpeg
+	assets/moods/depressed.jpeg
+	assets/moods/determined.jpeg
+	assets/moods/dizzy.jpeg
+	assets/moods/frightened.jpeg
+	assets/moods/happy.jpeg
+	assets/moods/hungry.jpeg
+	assets/moods/indifferent.jpeg
+	assets/moods/overwhelmed.jpeg
+	assets/moods/relaxed.jpeg
+	assets/moods/sad.jpeg
+	assets/moods/sleepy.jpeg
+	assets/moods/stressed.jpeg
+	assets/moods/strong.jpeg
+	assets/moods/unmotivated.jpeg
+	assets/moods/worried.jpeg
+	assets/sleep_forest.png
+	assets/sleep_rain.png
+	assets/sleep_thunder.png
+	assets/sleep_white_noise.png
+	assets/sounds/
+	assets/unmotivated.png
+	assets/worried.png
+	com.facebook.react.devsupport.BundleDownloader
+	components/CheckInModal.tsx
+	components/SelfLessonCard.tsx
+	components/SignaturePad.tsx
+	context/
+	docs/
+	files_list.txt
+	git_status.txt
+	hooks/
+	lib/
+	output.txt
+	scripts/
+
+no changes added to commit (use "git add" and/or "git commit -a")

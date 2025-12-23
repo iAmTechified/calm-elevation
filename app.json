@@ -13,7 +13,12 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.calmelevation.app"
+      "bundleIdentifier": "com.calmelevation.app",
+      "infoPlist": {
+        "UIBackgroundModes": [
+          "audio"
+        ]
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -29,11 +34,19 @@
     "plugins": [
       "expo-router",
       "expo-web-browser",
-      "expo-font"
+      "expo-font",
+      "expo-notifications",
+      "expo-asset"
     ],
     "scheme": "calm-elevation",
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "09f76373-d14e-46ff-a57a-026bb82e9e8b"
+      }
     }
   }
 }

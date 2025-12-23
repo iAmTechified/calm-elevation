@@ -1,7 +1,8 @@
 import React, { useEffect } from 'react';
 import { View, Text, Image, Dimensions } from 'react-native';
 import Svg, { Path, G, Circle } from 'react-native-svg';
-import Animated, { useSharedValue, useAnimatedProps, withTiming, Easing } from 'react-native-reanimated';
+import Animated, { useSharedValue, useAnimatedProps, withTiming, Easing, FadeIn, FadeOut } from 'react-native-reanimated';
+import { useColorScheme } from 'nativewind';
 
 // Helper to calculate arc path
 const createArc = (cx: number, cy: number, r: number, startAngle: number, endAngle: number) => {
@@ -30,89 +31,133 @@ interface StateometerProps {
 }
 
 export const Stateometer: React.FC<StateometerProps> = ({ score = 85 }) => {
-    // Fixed sizes for better control as requested
-    const gaugeSize = 120;
+    const { colorScheme } = useColorScheme();
+    const isDark = colorScheme === 'dark';
+
+    // Gauge Dimensions
+    const gaugeSize = 100;
     const cx = gaugeSize / 2;
     const cy = gaugeSize / 2;
-
-    // Radii configuration for the "Image-like" look
-    // Outer thin line
     const outerRadius = (gaugeSize / 2) - 5;
-    // Inner thick segments (gap of ~4px from outer line)
-    const segmentStrokeWidth = 14;
-    const segmentRadius = outerRadius - 4 - (segmentStrokeWidth / 2);
+    const segmentStrokeWidth = 12;
+    const segmentRadius = outerRadius - (segmentStrokeWidth / 2);
 
-    // Animation
+    // Animation Shared Value
     const progress = useSharedValue(0);
 
+    // Mascot Logic
+    const [mascotParams, setMascotParams] = React.useState({
+        image: require('../assets/cal.png'),
+    });
+
     useEffect(() => {
+        if(progress.value !== score){
         progress.value = withTiming(score, {
-            duration: 1500,
-            easing: Easing.out(Easing.back(1.5)),
+            duration: 1200,
+            easing: Easing.out(Easing.quad),
         });
+
+        let newImage;
+        if (score < 30) {
+            newImage = require('../assets/unmotivated.png');
+        } else if (score < 55) {
+            newImage = require('../assets/dizzy.png');
+        } else if (score < 75) {
+            newImage = require('../assets/worried.png');
+        } else if (score < 90) {
+            newImage = require('../assets/determined.png');
+        } else {
+            newImage = require('../assets/happy.png');
+        }
+        if (mascotParams.image !== newImage) {
+            setMascotParams({ image: newImage });
+        }
+    }
     }, [score]);
 
-    // Needle Rotation
+    // Needle Animation
+    // Vertical Arc: 270 deg (Bottom) -> 90 deg (Top) traversing Left side.
+    // The needle starts pointing right (0 deg).
+    // To align with the arc, 0 score should be at 270 degrees (bottom).
+    // 100 score should be at 90 degrees (top).
     const animatedProps = useAnimatedProps(() => {
-        const rotation = ((100 - progress.value) / 100) * 180;
+        // Map 0-100 to 0-180 degrees (increasing angle for increasing score)
+        // The range is 180 degrees.
+        // Start at 180 (bottom), end at 0 (top).
+        // For score 0, rotation is 90. For score 100, rotation is -90.
+        const rotationDeg = 90 - (progress.value / 100) * 180;
+        console.log(rotationDeg, score)
         return {
-            transform: [{ rotate: `${rotation}deg` }, { translateX: 0 }, { translateY: 0 }],
+            transform: [
+                { rotate: `${rotationDeg}deg` } // Rotate around (0,0) which is center due to <G x={cx} y={cy}>
+            ]
         };
     });
 
-    // Segments configuration
+    // Segments: 5 steps, 180 degrees total (36 deg each)
+    // Starting at 270 (Bottom), going to 90 (Top)
+    // Order: Red (Low/Bottom) -> Green (High/Top)
     const segments = [
-        { color: '#34d399', start: 0, end: 36 },      // Emerald
-        { color: '#a3e635', start: 36, end: 72 },     // Lime
-        { color: '#facc15', start: 72, end: 108 },    // Yellow
-        { color: '#fbbf24', start: 108, end: 144 },   // Orange
-        { color: '#fb7185', start: 144, end: 180 },   // Red
+        { color: '#ff3e3eff', start: 234, end: 270 },     // Red (Warning)
+        { color: '#fb7a24ff', start: 198, end: 234 },    // Orange
+        { color: '#facc15', start: 162, end: 198 },    // Yellow
+        { color: '#a3e635', start: 127, end: 162 },    // Lime
+        { color: '#34d399', start: 90, end: 125 },    // Green (Success)
     ];
+
+    const needleColor = isDark ? '#f8fafc' : '#1e293b';
+    const dividerColor = isDark ? '#1e293b' : '#f8fafc';
+    const trackColor = isDark ? '#4b5563' : '#cbd5e1';
 
     return (
         <View className="flex-row items-center justify-center p-4 pt-2">
-            {/* Mascot Image - Bigger */}
-            <View className="w-[100px] h-[100px] items-center justify-center -mr-6 z-10">
-                <Image
-                    source={require('../assets/cal-at-stateometer.png')}
-                    style={{ width: "100%", height: "100%" }}
+            {/* Mascot Image */}
+            <View className="w-[100px] h-[100px] items-center justify-center -mr-0 z-10 relative">
+                <Animated.Image
+                    key={mascotParams.image}
+                    source={mascotParams.image}
+                    style={{ width: "100%", height: "100%", position: 'absolute', marginTop: 10, zIndex: 1 }}
                     resizeMode="cover"
+                    entering={FadeIn.duration(500)}
+                    exiting={FadeOut.duration(500)}
                 />
+                {/* Mascot shadow */}
+                <View className='absolute bottom-0 bg-black/5 dark:bg-black/10 rounded-full w-full h-[10px] z-0'></View>
             </View>
 
-            {/* Gauge - Smaller & style match */}
-            <View style={{ width: gaugeSize - 10 , height: gaugeSize - 10 }} className="items-center justify-center rotate-90">
-                <Svg width={gaugeSize} height={gaugeSize - 50}>
+            {/* Vertical Curved Gauge */}
+            <View style={{ width: gaugeSize / 5, height: gaugeSize }} className="items-center justify-center">
+                <Svg width={gaugeSize} height={gaugeSize}>
                     <G x={cx} y={cy}>
-                        {/* Outer Thin Line Track */}
+                        {/* Track Background (Vertical Left Arc) */}
                         <Path
-                            d={createArc(0, 0, outerRadius, 0, 180)}
+                            d={createArc(0, 0, outerRadius, 90, 270)} // Start 270 (bottom), End 90 (top)
                             fill="none"
-                            stroke="#cbd5e1" // slate-300
+                            stroke={trackColor}
                             strokeWidth={3}
                             strokeLinecap="round"
                         />
 
-                        {/* Inner Segments */}
+                        {/* Colored Segments */}
                         {segments.map((seg, index) => (
                             <Path
                                 key={index}
-                                d={createArc(0, 0, segmentRadius, seg.start + 3, seg.end - 3)}
+                                d={createArc(0, 0, segmentRadius + 1, seg.start, seg.end)} // Adjusted for decreasing angles
                                 fill="none"
                                 stroke={seg.color}
                                 strokeWidth={segmentStrokeWidth}
-                                strokeLinecap="butt" // Blocky look
+                                strokeLinecap="round"
                             />
                         ))}
 
-                        {/* Needle Group */}
+                        {/* Needle */}
                         <AnimatedG animatedProps={animatedProps}>
-                            {/* Pivot Circle */}
-                            <Circle r="5" fill="#1e293b" />
-                            {/* Needle Line */}
+                            {/* Pivot */}
+                            <Circle r="5" fill={needleColor} />
+                            {/* Pointer Line - Drawn pointing RIGHT at 0 deg, so we rotate it to match range */}
                             <Path
-                                d={`M0,-2 L-${segmentRadius - 2},0 L0,2 Z`}
-                                fill="#1e293b"
+                                d={`M0,-2 L${segmentRadius + 5},0 L0,2 Z`} // Modified to point RIGHT (Positive X)
+                                fill={needleColor}
                             />
                         </AnimatedG>
                     </G>

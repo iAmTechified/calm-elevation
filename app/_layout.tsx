@@ -1,7 +1,8 @@
 import "../global.css";
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Stack } from 'expo-router';
-import { useColorScheme } from 'react-native';
+import { useColorScheme } from 'nativewind';
 import { StatusBar } from 'expo-status-bar';
 import {
     useFonts,
@@ -25,14 +26,21 @@ import {
     Poppins_900Black_Italic,
 } from '@expo-google-fonts/poppins';
 import * as SplashScreen from 'expo-splash-screen';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { useNotifications } from '../hooks/useNotifications';
+import { SubscriptionProvider } from '../context/SubscriptionContext';
+import { StatsProvider } from '../context/StatsContext';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
-SplashScreen.preventAutoHideAsync();
+try {
+    SplashScreen.preventAutoHideAsync().then(() => console.log('SplashScreen.preventAutoHideAsync() success')).catch(console.warn);
+} catch (e) {
+    console.warn('SplashScreen error:', e);
+}
 
 export default function RootLayout() {
-    const colorScheme = useColorScheme();
-    const [loaded] = useFonts({
+    const { colorScheme, setColorScheme } = useColorScheme();
+    const [loaded, error] = useFonts({
         Poppins_100Thin,
         Poppins_100Thin_Italic,
         Poppins_200ExtraLight,
@@ -53,22 +61,59 @@ export default function RootLayout() {
         Poppins_900Black_Italic,
     });
 
+    const { isInitialized } = useNotifications();
+
+    const [themeInitialized, setThemeInitialized] = useState(false);
+
     useEffect(() => {
-        if (loaded) {
+        const initializeTheme = async () => {
+            try {
+                const hasInitialized = await AsyncStorage.getItem('THEME_INITIALIZED');
+                if (!hasInitialized) {
+                    setColorScheme('light');
+                    await AsyncStorage.setItem('THEME_INITIALIZED', 'true');
+                }
+                setThemeInitialized(true);
+            } catch (error) {
+                console.warn('Failed to initialize theme:', error);
+            }
+        };
+
+        initializeTheme();
+    }, []);
+
+    useEffect(() => {
+        if (error) {
+            console.warn('Font loading error (ignoring to allow app to run):', error.message);
+            // Hide splash screen even on error to let the app show
             SplashScreen.hideAsync();
         }
-    }, [loaded]);
+        if (loaded && isInitialized) {
+            console.log('Fonts and notifications loaded, hiding splash screen');
+            SplashScreen.hideAsync().then(() => console.log('SplashScreen.hideAsync() called')).catch(console.warn);
+        } else {
+            console.log('Fonts or notifications not loaded yet');
+        }
+    }, [loaded, error, isInitialized]);
 
-    if (!loaded) {
+    // Only wait if there is no error and not loaded. If there is an error, we proceed (with default fonts).
+    if ((!loaded && !error) || !themeInitialized) {
         return null;
     }
 
     return (
         <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-            <Stack screenOptions={{ headerShown: false }}>
-                <Stack.Screen name="index" />
-            </Stack>
-            <StatusBar style="dark" />
+            <SubscriptionProvider>
+                <StatsProvider>
+                    <Stack screenOptions={{ headerShown: false }}>
+                        <Stack.Screen name="index" />
+                        <Stack.Screen name="self-healing/index" />
+                        <Stack.Screen name="self-healing/lesson/[id]" />
+                    </Stack>
+                    <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
+                </StatsProvider>
+            </SubscriptionProvider>
         </ThemeProvider>
     );
 }
+

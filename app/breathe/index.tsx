@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { View, Text, TouchableOpacity, Image, Dimensions, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, Image, Dimensions, StyleSheet, Pressable } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { useRouter } from 'expo-router';
-import { ArrowLeft, Minus, Plus, X, Smartphone, ArrowRight } from 'lucide-react-native';
+import { ArrowLeft, Minus, Plus, X, Smartphone, ArrowRight, ChevronRight } from 'lucide-react-native';
 import * as Haptics from 'expo-haptics';
 import { LinearGradient } from 'expo-linear-gradient';
 import Animated, {
@@ -20,10 +20,13 @@ import Animated, {
     withDelay
 } from 'react-native-reanimated';
 import Back from '../../components/Back';
+import { useStats } from '../../hooks/useStats';
+import { useColorScheme } from 'nativewind';
+import { CheckInModal } from '../../components/CheckInModal';
 
 // Assets
 const IMG_YOGA = require('../../assets/breathr.jpeg');
-const IMG_MEDITATE = require('../../assets/cal_meditate.png');
+const IMG_MEDITATE = require('../../assets/cal-cloud.png');
 const IMG_SUCCESS = require('../../assets/cal_success.png');
 const IMG_INHALE = require('../../assets/cal_inhale.png');
 const IMG_EXHALE = require('../../assets/cal_exhale.png');
@@ -36,12 +39,17 @@ const EXHALE_DURATION = 6000;
 export default function BreatheScreen() {
     const router = useRouter();
 
+    const { colorScheme } = useColorScheme();
+    const isDark = colorScheme === 'dark';
+
     // State
     const [phase, setPhase] = useState<'setup' | 'active' | 'completed'>('setup');
     const [durationSeconds, setDurationSeconds] = useState(60);
     const [timeLeft, setTimeLeft] = useState(60);
     const [breathState, setBreathState] = useState<'inhale' | 'exhale' | 'hold'>('inhale');
     const [isHapticsEnabled, setIsHapticsEnabled] = useState(true);
+    const [isCheckInVisible, setIsCheckInVisible] = useState(false);
+    const { addTimeInBreathr, recordMood } = useStats();
 
     // Anim Values
     const scale = useSharedValue(1);
@@ -126,6 +134,8 @@ export default function BreatheScreen() {
         }, 1000);
     };
 
+
+
     const endSession = () => {
         if (timerRef.current) clearInterval(timerRef.current);
         if (breathCycleRef.current) clearTimeout(breathCycleRef.current);
@@ -134,6 +144,11 @@ export default function BreatheScreen() {
         cancelAnimation(ripple2Scale);
         cancelAnimation(rippleOpacity);
         setPhase('completed');
+
+        // Record stats (minimum 1 minute if they completed it)
+        const minutes = Math.ceil(durationSeconds / 60);
+        addTimeInBreathr(minutes);
+
         if (isHapticsEnabled) Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     };
 
@@ -148,7 +163,14 @@ export default function BreatheScreen() {
     };
 
     const closeCompleted = () => {
-        router.push('/');
+        // Show check-in modal instead of immediate exit
+        setIsCheckInVisible(true);
+    };
+
+    const handleCheckIn = async (moodScore: number) => {
+        await recordMood(moodScore);
+        setIsCheckInVisible(false);
+        router.replace('../../(tabs)');
     };
 
     // Styles
@@ -178,62 +200,63 @@ export default function BreatheScreen() {
     // --------------------------------------------------------------------------------
     if (phase === 'setup') {
         return (
-            <View className="flex-1">
-                <StatusBar style="dark" />
+            <View className="flex-1 bg-white dark:bg-slate-900">
+                <StatusBar style="auto" />
                 <LinearGradient
-                    colors={['#e0f2fe', '#fff', '#f0f9ff']}
+                    colors={isDark ? ['#0f172a', '#1e293b', '#0f172a'] : ['#e0f2fe', '#fff', '#f0f9ff']}
                     style={StyleSheet.absoluteFillObject}
                 />
 
-                <SafeAreaView className="flex-1" edges={['top', 'bottom']}>
+                {/* Main Visual - Mascot as Focal Point */}
+                <View className="absolute inset-0 flex-1 w-full h-full items-center justify-center -mt-20">
+                    {/* Decorative Background Circle */}
+                    <View className="absolute w-[120%] h-[60%] bg-teal-100/30 rounded-full blur-3xl opacity-50" />
+
+                    <Image
+                        source={IMG_YOGA}
+                        style={{ width: "100%", height: "100%" }}
+                        resizeMode="contain"
+                    />
+                </View>
+
+                <SafeAreaView className="flex-1 justify-between" edges={['top', 'bottom']}>
                     {/* Top Bar */}
                     <View className="px-6 py-4 flex-row items-center justify-between z-10">
-                        <Back onPress={()=>router.back()} style='bg-white' iconColor='#000' />
-                        <Text className="text-2xl font-sans font-semibold text-primaryLight tracking-wide">Breathr</Text>
+                        <Back onPress={() => router.back()} style={isDark ? 'bg-slate-800' : 'bg-white'} iconColor={isDark ? '#fff' : '#000'} />
+                        <Text className="text-2xl font-sans font-semibold text-primaryLight dark:text-white tracking-wide">Breathe</Text>
                         <View className="w-10" />
                     </View>
 
-                    {/* Main Visual - Mascot as Focal Point */}
-                    <View className="flex-1 items-center justify-center -mt-20">
-                        {/* Decorative Background Circle */}
-                        <View className="absolute w-[120%] h-[60%] bg-teal-100/30 rounded-full blur-3xl opacity-50" />
-
-                        <Image
-                            source={IMG_YOGA}
-                            style={{ width: width * 0.85, height: width * 0.85 }}
-                            resizeMode="contain"
-                        />
-                    </View>
 
                     {/* Setup Controls - Floating Bottom Card */}
-                    <View className="mx-6 mb-6 bg-white/90 backdrop-blur-md rounded-[32px] p-6 shadow-xl shadow-teal-900/10 border border-white/50">
+                    <View className="bg-white dark:bg-slate-800 backdrop-blur-md rounded-[40px] p-6 shadow-xl shadow-teal-900/10 border border-white/50 dark:border-slate-700/50 z-10">
                         {/* Time Control */}
-                        <View className="flex-row items-center justify-between mb-8">
+                        <View className="flex-row items-center justify-center gap-6 mb-8">
                             <TouchableOpacity
                                 onPress={() => adjustTime(-15)}
-                                className="w-14 h-14 bg-slate-100 rounded-full items-center justify-center active:bg-slate-200">
-                                <Minus size={24} color="#334155" />
+                                className="w-14 h-14 bg-slate-100 dark:bg-slate-700 rounded-full items-center justify-center active:bg-slate-200 dark:active:bg-slate-600">
+                                <Minus size={18} stroke={isDark ? "#94a3b8" : "#334155"} strokeWidth={3} color={isDark ? "#94a3b8" : "#334155"} />
                             </TouchableOpacity>
 
                             <View className="items-center">
-                                <Text className="text-4xl font-light text-slate-800 tabular-nums">
+                                <Text className="text-3xl font-semibold text-slate-800 dark:text-white tabular-nums">
                                     {formatTime(durationSeconds)}
                                 </Text>
-                                <Text className="text-xs font-bold text-teal-600 tracking-[0.2em] mt-1">DURATION</Text>
+                                <Text className="text-xs font-semibold text-primaryLight dark:text-slate-400 tracking-[0.2em] mt-1">DURATION</Text>
                             </View>
 
                             <TouchableOpacity
                                 onPress={() => adjustTime(15)}
-                                className="w-14 h-14 bg-slate-100 rounded-full items-center justify-center active:bg-slate-200">
-                                <Plus size={24} color="#334155" />
+                                className="w-14 h-14 bg-slate-100 dark:bg-slate-700 rounded-full items-center justify-center active:bg-slate-200 dark:active:bg-slate-600">
+                                <Plus size={18} stroke={isDark ? "#94a3b8" : "#334155"} strokeWidth={3} color={isDark ? "#94a3b8" : "#334155"} />
                             </TouchableOpacity>
                         </View>
 
                         <TouchableOpacity
                             onPress={startSession}
                             className="w-full bg-teal-600 h-16 rounded-full flex-row items-center justify-center shadow-lg shadow-teal-600/30 active:scale-[0.98] transition-all">
-                            <Text className="text-white font-bold text-xl mr-2">Begin Session</Text>
-                            <ArrowRight size={20} color="white" strokeWidth={2.5} />
+                            <Text className="text-white font-semibold text-xl mr-2">Begin Session</Text>
+                            <ChevronRight size={20} color="white" stroke="#fff" strokeWidth={4} />
                         </TouchableOpacity>
                     </View>
                 </SafeAreaView>
@@ -246,37 +269,41 @@ export default function BreatheScreen() {
     // --------------------------------------------------------------------------------
     if (phase === 'active') {
         return (
-            <View className="flex-1">
-                <StatusBar style="light" />
+            <View className="flex-1 bg-white dark:bg-slate-900">
+                <StatusBar style="auto" />
                 <LinearGradient
-                    colors={['#0f172a', '#115e59', '#0f172a']} // Dark Zen Gradient
+                    colors={isDark ? ['#0f172a', '#1e293b', '#0f172a'] : ['#6fc6c945', '#f0f636a9', '#6fc6c945']}
+                    locations={[0.2, 0.4, 0.6]}
                     start={{ x: 0, y: 0 }}
                     end={{ x: 1, y: 1 }}
                     style={StyleSheet.absoluteFillObject}
+                    className='opacity-10'
+                    dither
                 />
 
+
                 {/* Huge Background Timer */}
-                <View className="absolute inset-0 items-center justify-center z-0 pointer-events-none">
-                    <Text className="text-[180px] font-bold text-white/5 tabular-nums">
+                <View className="absolute inset-0 items-center justify-center z-[99] pointer-events-none">
+                    <Text className="text-[180px] font-bold text-primaryLight/15 tabular-nums">
                         {Math.floor(timeLeft / 60)}:{(timeLeft % 60).toString().padStart(2, '0')}
                     </Text>
                 </View>
 
-                <SafeAreaView className="flex-1 justify-between" edges={['top', 'bottom']}>
+                <SafeAreaView className="flex-1 justify-between z-[999]" edges={['top', 'bottom']}>
                     {/* Header */}
                     <View className="px-6 py-2 flex-row justify-between items-center z-20">
                         <TouchableOpacity
                             onPress={stopSession}
-                            className="w-10 h-10 bg-white/10 rounded-full items-center justify-center backdrop-blur-sm">
-                            <X size={20} color="white" />
+                            className="w-10 h-10 bg-white dark:bg-slate-800 rounded-full items-center justify-center backdrop-blur-sm">
+                            <X size={20} color={isDark ? "#fff" : "black"} stroke={isDark ? "#fff" : "#000"} fill={isDark ? "#fff" : "#000"} strokeWidth={5} />
                         </TouchableOpacity>
-                        <View className="bg-white/10 px-4 py-1 rounded-full">
-                            <Text className="text-white/80 font-medium text-xs tracking-widest uppercase">{breathState}</Text>
+                        <View className="bg-white/10 dark:bg-slate-800/20 px-4 py-1 rounded-full">
+                            <Text className="text-black/60 dark:text-white/60 font-semibold text-lg tracking-widest uppercase">{breathState}</Text>
                         </View>
                         <TouchableOpacity
                             onPress={() => setIsHapticsEnabled(!isHapticsEnabled)}
-                            className={`w-10 h-10 rounded-full items-center justify-center backdrop-blur-sm ${isHapticsEnabled ? 'bg-teal-500/20' : 'bg-white/10'}`}>
-                            {isHapticsEnabled ? <Smartphone size={18} color="#2dd4bf" /> : <Smartphone size={18} color="#94a3b8" />}
+                            className={`w-10 h-10 rounded-full items-center justify-center backdrop-blur-sm ${isHapticsEnabled ? (isDark ? 'bg-teal-500/40' : 'bg-teal-500/20') : (isDark ? 'bg-white/20' : 'bg-white/60')}`}>
+                            {isHapticsEnabled ? <Smartphone size={18} color={isDark ? "#2dd4bf" : "#00a891ff"} strokeWidth={4} /> : <Smartphone size={18} strokeWidth={5} stroke="#94a3b8" color="#94a3b8" />}
                         </TouchableOpacity>
                     </View>
 
@@ -284,13 +311,13 @@ export default function BreatheScreen() {
                     <View className="flex-1 items-center justify-center relative">
                         {/* Ripples */}
                         <Animated.View style={[ripple1Style]} className="absolute w-[400px] h-[400px] rounded-full bg-teal-500/10 border border-teal-500/20" />
-                        <Animated.View style={[ripple2Style]} className="absolute w-[350px] h-[350px] rounded-full bg-teal-400/10" />
+                        <Animated.View style={[ripple2Style]} className="absolute w-[250px] h-[250px] rounded-full bg-teal-400/20" />
 
                         {/* Mascot */}
                         <Animated.View style={mascotAnimatedStyle}>
                             <Image
                                 source={IMG_MEDITATE}
-                                style={{ width: width * 0.7, height: width * 0.7 }}
+                                style={{ width: width * 0.4, height: width * 0.4 }}
                                 resizeMode="contain"
                             />
                         </Animated.View>
@@ -298,7 +325,7 @@ export default function BreatheScreen() {
 
                     {/* Footer / Instructions */}
                     <View className="items-center pb-12">
-                        <Text className="text-teal-200 text-lg font-light tracking-widest opacity-80">
+                        <Text className="text-primaryLight dark:text-white text-3xl font-semibold font-sans tracking-widest opacity-80">
                             {breathState === 'inhale' ? 'INHALE DEEPLY' : 'EXHALE SLOWLY'}
                         </Text>
                     </View>
@@ -310,36 +337,53 @@ export default function BreatheScreen() {
     // --------------------------------------------------------------------------------
     // RENDER: COMPLETED
     // --------------------------------------------------------------------------------
+    const { CheckInModal } = require('../../components/CheckInModal'); // Dynamic require to avoid cycle if any? Or just regular import.
+    // Actually better to use top level import. Fixing in next step if needed.
+
     if (phase === 'completed') {
         return (
-            <View className="flex-1 bg-white">
-                <StatusBar style="dark" />
+            <View className="flex-1 bg-white dark:bg-slate-900">
+                <StatusBar style="auto" />
                 <LinearGradient
-                    colors={['#f0fdfa', '#fff']}
+                    colors={['#6fc6c945', '#f0f636a9', '#6fc6c945']}
+                    locations={[0.2, 0.4, 0.6]}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 1 }}
                     style={StyleSheet.absoluteFillObject}
+                    className='opacity-10'
+                    dither
                 />
 
                 <Animated.View entering={FadeIn.delay(200)} className="flex-1 items-center justify-center px-8">
                     <View className="relative items-center mb-10">
-                        <View className="absolute w-64 h-64 bg-yellow-200/40 rounded-full blur-2xl -top-10" />
+                        <View className="absolute w-44 h-44 bg-yellow-200/40 rounded-full blur-2xl -top-10" />
                         <Image
                             source={IMG_SUCCESS}
-                            style={{ width: 300, height: 300 }}
+                            style={{ width: 200, height: 200 }}
                             resizeMode="contain"
                         />
                     </View>
 
-                    <Text className="text-3xl font-bold text-slate-800 mb-3 text-center">Session Complete</Text>
-                    <Text className="text-slate-500 text-lg text-center mb-12 leading-relaxed max-w-[80%]">
+                    <Text className="text-3xl font-semibold font-sans text-slate-800 dark:text-white mb-3 text-center">Session Complete</Text>
+                    <Text className="text-slate-500 dark:text-slate-400 font-sans text-lg text-center mb-12 leading-relaxed max-w-[80%]">
                         You've taken a moment for yourself. Carry this calmness with you.
                     </Text>
 
-                    <TouchableOpacity
+                    <Pressable
                         onPress={closeCompleted}
-                        className="bg-slate-900 w-full py-5 rounded-full shadow-xl shadow-slate-900/20 active:scale-[0.98]">
-                        <Text className="text-white text-center font-bold text-lg tracking-wide">Return Home</Text>
-                    </TouchableOpacity>
+                        className="bg-slate-900 dark:bg-white w-full py-5 rounded-full shadow-xl shadow-slate-900/20 active:scale-[0.98]">
+                        <Text className="text-white dark:text-slate-900 text-center font-semibold font-sans text-lg tracking-wide">Return Home</Text>
+                    </Pressable>
                 </Animated.View>
+
+                <CheckInModal
+                    visible={isCheckInVisible}
+                    onClose={() => {
+                        setIsCheckInVisible(false);
+                        router.replace('../../(tabs)');
+                    }}
+                    onMoodSelect={handleCheckIn}
+                />
             </View>
         );
     }
