@@ -12,19 +12,19 @@ const games = [
         id: 'zen-garden',
         title: 'Zen Garden',
         route: '/play/zen-garden',
-        image: require('../../assets/play-zen-garden.png'),
+        image: require('../../assets/play-zen-garden.jpeg'),
     },
     {
         id: 'bubble-pop',
         title: 'Bubble Pop',
         route: '/play/bubble-pop',
-        image: require('../../assets/play-bubble-pop.png'),
+        image: require('../../assets/play-bubble-pop.jpg'),
     },
     {
         id: 'mindful-maze',
         title: 'Mindful Maze',
         route: '/play/mindful-maze',
-        image: require('../../assets/play-mindful-maze.png'),
+        image: require('../../assets/play-mindful-maze.jpeg'),
     },
     {
         id: 'blocks',

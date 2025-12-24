@@ -169,7 +169,7 @@ export default function SleepPlayerScreen() {
 
                     {/* Mascot */}
                     <Image
-                        source={require('../../assets/cal_meditating_cloud.png')}
+                        source={require('../../assets/cal_meditating_cloud.jpg')}
                         style={{ width: 250, height: 250 }}
                         resizeMode="contain"
                     />

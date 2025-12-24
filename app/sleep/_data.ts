@@ -24,7 +24,7 @@ export const sleepTracks: SleepTrack[] = [
         id: 'thunder',
         title: 'Distant Thunder',
         duration: '10 hr',
-        image: require('../../assets/sleep_thunder.png'),
+        image: require('../../assets/sleep_thunder.jpeg'),
         audioSource: require('../../assets/sounds/thunder.mp3'),
         category: 'Nature',
         totalDurationSeconds: 36000
@@ -33,7 +33,7 @@ export const sleepTracks: SleepTrack[] = [
         id: 'forest',
         title: 'Safe Forest',
         duration: '8 hr',
-        image: require('../../assets/sleep_forest.png'),
+        image: require('../../assets/sleep_forest.jpeg'),
         audioSource: require('../../assets/sounds/birds.mp3'),
         category: 'Nature',
         totalDurationSeconds: 28800
@@ -42,7 +42,7 @@ export const sleepTracks: SleepTrack[] = [
         id: 'ocean',
         title: 'Rolling Waves',
         duration: '10 hrs',
-        image: require('../../assets/sleep_ocean.png'),
+        image: require('../../assets/sleep_ocean.jpeg'),
         audioSource: require('../../assets/sounds/ocean.mp3'),
         category: 'Nature',
         totalDurationSeconds: 36000
@@ -51,7 +51,7 @@ export const sleepTracks: SleepTrack[] = [
         id: 'river',
         title: 'River Stream',
         duration: '10 hr',
-        image: require('../../assets/sleep_rain.png'), // Reuse rain image
+        image: require('../../assets/sleep_rain.jpeg'), // Reuse rain image
         audioSource: require('../../assets/sounds/river.mp3'),
         category: 'Nature',
         totalDurationSeconds: 36000
@@ -60,7 +60,7 @@ export const sleepTracks: SleepTrack[] = [
         id: 'wind',
         title: 'Windy Day',
         duration: '10 hr',
-        image: require('../../assets/sleep_forest.png'), // Reuse forest image
+        image: require('../../assets/sleep_forest.jpeg'), // Reuse forest image
         audioSource: require('../../assets/sounds/wind.mp3'),
         category: 'Nature',
         totalDurationSeconds: 36000
@@ -79,7 +79,7 @@ export const sleepTracks: SleepTrack[] = [
         id: 'soft-rain-breath',
         title: 'Soft Rain Breathing',
         duration: '20 min',
-        image: require('../../assets/sleep_rain.png'),
+        image: require('../../assets/sleep_rain.jpeg'),
         audioSource: require('../../assets/sounds/rain.mp3'),
         category: 'Wind Down',
         totalDurationSeconds: 1200
