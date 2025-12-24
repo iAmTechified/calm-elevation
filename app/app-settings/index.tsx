@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, ScrollView, TouchableOpacity, Switch, Modal, Image } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, Switch, Modal, Image, Linking } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import {
@@ -137,16 +137,6 @@ export default function AppSettings() {
                     {/* Overlay hack to make dropdown clickable since row is disabled on specific types? No I fixed that logic */}
                     <TouchableOpacity onPress={toggleTheme} className="absolute top-[120px] w-full h-[60px] opacity-0" />
 
-                    <SettingRow
-                        label="Test Notification"
-                        type="action"
-                        value="Fire"
-                        icon={AlertTriangle}
-                        onPress={async () => {
-                            const { sendTestNotification } = require('../../lib/notifications');
-                            await sendTestNotification();
-                        }}
-                    />
                 </View>
 
                 {/* Reminder Card - Dynamic Prompt */}
@@ -169,49 +159,27 @@ export default function AppSettings() {
                     </View>
                 )}
 
-                {/* Social Actions */}
-                <View className="mt-8 mx-4 rounded-2xl bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 overflow-hidden">
-                    <TouchableOpacity className="flex-row items-center p-4 border-b border-slate-100 dark:border-slate-700 active:bg-slate-50 dark:active:bg-slate-700">
-                        <Share2 size={24} color={colorScheme === 'dark' ? '#94a3b8' : '#475569'} style={{ marginRight: 16 }} />
-                        <Text className="text-slate-700 dark:text-slate-200 font-medium text-base">Share Calm Elevation</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity className="flex-row items-center p-4 border-b border-slate-100 dark:border-slate-700 active:bg-slate-50 dark:active:bg-slate-700">
-                        <Star size={24} color={colorScheme === 'dark' ? '#94a3b8' : '#475569'} style={{ marginRight: 16 }} />
-                        <Text className="text-slate-700 dark:text-slate-200 font-medium text-base">Rate App!</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity className="flex-row items-center p-4 active:bg-slate-50 dark:active:bg-slate-700">
-                        <Instagram size={24} color={colorScheme === 'dark' ? '#94a3b8' : '#475569'} style={{ marginRight: 16 }} />
-                        <Text className="text-slate-700 dark:text-slate-200 font-medium text-base">Join us on Insta</Text>
-                    </TouchableOpacity>
-                </View>
 
                 {/* Bottom Links */}
                 <View className="mt-8 mx-4 rounded-2xl bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 overflow-hidden">
-                    <TouchableOpacity className="p-4 border-b border-slate-100 dark:border-slate-700 active:bg-slate-50 dark:active:bg-slate-700">
+                    <TouchableOpacity
+                        onPress={() => router.push('/app-settings/disclaimer')}
+                        className="p-4 border-b border-slate-100 dark:border-slate-700 active:bg-slate-50 dark:active:bg-slate-700"
+                    >
                         <Text className="text-slate-700 dark:text-slate-200 font-medium text-base">Disclaimer</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity className="p-4 border-b border-slate-100 dark:border-slate-700 active:bg-slate-50 dark:active:bg-slate-700">
-                        <Text className="text-slate-700 dark:text-slate-200 font-medium text-base">Support</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity className="p-4 border-b border-slate-100 dark:border-slate-700 active:bg-slate-50 dark:active:bg-slate-700">
-                        <Text className="text-slate-700 dark:text-slate-200 font-medium text-base">Report an Issue</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity className="p-4 active:bg-slate-50 dark:active:bg-slate-700">
-                        <Text className="text-slate-700 dark:text-slate-200 font-medium text-base">Log Out</Text>
                     </TouchableOpacity>
                 </View>
 
                 {/* Footer */}
                 <View className="mt-8 mb-4 items-center px-4">
                     <View className="flex-row gap-4 mb-4">
-                        <Text className="text-slate-400 dark:text-slate-500 text-xs underline">Delete Account</Text>
-                        <Text className="text-slate-400 dark:text-slate-500 text-xs underline">Terms & Conditions</Text>
-                        <Text className="text-slate-400 dark:text-slate-500 text-xs underline">Privacy Policy</Text>
+                        <TouchableOpacity onPress={() => Linking.openURL('https://calmelevation.com/terms-and-conditions/')}>
+                            <Text className="text-slate-400 dark:text-slate-500 text-xs underline">Terms & Conditions</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={() => Linking.openURL('https://calmelevation.com/privacy-policy/')}>
+                            <Text className="text-slate-400 dark:text-slate-500 text-xs underline">Privacy Policy</Text>
+                        </TouchableOpacity>
                     </View>
-                    <Text className="text-slate-400 dark:text-slate-500 text-xs font-medium">Your User Id:</Text>
-                    <Text className="text-slate-400 dark:text-slate-500 text-xs text-center mt-1">
-                        GRpkG7FobiSOlw2yl4EjZULdwtL2
-                    </Text>
                 </View>
 
             </ScrollView>

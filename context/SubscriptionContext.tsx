@@ -6,6 +6,12 @@ import { secureStorage } from '../lib/secureStorage';
 const SUBSCRIPTION_KEY = 'calm_elevation_sub_secure_v1';
 const INSTALL_DATE_KEY = 'calm_elevation_install_date';
 
+// Product IDs provided by the user
+const PRODUCT_IDS = {
+    monthly: 'calm_elevation_subscription:calm-elevation-monthly-premium',
+    yearly: 'calm_elevation_subscription_yearly:calm-elevation-yearly-premium'
+};
+
 // RevenueCat API Keys - PLACEHOLDERS
 // TODO: Replace with your actual RevenueCat API Keys
 const API_KEYS = {
@@ -50,16 +56,15 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
     // Sync RevenueCat status to our local state
     const updateSubscriptionStatus = useCallback(async (customerInfo?: CustomerInfo) => {
         try {
-            if (!isConfigured) {
-                await checkLocalTrialEligibility();
-                return;
-            }
-
             const info = customerInfo || await Purchases.getCustomerInfo();
-            // 'Calmelevation Pro' is the identifier for the Entitlement in RevenueCat.
-            const entitlement: PurchasesEntitlementInfo | undefined = info.entitlements.active['Calmelevation Pro'] || info.entitlements.active['Calmelevation Pro'];
+            console.log('[SubscriptionContext] Customer Info:', JSON.stringify(info, null, 2));
+
+            // Check for ANY active entitlement. This handles ID mismatches or changes.
+            const activeEntitlements = Object.values(info.entitlements.active);
+            const entitlement: PurchasesEntitlementInfo | undefined = activeEntitlements[0];
 
             if (entitlement) {
+                console.log('[SubscriptionContext] Found active entitlement:', entitlement.identifier);
                 // User has ACTIVE paid subscription
                 const newState: SubscriptionState = {
                     isSubscribed: true,
@@ -71,6 +76,7 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
                 setSubscription(newState);
                 await secureStorage.setJson(SUBSCRIPTION_KEY, newState);
             } else {
+                console.log('[SubscriptionContext] No active entitlement found in RevenueCat.');
                 // No active entitlement found in RevenueCat.
                 // Fallback to our local "3-Day Trial" check.
                 await checkLocalTrialEligibility();
@@ -126,6 +132,15 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
                 const now = new Date();
                 installDateStr = now.toISOString();
                 await secureStorage.setItem(INSTALL_DATE_KEY, installDateStr);
+            }
+
+            // 0b. Load Persistent Subscription State immediately for UI responsiveness
+            const persistedState = await secureStorage.getJson<SubscriptionState>(SUBSCRIPTION_KEY);
+            if (persistedState) {
+                console.log('[SubscriptionContext] Restored persisted state:', persistedState);
+                if (persistedState.isSubscribed) {
+                    setSubscription(persistedState);
+                }
             }
 
             // 1. Initialize RevenueCat
@@ -224,9 +239,13 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
             let packageToBuy: PurchasesPackage | undefined;
             // offerings is PurchasesOffering. It has .monthly, .annual, etc.
             if (sku === 'monthly') {
-                packageToBuy = offerings.monthly || offerings.availablePackages.find((p: PurchasesPackage) => p.packageType === 'MONTHLY');
+                packageToBuy = offerings.availablePackages.find((p: PurchasesPackage) => p.product.identifier === PRODUCT_IDS.monthly)
+                    || offerings.monthly
+                    || offerings.availablePackages.find((p: PurchasesPackage) => p.packageType === 'MONTHLY');
             } else {
-                packageToBuy = offerings.annual || offerings.availablePackages.find((p: PurchasesPackage) => p.packageType === 'ANNUAL');
+                packageToBuy = offerings.availablePackages.find((p: PurchasesPackage) => p.product.identifier === PRODUCT_IDS.yearly)
+                    || offerings.annual
+                    || offerings.availablePackages.find((p: PurchasesPackage) => p.packageType === 'ANNUAL');
             }
 
             if (!packageToBuy) {

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, TouchableOpacity, TextInput, Image, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter, useLocalSearchParams } from 'expo-router';
@@ -44,11 +44,14 @@ export default function JournalEntryScreen() {
     const { addEntry, updateEntry, getEntryById } = useJournal();
     const { recordJournalEntry, updateEmotionalState } = useStats();
 
+    const initialized = useRef(false);
+
     useEffect(() => {
-        if (params.id) {
+        if (params.id && !initialized.current) {
             const entry = getEntryById(params.id as string);
             if (entry) {
                 setAnswers(entry.answers);
+                initialized.current = true;
             }
         }
     }, [params.id, getEntryById]);

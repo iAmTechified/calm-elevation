@@ -64,11 +64,11 @@ export default function MoodSelectionScreen() {
     useEffect(() => {
         if (params.id) {
             const entry = getEntryById(params.id as string);
-            if (entry) {
+            if (entry && !selectedMood) {
                 setSelectedMood(entry.mood);
             }
         }
-    }, [params.id, getEntryById]);
+    }, [params.id, getEntryById, selectedMood]);
 
     const handleContinue = () => {
         if (selectedMood) {

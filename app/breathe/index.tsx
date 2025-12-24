@@ -282,7 +282,7 @@ export default function BreatheScreen() {
 
                 {/* Huge Background Timer */}
                 <View className="absolute inset-0 items-center justify-center z-[99] pointer-events-none">
-                    <Text className="text-[180px] font-bold text-primaryLight/15 tabular-nums">
+                    <Text className="text-[120px] font-bold text-primaryLight/15 tabular-nums">
                         {Math.floor(timeLeft / 60)}:{(timeLeft % 60).toString().padStart(2, '0')}
                     </Text>
                 </View>
@@ -311,14 +311,6 @@ export default function BreatheScreen() {
                         <Animated.View style={[ripple1Style]} className="absolute w-[400px] h-[400px] rounded-full bg-teal-500/10 border border-teal-500/20" />
                         <Animated.View style={[ripple2Style]} className="absolute w-[250px] h-[250px] rounded-full bg-teal-400/20" />
 
-                        {/* Mascot */}
-                        <Animated.View style={mascotAnimatedStyle}>
-                            <Image
-                                source={IMG_MEDITATE}
-                                style={{ width: width * 0.4, height: width * 0.4 }}
-                                resizeMode="contain"
-                            />
-                        </Animated.View>
                     </View>
 
                     {/* Footer / Instructions */}

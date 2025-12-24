@@ -66,6 +66,7 @@ export default function PaywallScreen() {
     return (
         <View style={styles.container}>
             <StatusBar style="light" />
+            <ScrollView>
 
             {/* Background Image with Overlay */}
             <Image
@@ -203,6 +204,7 @@ export default function PaywallScreen() {
                     </View>
                 </ScrollView>
             </SafeAreaView>
+            </ScrollView>
         </View>
     );
 }

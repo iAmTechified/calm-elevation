@@ -19,6 +19,7 @@ import { BlurView } from 'expo-blur';
 import { Colors } from '../constants/Colors';
 import { sendMessageToAI, ChatMessage } from '../lib/chat';
 import { router } from 'expo-router';
+import { ScrollView } from 'react-native-gesture-handler';
 
 if (
     Platform.OS === 'android' &&
@@ -153,6 +154,7 @@ export default function ChatModal({ visible, onClose }: ChatModalProps) {
                     enabled={Platform.OS === 'ios'}
                     keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 0}
                 >
+                    <ScrollView>
                     <View
                         style={[
                             styles.modalContent,
@@ -257,6 +259,7 @@ export default function ChatModal({ visible, onClose }: ChatModalProps) {
                             </TouchableOpacity>
                         </View>
                     </View>
+                    </ScrollView>
                 </KeyboardAvoidingView>
             </BlurView>
         </Modal>
