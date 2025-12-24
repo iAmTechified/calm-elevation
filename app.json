@@ -25,7 +25,11 @@
         "foregroundImage": "./assets/cal-cloud.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.calmelevation.app"
+      "package": "com.calmelevation.app",
+      "versionCode": 4,
+      "blockedPermissions": [
+        "android.permission.RECORD_AUDIO"
+      ]
     },
     "web": {
       "favicon": "./assets/cal-cloud.png",
