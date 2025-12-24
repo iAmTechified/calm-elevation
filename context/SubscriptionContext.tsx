@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, ReactNode, useRef } from 'react';
 import { AppState, Alert, Platform } from 'react-native';
 import Purchases, { PurchasesPackage, PurchasesOffering, CustomerInfo, PurchasesEntitlementInfo } from 'react-native-purchases';
 import { secureStorage } from '../lib/secureStorage';
@@ -52,10 +52,17 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
     const [loading, setLoading] = useState(true);
     const [offerings, setOfferings] = useState<PurchasesOffering | null>(null);
     const [isConfigured, setIsConfigured] = useState(false);
+    const isConfiguredRef = useRef(false);
 
     // Sync RevenueCat status to our local state
     const updateSubscriptionStatus = useCallback(async (customerInfo?: CustomerInfo) => {
         try {
+            if (!isConfiguredRef.current) {
+                console.log('[SubscriptionContext] Not configured yet, checking local trial eligibility only.');
+                await checkLocalTrialEligibility();
+                return;
+            }
+
             const info = customerInfo || await Purchases.getCustomerInfo();
             console.log('[SubscriptionContext] Customer Info:', JSON.stringify(info, null, 2));
 
@@ -166,11 +173,13 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
                             setOfferings(offers.current);
                         }
                         setIsConfigured(true); // Mark as successful
+                        isConfiguredRef.current = true;
                     }
 
                 } catch (rcError) {
                     console.log("RevenueCat configuration or offerings fetch failed (expected in Expo Go):", rcError);
                     setIsConfigured(false);
+                    isConfiguredRef.current = false;
                 }
             }
 
