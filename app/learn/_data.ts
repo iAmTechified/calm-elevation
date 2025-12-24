@@ -42,7 +42,7 @@ export const COURSES: Record<string, Course> = {
         id: 'short-term-relief',
         title: 'Short Term Relief',
         description: 'Learn quick, effective techniques to manage anxiety in the moment when you feel overwhelmed. Tools for your emergency kit.',
-        image: require('../../assets/images/learn/banner_short_term.png'),
+        image: require('../../assets/images/learn/banner_short_term.jpg'),
         color: 'bg-sky-100',
         lessonIds: ['7', '8', '9', '10', '11', '12', '13']
     },
@@ -50,7 +50,7 @@ export const COURSES: Record<string, Course> = {
         id: 'long-term-resilience',
         title: 'Long Term Resilience',
         description: 'Build long-term habits and understanding to transform your mental health journey. Move from surviving to thriving.',
-        image: require('../../assets/images/learn/banner_long_term.png'),
+        image: require('../../assets/images/learn/banner_long_term.jpg'),
         color: 'bg-orange-100',
         lessonIds: ['14', '15', '16', '17', '18', '19', '20', '21']
     }
