@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, Image, Dimensions, ActivityIndicator, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, Image, Dimensions, ActivityIndicator, StyleSheet, ScrollView } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -94,7 +94,11 @@ export default function PaywallScreen() {
                     </TouchableOpacity>
                 </View>
 
-                <View style={styles.content}>
+                <ScrollView
+                    style={styles.scrollView}
+                    contentContainerStyle={styles.scrollContent}
+                    showsVerticalScrollIndicator={false}
+                >
                     {/* Header Content */}
                     <View style={styles.headerContent}>
                         <View style={styles.crownIconContainer}>
@@ -197,7 +201,7 @@ export default function PaywallScreen() {
                             <Text style={styles.footerLink}>Privacy Policy</Text>
                         </TouchableOpacity>
                     </View>
-                </View>
+                </ScrollView>
             </SafeAreaView>
         </View>
     );
@@ -245,8 +249,12 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
     },
-    content: {
+    scrollView: {
         flex: 1,
+        width: '100%',
+    },
+    scrollContent: {
+        flexGrow: 1,
         paddingHorizontal: 24,
         justifyContent: 'flex-end',
         paddingBottom: 20,

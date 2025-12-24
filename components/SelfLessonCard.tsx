@@ -6,7 +6,7 @@ function SelfLessonCard({ lesson, isCompleted, isUnlocked, isPaywalled, onPress 
     // Determine styles based on state
     const bgStyle = isCompleted ? 'rgba(236, 253, 245, 1)' : !isUnlocked ? 'rgba(241, 245, 249, 1)' : 'white';
     const borderStyle = isCompleted ? '#10B981' : !isUnlocked ? 'transparent' : '#f1f5f9';
-    const opacityStyle = !isUnlocked && !isCompleted ? 0.6 : 1;
+    const opacityStyle = !isUnlocked && !isCompleted ? 0.8 : 1;
 
     return (
         <TouchableOpacity

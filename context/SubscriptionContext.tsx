@@ -10,7 +10,7 @@ const INSTALL_DATE_KEY = 'calm_elevation_install_date';
 // TODO: Replace with your actual RevenueCat API Keys
 const API_KEYS = {
     apple: 'test_DHXyHqKbjlkIFjisNvgRxaTcvny',
-    google: process.env.PAYMENT_API_KEY
+    google: process.env.EXPO_PUBLIC_PAYMENT_API_KEY || ''
 };
 
 export interface SubscriptionState {
@@ -132,23 +132,26 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
             if (Platform.OS === 'ios' || Platform.OS === 'android') {
                 try {
                     Purchases.setLogLevel(Purchases.LOG_LEVEL.ERROR);
-                    if (Platform.OS === 'ios') {
-                        Purchases.configure({ apiKey: API_KEYS.apple });
-                    } else if (Platform.OS === 'android') {
-                        Purchases.configure({ apiKey: API_KEYS.google });
-                    }
+                    const apiKey = Platform.OS === 'ios' ? API_KEYS.apple : API_KEYS.google;
 
-                    // Verify configuration by trying to get offerings (ignoring result)
-                    // If configure failed silently or threw catchable error, this helps confirm.
-                    // But actually, configure stays synchronous mostly, but let's assume if we reached here we are good.
-                    // However, we should be careful. 'configure' is void.
+                    if (!apiKey) {
+                        console.log(`[SubscriptionContext] No API key found for ${Platform.OS}. Skipping RevenueCat configuration.`);
+                        setIsConfigured(false);
+                    } else {
+                        Purchases.configure({ apiKey });
 
-                    // We immediately try to get offerings to confirm connectivity/config
-                    const offers = await Purchases.getOfferings();
-                    if (offers.current) {
-                        setOfferings(offers.current);
+                        // Verify configuration by trying to get offerings (ignoring result)
+                        // If configure failed silently or threw catchable error, this helps confirm.
+                        // But actually, configure stays synchronous mostly, but let's assume if we reached here we are good.
+                        // However, we should be careful. 'configure' is void.
+
+                        // We immediately try to get offerings to confirm connectivity/config
+                        const offers = await Purchases.getOfferings();
+                        if (offers.current) {
+                            setOfferings(offers.current);
+                        }
+                        setIsConfigured(true); // Mark as successful
                     }
-                    setIsConfigured(true); // Mark as successful
 
                 } catch (rcError) {
                     console.log("RevenueCat configuration or offerings fetch failed (expected in Expo Go):", rcError);

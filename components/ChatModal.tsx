@@ -148,9 +148,10 @@ export default function ChatModal({ visible, onClose }: ChatModalProps) {
                 style={styles.blurContainer}
             >
                 <KeyboardAvoidingView
-                    behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                    behavior={Platform.OS === 'ios' ? 'padding' : undefined}
                     style={styles.container}
-                    keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
+                    enabled={Platform.OS === 'ios'}
+                    keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 0}
                 >
                     <View
                         style={[
@@ -191,6 +192,7 @@ export default function ChatModal({ visible, onClose }: ChatModalProps) {
                         {/* Chat Area */}
                         <FlatList
                             ref={flatListRef}
+                            style={{ flex: 1 }}
                             data={messages}
                             renderItem={renderMessage}
                             keyExtractor={(item) => item.id}
