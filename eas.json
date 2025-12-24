@@ -13,8 +13,7 @@
     },
     "production": {
       "android": {
-        "buildType": "aab",
-        "gradleCommand": "assembleRelease",
+        "buildType": "app-bundle"
       },
       "autoIncrement": false
     }
