@@ -1,4 +1,3 @@
-
 import { ImageSourcePropType } from 'react-native';
 
 export interface LessonContentPage {
@@ -34,7 +33,7 @@ export const COURSES: Record<string, Course> = {
         id: 'understanding-anxiety',
         title: 'Understanding Anxiety',
         description: 'Find peace of mind by learning what anxiety actually is, how your body experiences a panic attack, and why it happens. Knowledge is power.',
-        image: require('../../assets/images/learn/banner_understanding.jpeg'),
+        image: require('../assets/images/learn/banner_understanding.jpeg'),
         color: 'bg-violet-100',
         lessonIds: ['1', '2', '3', '4', '5', '6']
     },
@@ -42,7 +41,7 @@ export const COURSES: Record<string, Course> = {
         id: 'short-term-relief',
         title: 'Short Term Relief',
         description: 'Learn quick, effective techniques to manage anxiety in the moment when you feel overwhelmed. Tools for your emergency kit.',
-        image: require('../../assets/images/learn/banner_short_term.jpg'),
+        image: require('../assets/images/learn/banner_short_term.jpg'),
         color: 'bg-sky-100',
         lessonIds: ['7', '8', '9', '10', '11', '12', '13']
     },
@@ -50,7 +49,7 @@ export const COURSES: Record<string, Course> = {
         id: 'long-term-resilience',
         title: 'Long Term Resilience',
         description: 'Build long-term habits and understanding to transform your mental health journey. Move from surviving to thriving.',
-        image: require('../../assets/images/learn/banner_long_term.jpg'),
+        image: require('../assets/images/learn/banner_long_term.jpg'),
         color: 'bg-orange-100',
         lessonIds: ['14', '15', '16', '17', '18', '19', '20', '21']
     }
@@ -63,7 +62,7 @@ export const LESSONS: Lesson[] = [
         courseId: 'understanding-anxiety',
         title: 'What is Anxiety?',
         icon: null,
-        iconSource: require('../../assets/images/learn/icon_anxiety.jpeg'),
+        iconSource: require('../assets/images/learn/icon_anxiety.jpeg'),
         color: 'bg-teal-100',
         duration: '5 min',
         content: [
@@ -131,7 +130,7 @@ export const LESSONS: Lesson[] = [
         courseId: 'understanding-anxiety',
         title: 'Causes & Theories',
         icon: null,
-        iconSource: require('../../assets/images/learn/icon_causes.jpeg'),
+        iconSource: require('../assets/images/learn/icon_causes.jpeg'),
         color: 'bg-blue-100',
         duration: '7 min',
         content: [

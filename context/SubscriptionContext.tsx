@@ -64,7 +64,6 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
             }
 
             const info = customerInfo || await Purchases.getCustomerInfo();
-            console.log('[SubscriptionContext] Customer Info:', JSON.stringify(info, null, 2));
 
             // Check for ANY active entitlement. This handles ID mismatches or changes.
             const activeEntitlements = Object.values(info.entitlements.active);
@@ -170,7 +169,6 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
 
                         // We immediately try to get offerings to confirm connectivity/config
                         const offers = await Purchases.getOfferings();
-                        console.log(offers);
                         if (offers.current) {
                             setOfferings(offers.current);
                         }else if(offers.all.current){

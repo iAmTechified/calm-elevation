@@ -7,7 +7,7 @@ import { ChevronRight, X } from 'lucide-react-native';
 import Back from '../../../components/Back';
 import HeroHeader from '../../../components/HeroHeader';
 
-import { COURSES, LESSONS } from '../_data';
+import { COURSES, LESSONS } from '../../../data/learn';
 
 export default function CourseScreen() {
     const router = useRouter();

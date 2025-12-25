@@ -12,7 +12,7 @@ import { useColorScheme } from 'nativewind';
 
 const { width } = Dimensions.get('window');
 
-import { LESSONS } from '../_data';
+import { LESSONS } from '../../../data/learn';
 
 export default function LessonScreen() {
     const router = useRouter();

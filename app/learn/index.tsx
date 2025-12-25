@@ -5,7 +5,7 @@ import { useRouter } from 'expo-router';
 import { Lock } from 'lucide-react-native';
 import LessonCard from '../../components/LessonCard';
 import Back from '../../components/Back';
-import { COURSES } from './_data';
+import { COURSES } from '../../data/learn';
 import { useStats } from '../../hooks/useStats';
 import { useAccess } from '../../hooks/useAccess';
 

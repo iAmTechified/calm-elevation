@@ -11,7 +11,7 @@ import LessonNavigationControls from '../../../components/LessonNavigationContro
 import { useSelfHealing } from '../../../hooks/useSelfHealing';
 import { useStats } from '../../../hooks/useStats';
 import { CheckInModal } from '../../../components/CheckInModal';
-import { healingLessons, LessonContent } from '../_data';
+import { healingLessons, LessonContent } from '../../../data/self-healing';
 
 const { width } = Dimensions.get('window');
 
@@ -61,47 +61,47 @@ export default function LessonScreen() {
 
     return (
         <>
-        <SafeAreaView className="h-full bg-slate-50 dark:bg-slate-900" edges={['top', 'left', 'right', 'bottom']}>
-            <StatusBar style="auto" />
+            <SafeAreaView className="h-full bg-slate-50 dark:bg-slate-900" edges={['top', 'left', 'right', 'bottom']}>
+                <StatusBar style="auto" />
 
-            {/* Header */}
-            <ProgressHeader
-                progress={progress}
-                containerStyle="flex-row items-center justify-between px-6 py-4"
-                trackStyle="h-2 bg-slate-200 dark:bg-slate-700 rounded-full mx-6"
-                progressStyle="bg-indigo-500"
-                leftElement={
-                    <TouchableOpacity onPress={() => router.back()} className="p-2 -ml-2">
-                        <ChevronLeft size={28} color={isDark ? '#f1f5f9' : '#1E293B'} strokeWidth={2.5} />
-                    </TouchableOpacity>
-                }
-                rightElement={
-                    <View className="flex-row items-center bg-indigo-100 dark:bg-indigo-900/50 px-3 py-1 rounded-full">
-                        <Text className="text-indigo-600 dark:text-indigo-300 font-bold mr-1">Day {lesson.day}</Text>
-                    </View>
-                }
-            />
-
-            {/* Content Card */}
-            <View className="flex-1 px-6 pb-4 pt-2">
-                <View className="flex-1 bg-white dark:bg-slate-800 rounded-3xl p-6 shadow-sm border border-slate-100 dark:border-slate-700 justify-center">
-                    <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ flexGrow: 1, justifyContent: 'center' }}>
-                        {renderContent(pages[currentPage], isDark)}
-                    </ScrollView>
-                </View>
-            </View>
-
-            {/* Footer Controls */}
-            <View className="px-6 py-4" style={{ marginBottom: insets.bottom }}>
-                <LessonNavigationControls
-                    currentPage={currentPage}
-                    totalPages={pages.length}
-                    onPrev={prevPage}
-                    onNext={nextPage}
+                {/* Header */}
+                <ProgressHeader
+                    progress={progress}
+                    containerStyle="flex-row items-center justify-between px-6 py-4"
+                    trackStyle="h-2 bg-slate-200 dark:bg-slate-700 rounded-full mx-6"
+                    progressStyle="bg-indigo-500"
+                    leftElement={
+                        <TouchableOpacity onPress={() => router.back()} className="p-2 -ml-2">
+                            <ChevronLeft size={28} color={isDark ? '#f1f5f9' : '#1E293B'} strokeWidth={2.5} />
+                        </TouchableOpacity>
+                    }
+                    rightElement={
+                        <View className="flex-row items-center bg-indigo-100 dark:bg-indigo-900/50 px-3 py-1 rounded-full">
+                            <Text className="text-indigo-600 dark:text-indigo-300 font-bold mr-1">Day {lesson.day}</Text>
+                        </View>
+                    }
                 />
-            </View>
 
-        </SafeAreaView>
+                {/* Content Card */}
+                <View className="flex-1 px-6 pb-4 pt-2">
+                    <View className="flex-1 bg-white dark:bg-slate-800 rounded-3xl p-6 shadow-sm border border-slate-100 dark:border-slate-700 justify-center">
+                        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ flexGrow: 1, justifyContent: 'center' }}>
+                            {renderContent(pages[currentPage], isDark)}
+                        </ScrollView>
+                    </View>
+                </View>
+
+                {/* Footer Controls */}
+                <View className="px-6 py-4" style={{ marginBottom: insets.bottom }}>
+                    <LessonNavigationControls
+                        currentPage={currentPage}
+                        totalPages={pages.length}
+                        onPrev={prevPage}
+                        onNext={nextPage}
+                    />
+                </View>
+
+            </SafeAreaView>
             <CheckInModal
                 visible={isCheckInVisible}
                 onClose={() => {
@@ -110,7 +110,7 @@ export default function LessonScreen() {
                 }}
                 onMoodSelect={handleCheckIn}
             />
-            </>
+        </>
     );
 }
 

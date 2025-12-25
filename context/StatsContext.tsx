@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
 import { storage } from '../lib/storage';
-import { COURSES } from '../app/learn/_data';
+import { COURSES } from '../data/learn';
 
 const STATS_STORAGE_KEY = 'calm_elevation_stats';
 

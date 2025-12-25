@@ -5,7 +5,7 @@ import { useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useSelfHealing } from '../../hooks/useSelfHealing';
 import { useAccess } from '../../hooks/useAccess';
-import { healingLessons } from './_data';
+import { healingLessons } from '../../data/self-healing';
 import Back from '../../components/Back';
 import SelfLessonCard from '../../components/SelfLessonCard';
 

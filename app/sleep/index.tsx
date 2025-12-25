@@ -9,7 +9,7 @@ import { useAccess } from '../../hooks/useAccess';
 
 
 
-import { sleepTracks } from './_data';
+import { sleepTracks } from '../../data/sleep';
 
 export default function SleepScreen() {
     const router = useRouter();
