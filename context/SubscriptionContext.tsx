@@ -157,6 +157,7 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
                     const apiKey = Platform.OS === 'ios' ? API_KEYS.apple : API_KEYS.google;
 
                     if (!apiKey) {
+                        Alert.alert("Something went wrong with request", "Please contact support");
                         console.log(`[SubscriptionContext] No API key found for ${Platform.OS}. Skipping RevenueCat configuration.`);
                         setIsConfigured(false);
                     } else {
@@ -231,17 +232,23 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
         return () => sub.remove();
     }, [checkExpiry]);
 
-    const purchase = async (sku: 'monthly' | 'yearly') => {
+    const purchase = async (sku: 'monthly' | 'yearly', times: number = 0) => {
         setLoading(true);
         try {
             if (!isConfigured) {
-                Alert.alert("Development Mode", "In-app purchases are not available in Expo Go. You are in a local trial state.");
+                if(times == 0){
+                    await initialize();
+                    console.log(isConfigured);
+                    purchase(sku, times + 1);
+                }else{
+                    Alert.alert(`Something went wrong", "Please contact support. ${API_KEYS.google ? "to continue" : "Thank you"}`);
+                }
                 return false;
             }
 
             if (!offerings) {
                 // If no offerings (perhaps API key is invalid)
-                Alert.alert("Configuration Error", "No offerings available. Please check configuration.");
+                Alert.alert("Error", "Please contact support");
                 return false;
             }
 
@@ -288,7 +295,7 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
         setLoading(true);
         try {
             if (!isConfigured) {
-                Alert.alert("Development Mode", "Restore is not available in Expo Go.");
+                Alert.alert("Error", "Please contact support.");
                 return false;
             }
 
