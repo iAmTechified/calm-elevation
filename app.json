@@ -25,8 +25,11 @@
         "foregroundImage": "./assets/cal-cloud.png",
         "backgroundColor": "#ffffff"
       },
+      "foregroundService": {
+        "enabled": false
+      },
       "package": "com.calmelevation.app",
-      "versionCode": 8,
+      "versionCode": 10,
       "blockedPermissions": [
         "android.permission.RECORD_AUDIO",
         "android.permission.ACTIVITY_RECOGNITION"
@@ -50,6 +53,7 @@
     "extra": {
       "router": {},
       "eas": {
+        "projectId": "bc057bbb-acc3-4d04-a81d-be0206a62156"
       }
     }
   }
