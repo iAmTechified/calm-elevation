@@ -170,8 +170,11 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
 
                         // We immediately try to get offerings to confirm connectivity/config
                         const offers = await Purchases.getOfferings();
+                        console.log(offers);
                         if (offers.current) {
                             setOfferings(offers.current);
+                        }else if(offers.all.current){
+                            setOfferings(offers.all.current);
                         }
                         setIsConfigured(true); // Mark as successful
                         isConfiguredRef.current = true;
@@ -248,6 +251,7 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
 
             if (!offerings) {
                 // If no offerings (perhaps API key is invalid)
+                console.log(offerings);
                 Alert.alert("Error", "Please contact support");
                 return false;
             }
