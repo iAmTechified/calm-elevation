@@ -74,14 +74,5 @@ export const sleepTracks: SleepTrack[] = [
         audioSource: require('../../assets/sounds/night.mp3'), // Placeholder audio
         category: 'Wind Down',
         totalDurationSeconds: 900
-    },
-    {
-        id: 'soft-rain-breath',
-        title: 'Soft Rain Breathing',
-        duration: '20 min',
-        image: require('../../assets/sleep_rain.jpeg'),
-        audioSource: require('../../assets/sounds/rain.mp3'),
-        category: 'Wind Down',
-        totalDurationSeconds: 1200
     }
 ];

@@ -206,7 +206,7 @@ export default function BreatheScreen() {
                 />
 
                 {/* Main Visual - Mascot as Focal Point */}
-                <View className="absolute inset-0 flex-1 w-full h-full items-center justify-center -mt-20">
+                <View className="absolute inset-0 flex-1 w-full h-full items-center justify-center -mt-[120px]">
                     {/* Decorative Background Circle */}
                     <View className="absolute w-[120%] h-[60%] bg-teal-100/30 rounded-full blur-3xl opacity-50" />
 

@@ -60,7 +60,8 @@ export default function LessonScreen() {
     };
 
     return (
-        <SafeAreaView className="h-full bg-slate-50 dark:bg-slate-900" edges={['top', 'left', 'right']}>
+        <>
+        <SafeAreaView className="h-full bg-slate-50 dark:bg-slate-900" edges={['top', 'left', 'right', 'bottom']}>
             <StatusBar style="auto" />
 
             {/* Header */}
@@ -100,6 +101,7 @@ export default function LessonScreen() {
                 />
             </View>
 
+        </SafeAreaView>
             <CheckInModal
                 visible={isCheckInVisible}
                 onClose={() => {
@@ -108,7 +110,7 @@ export default function LessonScreen() {
                 }}
                 onMoodSelect={handleCheckIn}
             />
-        </SafeAreaView>
+            </>
     );
 }
 
