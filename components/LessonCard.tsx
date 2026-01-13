@@ -1,4 +1,5 @@
-import { Pressable, Text, View, Image, ImageSourcePropType } from "react-native";
+import { Pressable, Text, View, ImageSourcePropType } from "react-native";
+import { Image } from "expo-image";
 
 
 interface LessonCardProps {
@@ -30,7 +31,11 @@ export default function LessonCard({
             {/* Image Placeholder Section */}
             <View className={`h-28 w-full ${!imageSource ? imagePlaceholderColor : 'bg-white dark:bg-slate-800'} items-center justify-center relative`}>
                 {imageSource ? (
-                    <Image source={imageSource} className="w-full h-full" resizeMode="cover" />
+                    <Image
+                        source={imageSource}
+                        style={{ width: '100%', height: '100%' }}
+                        contentFit="cover"
+                    />
                 ) : (
                     <View className="absolute bottom-0 w-full h-4 bg-black/5" />
                 )}

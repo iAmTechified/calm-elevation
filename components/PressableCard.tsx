@@ -1,4 +1,5 @@
-import { Image, ImageSourcePropType } from "react-native";
+import { ImageSourcePropType } from "react-native";
+import { Image } from "expo-image";
 import { Pressable, Text, View } from "react-native";
 
 interface PressableCardProps {
@@ -28,7 +29,8 @@ export default function PressableCard({
                     <Image
                         source={imageSource}
                         style={{ width: "100%", height: "100%" }}
-                        resizeMode="cover"
+                        contentFit="cover"
+                        transition={200}
                     />
                 )}
             </View>

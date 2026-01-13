@@ -43,8 +43,10 @@ export default function PaywallScreen() {
             // upgrading to FULL ACCESS immediately. We no longer offer a "7-day full trial".
             // The "Free Trial" concept is now the initial 3-day restricted mode.
             if (selectedPlan === 'yearly') {
+                console.log('Yearly selected');
                 await purchase('yearly');
             } else {
+                console.log('Monthly selected');
                 await purchase('monthly');
             }
             handleClose();

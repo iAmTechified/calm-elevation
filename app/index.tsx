@@ -1,4 +1,5 @@
-import { View, Image } from 'react-native';
+import { View } from 'react-native';
+import { Image } from 'expo-image';
 import { router } from 'expo-router';
 import { useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -31,8 +32,8 @@ export default function InitialLoadScreen() {
         <SafeAreaView className="flex-1 bg-white dark:bg-slate-900 justify-center items-center">
             <Image
                 source={require('../assets/cal-cloud.png')}
-                className="h-[200px] w-[200px]"
-                resizeMode="contain"
+                className="w-1/2 aspect-square max-w-[300px]"
+                contentFit="contain"
             />
         </SafeAreaView>
     );

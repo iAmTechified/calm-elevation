@@ -131,81 +131,84 @@ export function StatsProvider({ children }: { children: ReactNode }) {
         }
     }, []);
 
+    const statsRef = React.useRef(DEFAULT_STATS);
+
     useEffect(() => {
-        loadStats();
-    }, [loadStats]);
+        statsRef.current = stats;
+    }, [stats]);
 
-    const updateStats = async (updates: Partial<StatsState>) => {
+    const updateStats = useCallback(async (updates: Partial<StatsState>) => {
         try {
-            // Optimistic update
-            const newStats = { ...stats, ...updates };
-            setStats(newStats);
-
-            // Persist
-            // Fetch latest to avoid race conditions? In this simple app, relying on state is usually fine, 
-            // but strictly we should merge. For now, simple set.
-            await storage.setItem(STATS_STORAGE_KEY, newStats);
+            // Functional update ensures we always have the latest state without 'stats' dependency in useCallback
+            setStats(prevStats => {
+                const newStats = { ...prevStats, ...updates };
+                // Update ref immediately for any subsequent sync usage (though unlikely needed here)
+                statsRef.current = newStats;
+                // Side effect: Storage
+                storage.setItem(STATS_STORAGE_KEY, newStats).catch(err => 
+                     console.error('Failed to save stats:', err)
+                );
+                return newStats;
+            });
         } catch (error) {
             console.error('Failed to update stats:', error);
         }
-    };
+    }, []);
 
     // --- Core Actions ---
 
-    const updateEmotionalState = (delta: number) => {
-        // Delta is expected in range like 0.1, 0.2.
-        // We map 0.1 -> 10 points.
+    const updateEmotionalState = useCallback((delta: number) => {
+        const currentScore = statsRef.current.stateometerScore;
         const points = Math.round(delta * 100);
-        const newScore = Math.min(100, Math.max(0, stats.stateometerScore + points));
+        const newScore = Math.min(100, Math.max(0, currentScore + points));
         updateStats({ stateometerScore: newScore });
-    };
+    }, [updateStats]);
 
-    const addBraveryPoints = (points: number) => {
-        updateStats({ braveryPoints: stats.braveryPoints + points });
-    };
+    const addBraveryPoints = useCallback((points: number) => {
+        updateStats({ braveryPoints: statsRef.current.braveryPoints + points });
+    }, [updateStats]);
 
-    const incrementPanicAttacksConquered = () => {
-        updateStats({ panicAttacksConquered: stats.panicAttacksConquered + 1 });
-        updateEmotionalState(0.25); // +25 points
-    };
+    const incrementPanicAttacksConquered = useCallback(() => {
+        updateStats({ panicAttacksConquered: statsRef.current.panicAttacksConquered + 1 });
+        updateEmotionalState(0.25); 
+    }, [updateStats, updateEmotionalState]);
 
-    const addTimeInBreathr = (minutes: number) => {
-        // Map 1 minute to roughly +10 points (0.1) as per requirements "Fast stabilization"
+    const addTimeInBreathr = useCallback((minutes: number) => {
+        const currentStats = statsRef.current;
         const points = Math.ceil(minutes * 10);
-        const newScore = Math.min(100, stats.stateometerScore + points);
+        const newScore = Math.min(100, currentStats.stateometerScore + points);
 
         updateStats({
-            timeBreathr: stats.timeBreathr + minutes,
+            timeBreathr: currentStats.timeBreathr + minutes,
             stateometerScore: newScore
         });
-    };
+    }, [updateStats]);
 
-    const addTimeInVisualizr = (minutes: number) => {
+    const addTimeInVisualizr = useCallback((minutes: number) => {
+        const currentStats = statsRef.current;
         const points = Math.ceil(minutes * 2);
-        const newScore = Math.min(100, stats.stateometerScore + points);
+        const newScore = Math.min(100, currentStats.stateometerScore + points);
 
         updateStats({
-            timeVisualizr: stats.timeVisualizr + minutes,
+            timeVisualizr: currentStats.timeVisualizr + minutes,
             stateometerScore: newScore
         });
-    };
+    }, [updateStats]);
 
-    const recordJournalEntry = async () => {
+    const recordJournalEntry = useCallback(async () => {
         const today = new Date().toISOString().split('T')[0];
-
-        // Logic: Allow multiple entries but only increment streak once per day
-        let newStreak = stats.journalStreak;
-
-        // Check if validated for streak today
-        const alreadyJournaledToday = stats.lastJournalDate === today;
+        const currentStats = statsRef.current;
+        
+        let newStreak = currentStats.journalStreak;
+        const alreadyJournaledToday = currentStats.lastJournalDate === today;
 
         if (!alreadyJournaledToday) {
-            const lastJournal = stats.lastJournalDate ? new Date(stats.lastJournalDate) : null;
+            const lastJournalStr = currentStats.lastJournalDate;
             const yesterday = new Date();
             yesterday.setDate(yesterday.getDate() - 1);
             const yesterdayStr = yesterday.toISOString().split('T')[0];
 
-            if (stats.lastJournalDate === yesterdayStr) {
+            if (lastJournalStr === yesterdayStr) {
                 newStreak += 1;
             } else {
                 newStreak = 1;
@@ -215,73 +218,95 @@ export function StatsProvider({ children }: { children: ReactNode }) {
         await updateStats({
             journalStreak: newStreak,
             lastJournalDate: today,
-            braveryPoints: stats.braveryPoints + 15,
-            stateometerScore: Math.min(100, stats.stateometerScore + 10) // +0.1
+            braveryPoints: currentStats.braveryPoints + 15,
+            stateometerScore: Math.min(100, currentStats.stateometerScore + 10) 
         });
-    };
+    }, [updateStats]);
 
-    const markLessonCompleted = (lessonId: string) => {
-        if (!stats.completedLessons.includes(lessonId)) {
+    const markLessonCompleted = useCallback((lessonId: string) => {
+        const currentStats = statsRef.current;
+        if (!currentStats.completedLessons.includes(lessonId)) {
             updateStats({
-                completedLessons: [...stats.completedLessons, lessonId],
-                braveryPoints: stats.braveryPoints + 10,
-                stateometerScore: Math.min(100, stats.stateometerScore + 15) // +0.15
+                completedLessons: [...currentStats.completedLessons, lessonId],
+                braveryPoints: currentStats.braveryPoints + 10,
+                stateometerScore: Math.min(100, currentStats.stateometerScore + 15) 
             });
         }
-    };
+    }, [updateStats]);
 
-    const markHealingDayCompleted = (day: number) => {
-        if (!stats.completedHealingDays.includes(day)) {
+    const markHealingDayCompleted = useCallback((day: number) => {
+        const currentStats = statsRef.current;
+        if (!currentStats.completedHealingDays.includes(day)) {
             updateStats({
-                completedHealingDays: [...stats.completedHealingDays, day],
-                braveryPoints: stats.braveryPoints + 20,
-                stateometerScore: Math.min(100, stats.stateometerScore + 20) // +0.2
+                completedHealingDays: [...currentStats.completedHealingDays, day],
+                braveryPoints: currentStats.braveryPoints + 20,
+                stateometerScore: Math.min(100, currentStats.stateometerScore + 20) 
             });
         }
-    };
+    }, [updateStats]);
 
-    const getCourseProgress = (courseId: string) => {
+    // getCourseProgress reads directly from stats, so it's fine to rely on the passed stats object in render, 
+    // but if we expose it as a helper, it should probably be memoized or just a dynamic selector. 
+    // Since it takes an arg, it's a function.
+    const getCourseProgress = useCallback((courseId: string) => {
         const course = COURSES[courseId];
         if (!course) return { completed: 0, total: 0 };
-
         const total = course.lessonIds.length;
-        const completed = course.lessonIds.filter(id => stats.completedLessons.includes(id)).length;
-
+        // Accessing ref ensures we always compute against latest without dep
+        const completed = course.lessonIds.filter(id => statsRef.current.completedLessons.includes(id)).length;
         return { completed, total };
-    };
+    }, []);
 
-    const recordMood = async (score: number) => {
+    const recordMood = useCallback(async (score: number) => {
         const today = new Date().toISOString().split('T')[0];
-        const currentDailyMoods = stats.moodHistory[today] || [];
+        const currentStats = statsRef.current;
+        const currentDailyMoods = currentStats.moodHistory[today] || [];
         const safeMoods = Array.isArray(currentDailyMoods) ? currentDailyMoods : [currentDailyMoods as unknown as number];
 
         const newMoodHistory = {
-            ...stats.moodHistory,
+            ...currentStats.moodHistory,
             [today]: [...safeMoods, score]
         };
 
         await updateStats({
             moodHistory: newMoodHistory,
-            stateometerScore: Math.min(100, score) // +0.05
+            stateometerScore: Math.min(100, score) 
         });
-    };
+    }, [updateStats]);
+
+    // Memoize the context value
+    const contextValue = React.useMemo(() => ({
+        stats,
+        loading,
+        updateEmotionalState,
+        addBraveryPoints,
+        incrementPanicAttacksConquered,
+        addTimeInBreathr,
+        addTimeInVisualizr,
+        markLessonCompleted,
+        markHealingDayCompleted,
+        getCourseProgress,
+        recordJournalEntry,
+        recordMood,
+        refresh: loadStats
+    }), [
+        stats, 
+        loading, 
+        loadStats,
+        updateEmotionalState,
+        addBraveryPoints,
+        incrementPanicAttacksConquered,
+        addTimeInBreathr,
+        addTimeInVisualizr,
+        markLessonCompleted,
+        markHealingDayCompleted,
+        getCourseProgress,
+        recordJournalEntry,
+        recordMood
+    ]);
 
     return (
-        <StatsContext.Provider value={{
-            stats,
-            loading,
-            updateEmotionalState,
-            addBraveryPoints,
-            incrementPanicAttacksConquered,
-            addTimeInBreathr,
-            addTimeInVisualizr,
-            markLessonCompleted,
-            markHealingDayCompleted,
-            getCourseProgress,
-            recordJournalEntry,
-            recordMood,
-            refresh: loadStats
-        }}>
+        <StatsContext.Provider value={contextValue}>
             {children}
         </StatsContext.Provider>
     );

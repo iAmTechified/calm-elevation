@@ -1,10 +1,11 @@
 import React, { ReactNode } from 'react';
-import { View, Image, ImageSourcePropType, ViewStyle } from 'react-native';
+import { View, ImageSourcePropType, ViewStyle } from 'react-native';
+import { Image, ImageContentFit } from 'expo-image';
 import { useRouter } from 'expo-router';
 import Back from './Back';
 
 interface HeroHeaderProps {
-    image?: ImageSourcePropType;
+    image?: string | ImageSourcePropType; // expo-image accepts string urls too
     iconColor?: string;
     onBack?: () => void;
     className?: string;
@@ -25,6 +26,15 @@ export default function HeroHeader({
     imageResizeMode = "cover"
 }: HeroHeaderProps) {
     const router = useRouter();
+
+    const getContentFit = (): ImageContentFit => {
+        switch (imageResizeMode) {
+            case 'stretch': return 'fill';
+            case 'center': return 'none';
+            case 'repeat': return 'none'; // repeat handled via unique prop if needed, fallback to none/cover
+            default: return imageResizeMode as ImageContentFit;
+        }
+    };
 
     return (
         <View className={`absolute top-0 w-full pb-8 ${className}`}>
@@ -50,7 +60,8 @@ export default function HeroHeader({
                     <Image
                         source={image}
                         className="w-full h-full"
-                        resizeMode={imageResizeMode}
+                        contentFit={getContentFit()}
+                        transition={200}
                     />
                 ) : null}
             </View>
