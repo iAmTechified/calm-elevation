@@ -1,0 +1,298 @@
+ LOG  Yearly selected
+ LOG  Purchase called for yearly
+ LOG  offerings {
+    "annual": {
+        "identifier": "$rc_annual",
+        "offeringIdentifier": "current",
+        "packageType": "ANNUAL",
+        "presentedOfferingContext": {
+            "offeringIdentifier": "current",
+            "placementIdentifier": null,
+            "targetingContext": null
+        },
+        "product": {
+            "currencyCode": "NGN",
+            "defaultOption": [Object
+            ],
+            "description": "",
+            "discounts": null,
+            "identifier": "calm_elevation_subscription:calm-elevation-monthly-premium",
+            "introPrice": null,
+            "presentedOfferingContext": [Object
+            ],
+            "presentedOfferingIdentifier": "current",
+            "price": 15500,
+            "pricePerMonth": 15500000000,
+            "pricePerMonthString": "NGN15,500.00",
+            "pricePerWeek": 3567123287,
+            "pricePerWeekString": "NGN3,567.12",
+            "pricePerYear": 186000000000,
+            "pricePerYearString": "NGN186,000.00",
+            "priceString": "₦15,500.00",
+            "productCategory": "SUBSCRIPTION",
+            "productType": "AUTO_RENEWABLE_SUBSCRIPTION",
+            "subscriptionOptions": [Array
+            ],
+            "subscriptionPeriod": "P1M",
+            "title": "Calmelevation subscription (Calmelevation)"
+        }
+    },
+    "availablePackages": [
+        {
+            "identifier": "$rc_annual",
+            "offeringIdentifier": "current",
+            "packageType": "ANNUAL",
+            "presentedOfferingContext": [Object
+            ],
+            "product": [Object
+            ]
+        },
+        {
+            "identifier": "$rc_monthly",
+            "offeringIdentifier": "current",
+            "packageType": "MONTHLY",
+            "presentedOfferingContext": [Object
+            ],
+            "product": [Object
+            ]
+        }
+    ],
+    "identifier": "current",
+    "lifetime": null,
+    "metadata": {},
+    "monthly": {
+        "identifier": "$rc_monthly",
+        "offeringIdentifier": "current",
+        "packageType": "MONTHLY",
+        "presentedOfferingContext": {
+            "offeringIdentifier": "current",
+            "placementIdentifier": null,
+            "targetingContext": null
+        },
+        "product": {
+            "currencyCode": "NGN",
+            "defaultOption": [Object
+            ],
+            "description": "",
+            "discounts": null,
+            "identifier": "calm_elevation_subscription:calm-elevation-monthly-premium",
+            "introPrice": null,
+            "presentedOfferingContext": [Object
+            ],
+            "presentedOfferingIdentifier": "current",
+            "price": 15500,
+            "pricePerMonth": 15500000000,
+            "pricePerMonthString": "NGN15,500.00",
+            "pricePerWeek": 3567123287,
+            "pricePerWeekString": "NGN3,567.12",
+            "pricePerYear": 186000000000,
+            "pricePerYearString": "NGN186,000.00",
+            "priceString": "₦15,500.00",
+            "productCategory": "SUBSCRIPTION",
+            "productType": "AUTO_RENEWABLE_SUBSCRIPTION",
+            "subscriptionOptions": [Array
+            ],
+            "subscriptionPeriod": "P1M",
+            "title": "Calmelevation subscription (Calmelevation)"
+        }
+    },
+    "serverDescription": "Packages",
+    "sixMonth": null,
+    "threeMonth": null,
+    "twoMonth": null,
+    "weekly": null
+}
+ LOG  offerings.availablePackages [
+    {
+        "identifier": "$rc_annual",
+        "offeringIdentifier": "current",
+        "packageType": "ANNUAL",
+        "presentedOfferingContext": {
+            "offeringIdentifier": "current",
+            "placementIdentifier": null,
+            "targetingContext": null
+        },
+        "product": {
+            "currencyCode": "NGN",
+            "defaultOption": [Object
+            ],
+            "description": "",
+            "discounts": null,
+            "identifier": "calm_elevation_subscription:calm-elevation-monthly-premium",
+            "introPrice": null,
+            "presentedOfferingContext": [Object
+            ],
+            "presentedOfferingIdentifier": "current",
+            "price": 15500,
+            "pricePerMonth": 15500000000,
+            "pricePerMonthString": "NGN15,500.00",
+            "pricePerWeek": 3567123287,
+            "pricePerWeekString": "NGN3,567.12",
+            "pricePerYear": 186000000000,
+            "pricePerYearString": "NGN186,000.00",
+            "priceString": "₦15,500.00",
+            "productCategory": "SUBSCRIPTION",
+            "productType": "AUTO_RENEWABLE_SUBSCRIPTION",
+            "subscriptionOptions": [Array
+            ],
+            "subscriptionPeriod": "P1M",
+            "title": "Calmelevation subscription (Calmelevation)"
+        }
+    },
+    {
+        "identifier": "$rc_monthly",
+        "offeringIdentifier": "current",
+        "packageType": "MONTHLY",
+        "presentedOfferingContext": {
+            "offeringIdentifier": "current",
+            "placementIdentifier": null,
+            "targetingContext": null
+        },
+        "product": {
+            "currencyCode": "NGN",
+            "defaultOption": [Object
+            ],
+            "description": "",
+            "discounts": null,
+            "identifier": "calm_elevation_subscription:calm-elevation-monthly-premium",
+            "introPrice": null,
+            "presentedOfferingContext": [Object
+            ],
+            "presentedOfferingIdentifier": "current",
+            "price": 15500,
+            "pricePerMonth": 15500000000,
+            "pricePerMonthString": "NGN15,500.00",
+            "pricePerWeek": 3567123287,
+            "pricePerWeekString": "NGN3,567.12",
+            "pricePerYear": 186000000000,
+            "pricePerYearString": "NGN186,000.00",
+            "priceString": "₦15,500.00",
+            "productCategory": "SUBSCRIPTION",
+            "productType": "AUTO_RENEWABLE_SUBSCRIPTION",
+            "subscriptionOptions": [Array
+            ],
+            "subscriptionPeriod": "P1M",
+            "title": "Calmelevation subscription (Calmelevation)"
+        }
+    }
+]
+ LOG  offerings.monthly {
+    "identifier": "$rc_monthly",
+    "offeringIdentifier": "current",
+    "packageType": "MONTHLY",
+    "presentedOfferingContext": {
+        "offeringIdentifier": "current",
+        "placementIdentifier": null,
+        "targetingContext": null
+    },
+    "product": {
+        "currencyCode": "NGN",
+        "defaultOption": {
+            "billingPeriod": [Object
+            ],
+            "freePhase": null,
+            "fullPricePhase": [Object
+            ],
+            "id": "calm-elevation-monthly-premium",
+            "installmentsInfo": null,
+            "introPhase": null,
+            "isBasePlan": true,
+            "isPrepaid": false,
+            "presentedOfferingContext": [Object
+            ],
+            "presentedOfferingIdentifier": "current",
+            "pricingPhases": [Array
+            ],
+            "productId": "calm_elevation_subscription",
+            "storeProductId": "calm_elevation_subscription:calm-elevation-monthly-premium",
+            "tags": [Array
+            ]
+        },
+        "description": "",
+        "discounts": null,
+        "identifier": "calm_elevation_subscription:calm-elevation-monthly-premium",
+        "introPrice": null,
+        "presentedOfferingContext": {
+            "offeringIdentifier": "current",
+            "placementIdentifier": null,
+            "targetingContext": null
+        },
+        "presentedOfferingIdentifier": "current",
+        "price": 15500,
+        "pricePerMonth": 15500000000,
+        "pricePerMonthString": "NGN15,500.00",
+        "pricePerWeek": 3567123287,
+        "pricePerWeekString": "NGN3,567.12",
+        "pricePerYear": 186000000000,
+        "pricePerYearString": "NGN186,000.00",
+        "priceString": "₦15,500.00",
+        "productCategory": "SUBSCRIPTION",
+        "productType": "AUTO_RENEWABLE_SUBSCRIPTION",
+        "subscriptionOptions": [
+            [Object
+            ]
+        ],
+        "subscriptionPeriod": "P1M",
+        "title": "Calmelevation subscription (Calmelevation)"
+    }
+}
+ LOG  offerings.yearly {
+    "identifier": "$rc_annual",
+    "offeringIdentifier": "current",
+    "packageType": "ANNUAL",
+    "presentedOfferingContext": {
+        "offeringIdentifier": "current",
+        "placementIdentifier": null,
+        "targetingContext": null
+    },
+    "product": {
+        "currencyCode": "NGN",
+        "defaultOption": {
+            "billingPeriod": [Object
+            ],
+            "freePhase": null,
+            "fullPricePhase": [Object
+            ],
+            "id": "calm-elevation-monthly-premium",
+            "installmentsInfo": null,
+            "introPhase": null,
+            "isBasePlan": true,
+            "isPrepaid": false,
+            "presentedOfferingContext": [Object
+            ],
+            "presentedOfferingIdentifier": "current",
+            "pricingPhases": [Array
+            ],
+            "productId": "calm_elevation_subscription",
+            "storeProductId": "calm_elevation_subscription:calm-elevation-monthly-premium",
+            "tags": [Array
+            ]
+        },
+        "description": "",
+        "discounts": null,
+        "identifier": "calm_elevation_subscription:calm-elevation-monthly-premium",
+        "introPrice": null,
+        "presentedOfferingContext": {
+            "offeringIdentifier": "current",
+            "placementIdentifier": null,
+            "targetingContext": null
+        },
+        "presentedOfferingIdentifier": "current",
+        "price": 15500,
+        "pricePerMonth": 15500000000,
+        "pricePerMonthString": "NGN15,500.00",
+        "pricePerWeek": 3567123287,
+        "pricePerWeekString": "NGN3,567.12",
+        "pricePerYear": 186000000000,
+        "pricePerYearString": "NGN186,000.00",
+        "priceString": "₦15,500.00",
+        "productCategory": "SUBSCRIPTION",
+        "productType": "AUTO_RENEWABLE_SUBSCRIPTION",
+        "subscriptionOptions": [
+            [Object
+            ]
+        ],
+        "subscriptionPeriod": "P1M",
+        "title": "Calmelevation subscription (Calmelevation)"
+    }
+}

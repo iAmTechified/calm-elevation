@@ -31,7 +31,6 @@ export default function LearnScreen() {
                     {Object.values(COURSES).map((course) => {
                         const progress = getCourseProgress(course.id);
                         const locked = isLocked('course', { courseId: course.id });
-
                         return (
                             <View key={course.id} className="mb-4 relative">
                                 <LessonCard

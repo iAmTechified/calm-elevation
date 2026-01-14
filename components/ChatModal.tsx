@@ -137,132 +137,135 @@ export default function ChatModal({ visible, onClose }: ChatModalProps) {
     };
 
     return (
-        <Modal
-            animationType="fade"
-            transparent={true}
-            visible={visible}
-            onRequestClose={onClose}
-        >
-            <BlurView
-                intensity={Platform.OS === 'ios' ? 40 : 100}
-                tint={isDark ? 'dark' : 'light'}
-                style={styles.blurContainer}
+        // <KeyboardAvoidingView
+        //     behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        //     style={styles.container}
+        //     enabled={Platform.OS === 'ios'}
+        //     keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 0}
+        // >
+            <Modal
+                animationType="fade"
+                transparent={true}
+                visible={visible}
+                onRequestClose={onClose}
+                className='h-[100px]'
             >
-                <KeyboardAvoidingView
-                    behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-                    style={styles.container}
-                    enabled={Platform.OS === 'ios'}
-                    keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 0}
-                >
-                    <ScrollView>
-                    <View
-                        style={[
-                            styles.modalContent,
-                            {
-                                backgroundColor: isDark ? Colors.dark.surface : '#FFFFFF',
-                                shadowColor: isDark ? '#000' : '#000',
-                            },
-                        ]}
-                    >
-                        {/* Header */}
-                        <View
-                            style={[
-                                styles.header,
-                                { borderBottomColor: isDark ? '#334155' : '#F0F0F0' },
-                            ]}
+
+                    <ScrollView className='h-[400px]'>
+                        <KeyboardAvoidingView
+                            behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+                            style={styles.container}
+                            enabled={Platform.OS === 'ios'}
+                            keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 0}
                         >
-                            <View style={styles.headerTitleContainer}>
-                                <Bot size={20} color={theme.primary} style={{ marginRight: 8 }} />
-                                <View>
-                                    <Text style={[styles.headerTitle, { color: theme.text }]}>
-                                        Chat with Cal
-                                    </Text>
-                                    <Text style={[styles.headerSubtitle, { color: theme.textSecondary }]}>
-                                        AI Wellness Companion
-                                    </Text>
-                                </View>
-                            </View>
-
-                            <TouchableOpacity
-                                onPress={onClose}
-                                style={[styles.closeButton, { backgroundColor: isDark ? '#334155' : '#F5F5F5' }]}
+                            <View
+                                style={[
+                                    styles.modalContent,
+                                    {
+                                        backgroundColor: isDark ? Colors.dark.surface : '#FFFFFF',
+                                        shadowColor: isDark ? '#000' : '#000',
+                                    },
+                                ]}
                             >
-                                <X size={20} color={theme.text} />
-                            </TouchableOpacity>
-                        </View>
-
-                        {/* Chat Area */}
-                        <FlatList
-                            ref={flatListRef}
-                            style={{ flex: 1 }}
-                            data={messages}
-                            renderItem={renderMessage}
-                            keyExtractor={(item) => item.id}
-                            contentContainerStyle={styles.listContent}
-                            showsVerticalScrollIndicator={false}
-                            ListFooterComponent={
-                                isTyping ? (
-                                    <View style={[styles.messageRow, styles.messageRowCal]}>
-                                        <View style={[styles.avatarContainer, { backgroundColor: theme.surfaceHighlight }]}>
-                                            <Bot size={16} color={theme.primary} />
-                                        </View>
-                                        <View style={[styles.messageBubble, { backgroundColor: isDark ? '#334155' : '#F0F2F5', borderBottomLeftRadius: 2 }]}>
-                                            <Text style={{ color: theme.textSecondary, fontSize: 12, fontStyle: 'italic' }}>Typing...</Text>
+                                {/* Header */}
+                                <View
+                                    style={[
+                                        styles.header,
+                                        { borderBottomColor: isDark ? '#334155' : '#F0F0F0' },
+                                    ]}
+                                >
+                                    <View style={styles.headerTitleContainer}>
+                                        <Bot size={20} color={theme.primary} style={{ marginRight: 8 }} />
+                                        <View>
+                                            <Text style={[styles.headerTitle, { color: theme.text }]}>
+                                                Chat with Cal
+                                            </Text>
+                                            <Text style={[styles.headerSubtitle, { color: theme.textSecondary }]}>
+                                                AI Wellness Companion
+                                            </Text>
                                         </View>
                                     </View>
-                                ) : null
-                            }
-                        />
 
-                        {/* Input Area */}
-                        <View
-                            style={[
-                                styles.inputContainer,
-                                {
-                                    borderTopColor: isDark ? '#334155' : '#F0F0F0',
-                                    backgroundColor: isDark ? Colors.dark.surface : '#FFFFFF',
-                                },
-                            ]}
-                        >
-                            <TextInput
-                                style={[
-                                    styles.input,
-                                    {
-                                        backgroundColor: isDark ? '#0F172A' : '#F8F9FA',
-                                        color: theme.text,
-                                        borderColor: isDark ? '#334155' : '#E9ECEF',
-                                    },
-                                ]}
-                                placeholder="Type a message..."
-                                placeholderTextColor={theme.textSecondary}
-                                value={messageText}
-                                onChangeText={setMessageText}
-                                multiline
-                                maxLength={500}
-                            />
-                            <TouchableOpacity
-                                style={[
-                                    styles.sendButton,
-                                    {
-                                        backgroundColor: messageText.trim()
-                                            ? theme.primary
-                                            : isDark
-                                                ? '#334155'
-                                                : '#E0E0E0',
-                                        opacity: messageText.trim() ? 1 : 0.7,
-                                    },
-                                ]}
-                                onPress={handleSendMessage}
-                                disabled={!messageText.trim()}
-                            >
-                                <Send size={18} color="#FFFFFF" />
-                            </TouchableOpacity>
-                        </View>
-                    </View>
+                                    <TouchableOpacity
+                                        onPress={onClose}
+                                        style={[styles.closeButton, { backgroundColor: isDark ? '#334155' : '#F5F5F5' }]}
+                                    >
+                                        <X size={20} color={theme.text} />
+                                    </TouchableOpacity>
+                                </View>
+
+                                {/* Chat Area */}
+                                <FlatList
+                                    ref={flatListRef}
+                                    style={{ flex: 1 }}
+                                    data={messages}
+                                    renderItem={renderMessage}
+                                    keyExtractor={(item) => item.id}
+                                    contentContainerStyle={styles.listContent}
+                                    showsVerticalScrollIndicator={false}
+                                    ListFooterComponent={
+                                        isTyping ? (
+                                            <View style={[styles.messageRow, styles.messageRowCal]}>
+                                                <View style={[styles.avatarContainer, { backgroundColor: theme.surfaceHighlight }]}>
+                                                    <Bot size={16} color={theme.primary} />
+                                                </View>
+                                                <View style={[styles.messageBubble, { backgroundColor: isDark ? '#334155' : '#F0F2F5', borderBottomLeftRadius: 2 }]}>
+                                                    <Text style={{ color: theme.textSecondary, fontSize: 12, fontStyle: 'italic' }}>Typing...</Text>
+                                                </View>
+                                            </View>
+                                        ) : null
+                                    }
+                                />
+
+                                {/* Input Area */}
+                                <View
+                                    style={[
+                                        styles.inputContainer,
+                                        {
+                                            borderTopColor: isDark ? '#334155' : '#F0F0F0',
+                                            backgroundColor: isDark ? Colors.dark.surface : '#FFFFFF',
+                                        },
+                                    ]}
+                                >
+                                    <TextInput
+                                        style={[
+                                            styles.input,
+                                            {
+                                                backgroundColor: isDark ? '#0F172A' : '#F8F9FA',
+                                                color: theme.text,
+                                                borderColor: isDark ? '#334155' : '#E9ECEF',
+                                            },
+                                        ]}
+                                        placeholder="Type a message..."
+                                        placeholderTextColor={theme.textSecondary}
+                                        value={messageText}
+                                        onChangeText={setMessageText}
+                                        multiline
+                                        maxLength={500}
+                                    />
+                                    <TouchableOpacity
+                                        style={[
+                                            styles.sendButton,
+                                            {
+                                                backgroundColor: messageText.trim()
+                                                    ? theme.primary
+                                                    : isDark
+                                                        ? '#334155'
+                                                        : '#E0E0E0',
+                                                opacity: messageText.trim() ? 1 : 0.7,
+                                            },
+                                        ]}
+                                        onPress={handleSendMessage}
+                                        disabled={!messageText.trim()}
+                                    >
+                                        <Send size={18} color="#FFFFFF" />
+                                    </TouchableOpacity>
+                                </View>
+                            </View>
+                        </KeyboardAvoidingView>
                     </ScrollView>
-                </KeyboardAvoidingView>
-            </BlurView>
-        </Modal>
+            </Modal>
+        // </KeyboardAvoidingView>
     );
 }
 

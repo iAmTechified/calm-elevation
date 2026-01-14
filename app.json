@@ -7,9 +7,13 @@
     "orientation": "portrait",
     "userInterfaceStyle": "automatic",
     "splash": {
-      "image": "./assets/cal-cloud.png",
+      "image": "./assets/cal-cloud-splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
+    },
+    "notification": {
+      "icon": "./assets/ic-notification.png",
+      "color": "#ffffff"
     },
     "ios": {
       "supportsTablet": true,
