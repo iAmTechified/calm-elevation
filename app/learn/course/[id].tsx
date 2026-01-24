@@ -26,7 +26,7 @@ export default function CourseScreen() {
             <HeroHeader image={course.image} onBack={() => router.back()} />
             {/* Top Illustration Area */}
             <SafeAreaView edges={['top']} className={`flex-0 h-full z-10`}>
-                <ScrollView className='pb-20'>
+                <ScrollView className='pb-20 z-[150]'>
                     {/* Bottom Sheet Content */}
                     <View className="z-[150] flex-1 bg-white dark:bg-slate-900 rounded-t-[40px] h-full px-8 pt-10 mt-[200px] z-[999] shadow-sm">
                         <Text className="text-3xl font-semibold font-sans text-primaryLight dark:text-white text-center mb-4">

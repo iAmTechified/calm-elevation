@@ -37,7 +37,7 @@ export default function HeroHeader({
     };
 
     return (
-        <View className={`absolute top-0 w-full pb-8 ${className}`}>
+        <View className={`absolute top-0 w-full pb-8 ${className} z-[50]`}>
             <View className="flex-row p-6 pt-16 justify-between items-center z-[50]">
                 <View>
                     <Back
@@ -53,7 +53,7 @@ export default function HeroHeader({
                 )}
             </View>
 
-            <View className="items-center justify-center h-[300px] -m-[20px] -mt-[120px]">
+            <View className="items-center justify-center h-[300px] -m-[20px] -mt-[120px] z-[0]">
                 {children ? (
                     children
                 ) : image ? (

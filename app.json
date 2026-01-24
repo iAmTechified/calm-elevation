@@ -19,6 +19,7 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.calmelevation.app",
       "infoPlist": {
+        // "ITSAppUsesNonExemptEncryption": false,
         "UIBackgroundModes": [
           "audio"
         ]
@@ -33,7 +34,7 @@
         "enabled": false
       },
       "package": "com.calmelevation.app",
-      "versionCode": 15,
+      "versionCode": 16,
       "blockedPermissions": [
         "android.permission.RECORD_AUDIO",
         "android.permission.ACTIVITY_RECOGNITION"
