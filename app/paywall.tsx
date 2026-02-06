@@ -223,8 +223,8 @@ export default function PaywallScreen() {
 
                         <Text style={styles.chargeDisclaimer}>
                             {selectedPlan === 'yearly'
-                                ? `Billed ${yearlyPackage?.product.priceString || 'yearly'}.`
-                                : `Billed ${monthlyPackage?.product.priceString || 'monthly'}.`}
+                                ? `Billed ${yearlyPricePerMonth + '/month' || 'yearly'}, Cancel Anytime`
+                                : `Billed ${monthlyPackage?.product.priceString + '/month' || 'monthly'}, Cancel Anytime`}
                         </Text>
 
 
