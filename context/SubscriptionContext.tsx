@@ -43,6 +43,7 @@ interface SubscriptionContextType {
     checkExpiry: () => Promise<void>;
     startFreeTrial: () => Promise<void>;
     initialize: () => Promise<void>;
+    offerings: PurchasesOffering | null;
 }
 
 const SubscriptionContext = createContext<SubscriptionContextType | undefined>(undefined);
@@ -343,8 +344,9 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
         restore,
         checkExpiry,
         startFreeTrial,
-        initialize
-    }), [subscription, loading, purchase, restore, checkExpiry, startFreeTrial, initialize]);
+        initialize,
+        offerings
+    }), [subscription, loading, purchase, restore, checkExpiry, startFreeTrial, initialize, offerings]);
 
     return (
         <SubscriptionContext.Provider value={contextValue}>

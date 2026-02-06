@@ -19,11 +19,13 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.calmelevation.app",
       "infoPlist": {
-        // "ITSAppUsesNonExemptEncryption": false,
         "UIBackgroundModes": [
+          "audio",
           "audio"
-        ]
-      }
+        ],
+        "ITSAppUsesNonExemptEncryption": false
+      },
+      "buildNumber": "2"
     },
     "android": {
       "adaptiveIcon": {

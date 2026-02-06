@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
+import { PurchasesPackage } from 'react-native-purchases';
 import { View, Text, TouchableOpacity, Image, Dimensions, ActivityIndicator, StyleSheet, ScrollView } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
@@ -23,9 +24,38 @@ export default function PaywallScreen() {
     const params = useLocalSearchParams();
     const fromOnboarding = params.from === 'onboarding';
 
-    const { purchase, startFreeTrial, restore } = useSubscriptionContext();
+    const { purchase, startFreeTrial, restore, offerings, loading: contextLoading } = useSubscriptionContext();
     const [selectedPlan, setSelectedPlan] = useState<'yearly' | 'monthly'>('yearly');
     const [processing, setProcessing] = useState(false);
+
+    const { monthlyPackage, yearlyPackage, yearlyPricePerMonth } = useMemo(() => {
+        if (!offerings) return { monthlyPackage: null, yearlyPackage: null, yearlyPricePerMonth: null };
+
+        // Try to find packages in current offering
+        const current = offerings;
+        const monthly = current?.monthly || current?.availablePackages.find((p: PurchasesPackage) => p.packageType === 'MONTHLY');
+        const yearly = current?.annual || current?.availablePackages.find((p: PurchasesPackage) => p.packageType === 'ANNUAL');
+
+        let pricePerMonth = '';
+        if (yearly) {
+            const price = yearly.product.price / 12;
+            try {
+                pricePerMonth = new Intl.NumberFormat(undefined, {
+                    style: 'currency',
+                    currency: yearly.product.currencyCode,
+                }).format(price);
+            } catch (e) {
+                // Fallback for very old JS engines or errors
+                pricePerMonth = `${yearly.product.currencyCode} ${(price).toFixed(2)}`;
+            }
+        }
+
+        return { monthlyPackage: monthly, yearlyPackage: yearly, yearlyPricePerMonth: pricePerMonth };
+    }, [offerings]);
+
+    // If still loading context or no offerings found yet, show loader or fallback
+    // (Ideally we show loader, but to avoid flash we might return null or skeleton)
+    const isLoadingOfferings = contextLoading || (!monthlyPackage && !yearlyPackage);
 
     const handleClose = () => {
         if (fromOnboarding) {
@@ -70,142 +100,148 @@ export default function PaywallScreen() {
             <StatusBar style="light" />
             <ScrollView>
 
-            {/* Background Image with Overlay */}
-            <Image
-                source={require('../assets/cal-cloud.png')}
-                style={styles.backgroundImage}
-                resizeMode="cover"
-            />
+                {/* Background Image with Overlay */}
+                <Image
+                    source={require('../assets/cal-cloud.png')}
+                    style={styles.backgroundImage}
+                    resizeMode="cover"
+                />
 
-            <LinearGradient
-                colors={['transparent', '#0F172A']}
-                style={styles.topGradient}
-            />
+                <LinearGradient
+                    colors={['transparent', '#0F172A']}
+                    style={styles.topGradient}
+                />
 
-            <LinearGradient
-                colors={['rgba(15,23,42,0)', '#0F172A', '#0F172A']}
-                style={styles.bottomGradient}
-            />
+                <LinearGradient
+                    colors={['rgba(15,23,42,0)', '#0F172A', '#0F172A']}
+                    style={styles.bottomGradient}
+                />
 
-            <SafeAreaView style={styles.safeArea}>
-                <View style={styles.header}>
-                    <TouchableOpacity
-                        onPress={handleClose}
-                        style={styles.closeButton}
+                <SafeAreaView style={styles.safeArea}>
+                    <View style={styles.header}>
+                        <TouchableOpacity
+                            onPress={handleClose}
+                            style={styles.closeButton}
+                        >
+                            <X size={20} color="#fff" />
+                        </TouchableOpacity>
+                    </View>
+
+                    <ScrollView
+                        style={styles.scrollView}
+                        contentContainerStyle={styles.scrollContent}
+                        showsVerticalScrollIndicator={false}
                     >
-                        <X size={20} color="#fff" />
-                    </TouchableOpacity>
-                </View>
-
-                <ScrollView
-                    style={styles.scrollView}
-                    contentContainerStyle={styles.scrollContent}
-                    showsVerticalScrollIndicator={false}
-                >
-                    {/* Header Content */}
-                    <View style={styles.headerContent}>
-                        <View style={styles.crownIconContainer}>
-                            <Crown size={32} color="#38BDF8" fill="#38BDF8" />
+                        {/* Header Content */}
+                        <View style={styles.headerContent}>
+                            <View style={styles.crownIconContainer}>
+                                <Crown size={32} color="#38BDF8" fill="#38BDF8" />
+                            </View>
+                            <Text style={styles.title}>
+                                Unlock Calm Premium
+                            </Text>
+                            <Text style={styles.subtitle}>
+                                Join thousands who have found their inner peace and conquered anxiety.
+                            </Text>
                         </View>
-                        <Text style={styles.title}>
-                            Unlock Calm Premium
-                        </Text>
-                        <Text style={styles.subtitle}>
-                            Join thousands who have found their inner peace and conquered anxiety.
-                        </Text>
-                    </View>
 
-                    {/* Features */}
-                    <View style={styles.featuresList}>
-                        {FEATURES.map((feature, index) => (
-                            <View key={index} style={styles.featureItem}>
-                                <View style={styles.checkContainer}>
-                                    <Check size={12} color="#fff" strokeWidth={4} />
+                        {/* Features */}
+                        <View style={styles.featuresList}>
+                            {FEATURES.map((feature, index) => (
+                                <View key={index} style={styles.featureItem}>
+                                    <View style={styles.checkContainer}>
+                                        <Check size={12} color="#fff" strokeWidth={4} />
+                                    </View>
+                                    <Text style={styles.featureText}>{feature}</Text>
                                 </View>
-                                <Text style={styles.featureText}>{feature}</Text>
-                            </View>
-                        ))}
-                    </View>
+                            ))}
+                        </View>
 
-                    {/* Plan Selection */}
-                    <View style={styles.plansContainer}>
-                        <TouchableOpacity
-                            onPress={() => setSelectedPlan('yearly')}
-                            activeOpacity={0.8}
-                            style={[
-                                styles.planCard,
-                                selectedPlan === 'yearly' && styles.selectedPlanCard
-                            ]}
-                        >
-                            <View style={styles.bestValueBadge}>
-                                <Text style={styles.bestValueText}>BEST VALUE</Text>
-                            </View>
-                            <View>
-                                <Text style={styles.planTitle}>Yearly Access</Text>
-                                <Text style={styles.planPriceInfo}>$79.99 / year</Text>
-                            </View>
-                            <View style={styles.planMonthlyInfo}>
-                                <Text style={styles.monthlyPriceText}>$6.66</Text>
-                                <Text style={styles.perMonthText}>per month</Text>
-                            </View>
-                        </TouchableOpacity>
-
-                        <TouchableOpacity
-                            onPress={() => setSelectedPlan('monthly')}
-                            activeOpacity={0.8}
-                            style={[
-                                styles.planCard,
-                                selectedPlan === 'monthly' && styles.selectedPlanCard
-                            ]}
-                        >
-                            <View>
-                                <Text style={styles.planTitle}>Monthly Access</Text>
-                                <Text style={styles.planPriceInfo}>$9.99 / month</Text>
-                            </View>
-                        </TouchableOpacity>
-                    </View>
-
-                    {/* CTA Button */}
-                    <TouchableOpacity
-                        style={[styles.ctaButton, { opacity: processing ? 0.8 : 1 }]}
-                        onPress={handlePurchase}
-                        disabled={processing}
-                    >
-                        <LinearGradient
-                            colors={['#38BDF8', '#0284C7']}
-                            style={styles.ctaGradient}
-                        >
-                            {processing ? (
-                                <ActivityIndicator color="#fff" />
+                        {/* Plan Selection */}
+                        <View style={styles.plansContainer}>
+                            {isLoadingOfferings ? (
+                                <ActivityIndicator size="large" color="#38BDF8" style={{ marginVertical: 20 }} />
                             ) : (
-                                <Text style={styles.ctaText}>
-                                    {selectedPlan === 'yearly' ? 'Unlock Full Access (Yearly)' : 'Subscribe Monthly'}
-                                </Text>
+                                <>
+                                    <TouchableOpacity
+                                        onPress={() => setSelectedPlan('yearly')}
+                                        activeOpacity={0.8}
+                                        style={[
+                                            styles.planCard,
+                                            selectedPlan === 'yearly' && styles.selectedPlanCard
+                                        ]}
+                                    >
+                                        <View style={styles.bestValueBadge}>
+                                            <Text style={styles.bestValueText}>BEST VALUE</Text>
+                                        </View>
+                                        <View>
+                                            <Text style={styles.planTitle}>Yearly Access</Text>
+                                            <Text style={styles.planPriceInfo}>{yearlyPackage?.product.priceString} / year</Text>
+                                        </View>
+                                        <View style={styles.planMonthlyInfo}>
+                                            <Text style={styles.monthlyPriceText}>{yearlyPricePerMonth}</Text>
+                                            <Text style={styles.perMonthText}>per month</Text>
+                                        </View>
+                                    </TouchableOpacity>
+
+                                    <TouchableOpacity
+                                        onPress={() => setSelectedPlan('monthly')}
+                                        activeOpacity={0.8}
+                                        style={[
+                                            styles.planCard,
+                                            selectedPlan === 'monthly' && styles.selectedPlanCard
+                                        ]}
+                                    >
+                                        <View>
+                                            <Text style={styles.planTitle}>Monthly Access</Text>
+                                            <Text style={styles.planPriceInfo}>{monthlyPackage?.product.priceString} / month</Text>
+                                        </View>
+                                    </TouchableOpacity>
+                                </>
                             )}
-                        </LinearGradient>
-                    </TouchableOpacity>
+                        </View>
 
-                    <Text style={styles.chargeDisclaimer}>
-                        {selectedPlan === 'yearly'
-                            ? 'Billed $59.99 yearly. Cancel anytime.'
-                            : 'Billed $9.99 monthly. Cancel anytime.'}
-                    </Text>
+                        {/* CTA Button */}
+                        <TouchableOpacity
+                            style={[styles.ctaButton, { opacity: processing ? 0.8 : 1 }]}
+                            onPress={handlePurchase}
+                            disabled={processing}
+                        >
+                            <LinearGradient
+                                colors={['#38BDF8', '#0284C7']}
+                                style={styles.ctaGradient}
+                            >
+                                {processing ? (
+                                    <ActivityIndicator color="#fff" />
+                                ) : (
+                                    <Text style={styles.ctaText}>
+                                        {selectedPlan === 'yearly' ? 'Unlock Full Access (Yearly)' : 'Subscribe Monthly'}
+                                    </Text>
+                                )}
+                            </LinearGradient>
+                        </TouchableOpacity>
+
+                        <Text style={styles.chargeDisclaimer}>
+                            {selectedPlan === 'yearly'
+                                ? `Billed ${yearlyPackage?.product.priceString || 'yearly'}.`
+                                : `Billed ${monthlyPackage?.product.priceString || 'monthly'}.`}
+                        </Text>
 
 
-                    {/* Footer Links */}
-                    <View style={styles.footer}>
-                        <TouchableOpacity onPress={handleRestore}>
-                            <Text style={styles.footerLink}>Restore Purchase</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity>
-                            <Text style={styles.footerLink}>Terms of Service</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity>
-                            <Text style={styles.footerLink}>Privacy Policy</Text>
-                        </TouchableOpacity>
-                    </View>
-                </ScrollView>
-            </SafeAreaView>
+                        {/* Footer Links */}
+                        <View style={styles.footer}>
+                            <TouchableOpacity onPress={handleRestore}>
+                                <Text style={styles.footerLink}>Restore Purchase</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity>
+                                <Text style={styles.footerLink}>Terms of Service</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity>
+                                <Text style={styles.footerLink}>Privacy Policy</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </ScrollView>
+                </SafeAreaView>
             </ScrollView>
         </View>
     );
