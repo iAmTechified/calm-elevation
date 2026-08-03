@@ -1,17 +1,24 @@
 import { useState, useEffect, useCallback } from 'react';
 import { storage } from '../lib/storage';
 
-const SELF_HEALING_KEY = 'calm_elevation_self_healing';
+const SELF_HEALING_KEY = 'calm_elevation_self_healing_v2';
+
+export interface RatingData {
+    before?: number;
+    after?: number;
+}
 
 export interface SelfHealingState {
-    completedDays: number[]; // Array of completed day numbers (e.g. [1, 2, 3])
-    currentDay: number; // The day the user is currently on (e.g. 4)
-    lastCompletedDate: string | null; // ISO Date to prevent doing multiple days at once if desired
+    completedDaysByBook: Record<string, number[]>; // bookId -> array of completed days [1, 2, 3]
+    reflectionsByBookDay: Record<string, string>; // `${bookId}-${day}` -> user text answer
+    ratingsByBookDay: Record<string, RatingData>; // `${bookId}-${day}` -> { before: 5, after: 2 }
+    lastCompletedDate: string | null;
 }
 
 const DEFAULT_STATE: SelfHealingState = {
-    completedDays: [],
-    currentDay: 1,
+    completedDaysByBook: {},
+    reflectionsByBookDay: {},
+    ratingsByBookDay: {},
     lastCompletedDate: null,
 };
 
@@ -23,7 +30,12 @@ export function useSelfHealing() {
         try {
             const stored = await storage.getItem<SelfHealingState>(SELF_HEALING_KEY);
             if (stored) {
-                setState(stored);
+                setState({
+                    completedDaysByBook: stored.completedDaysByBook || {},
+                    reflectionsByBookDay: stored.reflectionsByBookDay || {},
+                    ratingsByBookDay: stored.ratingsByBookDay || {},
+                    lastCompletedDate: stored.lastCompletedDate || null,
+                });
             }
         } catch (error) {
             console.error('Failed to load self healing state:', error);
@@ -36,14 +48,18 @@ export function useSelfHealing() {
         loadState();
     }, [loadState]);
 
-    const markDayComplete = async (dayNumber: number) => {
+    const markDayComplete = async (bookId: string, dayNumber: number) => {
         try {
-            if (state.completedDays.includes(dayNumber)) return;
+            const bookCompletedDays = state.completedDaysByBook[bookId] || [];
+            if (bookCompletedDays.includes(dayNumber)) return;
 
+            const updatedCompletedDays = [...bookCompletedDays, dayNumber];
             const newState = {
                 ...state,
-                completedDays: [...state.completedDays, dayNumber],
-                currentDay: dayNumber + 1, // Unlock next day
+                completedDaysByBook: {
+                    ...state.completedDaysByBook,
+                    [bookId]: updatedCompletedDays,
+                },
                 lastCompletedDate: new Date().toISOString(),
             };
             setState(newState);
@@ -53,22 +69,66 @@ export function useSelfHealing() {
         }
     };
 
-    const isDayUnlocked = (dayNumber: number) => {
-        if (!state) {
-            console.warn('SelfHealingState is undefined in isDayUnlocked');
-            return false;
+    const saveReflection = async (bookId: string, dayNumber: number, text: string) => {
+        try {
+            const key = `${bookId}-${dayNumber}`;
+            const newState = {
+                ...state,
+                reflectionsByBookDay: {
+                    ...state.reflectionsByBookDay,
+                    [key]: text,
+                },
+            };
+            setState(newState);
+            await storage.setItem(SELF_HEALING_KEY, newState);
+        } catch (error) {
+            console.error('Failed to save reflection:', error);
         }
-        // Day 1 is always unlocked.
-        // Day N is unlocked if Day N-1 is completed.
-        // OR simply: is unlocked if dayNumber <= currentDay
-        return dayNumber <= (state.currentDay || 1);
+    };
+
+    const saveRating = async (bookId: string, dayNumber: number, rating: RatingData) => {
+        try {
+            const key = `${bookId}-${dayNumber}`;
+            const existing = state.ratingsByBookDay[key] || {};
+            const newState = {
+                ...state,
+                ratingsByBookDay: {
+                    ...state.ratingsByBookDay,
+                    [key]: { ...existing, ...rating },
+                },
+            };
+            setState(newState);
+            await storage.setItem(SELF_HEALING_KEY, newState);
+        } catch (error) {
+            console.error('Failed to save rating:', error);
+        }
+    };
+
+    const isDayUnlocked = (bookId: string, dayNumber: number) => {
+        if (dayNumber === 1) return true;
+        const bookCompletedDays = state.completedDaysByBook[bookId] || [];
+        // Day N is unlocked if Day N-1 is completed, or if dayNumber <= max completed day + 1
+        const maxCompleted = bookCompletedDays.length > 0 ? Math.max(...bookCompletedDays) : 0;
+        return dayNumber <= maxCompleted + 1;
+    };
+
+    const getBookCompletedDays = (bookId: string): number[] => {
+        return state.completedDaysByBook[bookId] || [];
+    };
+
+    const getTotalCompletedLessonsCount = (): number => {
+        return Object.values(state.completedDaysByBook).reduce((acc, days) => acc + days.length, 0);
     };
 
     return {
         state,
         loading,
         markDayComplete,
+        saveReflection,
+        saveRating,
         isDayUnlocked,
-        refresh: loadState
+        getBookCompletedDays,
+        getTotalCompletedLessonsCount,
+        refresh: loadState,
     };
 }

@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { PurchasesPackage } from 'react-native-purchases';
-import { View, Text, TouchableOpacity, Image, Dimensions, ActivityIndicator, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, TouchableOpacity, Image, Dimensions, ActivityIndicator, StyleSheet, ScrollView, Linking } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -233,10 +233,10 @@ export default function PaywallScreen() {
                             <TouchableOpacity onPress={handleRestore}>
                                 <Text style={styles.footerLink}>Restore Purchase</Text>
                             </TouchableOpacity>
-                            <TouchableOpacity>
+                            <TouchableOpacity onPress={() => Linking.openURL('https://calmelevation.com/terms/')}>
                                 <Text style={styles.footerLink}>Terms of Service</Text>
                             </TouchableOpacity>
-                            <TouchableOpacity>
+                            <TouchableOpacity onPress={() => Linking.openURL('https://calmelevation.com/privacy-policy/')}>
                                 <Text style={styles.footerLink}>Privacy Policy</Text>
                             </TouchableOpacity>
                         </View>

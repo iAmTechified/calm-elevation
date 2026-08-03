@@ -15,7 +15,7 @@ const PRODUCT_IDS = {
 // RevenueCat API Keys - PLACEHOLDERS
 // TODO: Replace with your actual RevenueCat API Keys
 const API_KEYS = {
-    apple: 'test_DHXyHqKbjlkIFjisNvgRxaTcvny',
+    apple: 'appl_vAoJvvQnSnKPidTqGZCufqWIiPm',
     google: process.env.EXPO_PUBLIC_PAYMENT_API_KEY || ''
 };
 

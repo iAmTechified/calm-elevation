@@ -1,16 +1,3 @@
-
-import { GoogleGenerativeAI } from '@google/generative-ai';
-
-// Initialize the Gemini API client if the key is available
-const API_KEY = process.env.EXPO_PUBLIC_GEMINI_API_KEY;
-let genAI: GoogleGenerativeAI | null = null;
-let model: any = null;
-
-if (API_KEY) {
-    genAI = new GoogleGenerativeAI(API_KEY);
-    model = genAI.getGenerativeModel({ model: "gemini-pro" });
-}
-
 export type ChatMessage = {
     id: string;
     role: 'user' | 'assistant' | 'system';
@@ -37,11 +24,13 @@ If a user talks about something completely unrelated to mental health or the app
 Always be empathetic, calm, and supportive.
 `;
 
-// Fallback logic for when no API key is present or for offline use
+const GROQ_API_KEY = process.env.EXPO_PUBLIC_GROQ_API_KEY;
+
+// Fallback logic for when no API key is present, offline use, or API failure
 const FALLBACK_RESPONSES = [
     {
         keywords: ['sleep', 'insomnia', 'awake', 'tired'],
-        response: "I hear you. Creating a restful environment is key. Our Sleep section has sounds and stories to help you drift off. shall we go there?",
+        response: "I hear you. Creating a restful environment is key. Our Sleep section has sounds and stories to help you drift off. Shall we go there?",
         action: { type: 'navigate', target: '/sleep' }
     },
     {
@@ -72,61 +61,64 @@ const FALLBACK_RESPONSES = [
 ];
 
 export async function sendMessageToAI(message: string, history: ChatMessage[] = []): Promise<ChatMessage> {
-    // If we have the API key, try to use Gemini
-    if (model) {
+    if (GROQ_API_KEY) {
         try {
-            const chat = model.startChat({
-                history: history.filter(m => m.role !== 'system').map(m => ({
-                    role: m.role === 'assistant' ? 'model' : 'user',
-                    parts: [{ text: m.content }],
-                })),
-                generationConfig: {
-                    maxOutputTokens: 150,
+            const formattedMessages = [
+                { role: 'system', content: SYSTEM_PROMPT },
+                ...history
+                    .filter(m => m.role === 'user' || m.role === 'assistant')
+                    .map(m => ({
+                        role: m.role,
+                        content: m.content
+                    })),
+                { role: 'user', content: message }
+            ];
+
+            const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${GROQ_API_KEY}`,
+                    'Content-Type': 'application/json',
                 },
+                body: JSON.stringify({
+                    model: 'llama-3.3-70b-versatile',
+                    messages: formattedMessages,
+                    max_tokens: 250,
+                    temperature: 0.7,
+                }),
             });
 
-            // Prepend system prompt context if it's the start (Gemini doesn't have system role in the same way as OpenAI, usually sent as first message or context)
-            // For simplicity in this "guide", we'll just send the user message. 
-            // A better way with Gemini is to include the system prompt in the first message or history, 
-            // but 'startChat' history is the robust way.
-            // We will inject the system context if the history is empty.
+            if (response.ok) {
+                const data = await response.json();
+                const text = data.choices?.[0]?.message?.content || '';
 
-            let msgToSend = message;
-            if (history.length === 0) {
-                msgToSend = `${SYSTEM_PROMPT}\n\nUser: ${message}`;
+                let action: any = undefined;
+                const lowerText = text.toLowerCase();
+                if (lowerText.includes("sleep section")) action = { type: 'navigate', target: '/sleep' };
+                else if (lowerText.includes("breathe section")) action = { type: 'navigate', target: '/breathe' };
+                else if (lowerText.includes("play section")) action = { type: 'navigate', target: '/play' };
+                else if (lowerText.includes("journal")) action = { type: 'navigate', target: '/journal' };
+                else if (lowerText.includes("learn section")) action = { type: 'navigate', target: '/learn' };
+                else if (lowerText.includes("self-healing")) action = { type: 'navigate', target: '/self-healing' };
+
+                return {
+                    id: Date.now().toString(),
+                    role: 'assistant',
+                    content: text,
+                    action
+                };
+            } else {
+                const errText = await response.text();
+                console.error("Groq API Http Error:", response.status, errText);
             }
-
-            const result = await chat.sendMessage(msgToSend);
-            const response = result.response;
-            const text = response.text();
-
-            // Simple heuristic to detect navigation intent from AI response if it suggests a section.
-            // In a real agent, we'd use function calling.
-            let action: any = undefined;
-            const lowerText = text.toLowerCase();
-            if (lowerText.includes("sleep section")) action = { type: 'navigate', target: '/sleep' };
-            else if (lowerText.includes("breathe section")) action = { type: 'navigate', target: '/breathe' };
-            else if (lowerText.includes("play section")) action = { type: 'navigate', target: '/play' };
-            else if (lowerText.includes("journal")) action = { type: 'navigate', target: '/journal' };
-            else if (lowerText.includes("learn section")) action = { type: 'navigate', target: '/learn' };
-            else if (lowerText.includes("self-healing")) action = { type: 'navigate', target: '/self-healing' };
-
-            return {
-                id: Date.now().toString(),
-                role: 'assistant',
-                content: text,
-                action
-            };
         } catch (error) {
-            console.error("Gemini API Error:", error);
-            // Fallthrough to fallback
+            console.error("Groq API Error:", error);
         }
     }
 
     // Fallback Logic (Mock AI)
     const lowerMsg = message.toLowerCase();
 
-    // Check for specialized keywords
     for (const item of FALLBACK_RESPONSES) {
         if (item.keywords.some(k => lowerMsg.includes(k))) {
             return {
@@ -138,7 +130,6 @@ export async function sendMessageToAI(message: string, history: ChatMessage[] = 
         }
     }
 
-    // Generic fallback if no keywords match
     return {
         id: Date.now().toString(),
         role: 'assistant',

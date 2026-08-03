@@ -13,7 +13,7 @@ import { useFocusEffect } from 'expo-router';
 import { useStats } from '../../hooks/useStats';
 
 const DATA = [
-    { id: '1', title: 'Self-healing', route: '/self-healing', imagePlaceholderColor: 'bg-lime-200', imagePlaceholder: require('../../assets/visualize.jpeg') },
+    { id: '1', title: 'Self Healing & Confidence', route: '/self-healing', imagePlaceholderColor: 'bg-lime-200', imagePlaceholder: require('../../assets/visualize.jpeg') },
     { id: '2', title: 'Learn', route: '/learn', imagePlaceholderColor: 'bg-blue-200', imagePlaceholder: require('../../assets/learn.jpeg') },
     { id: '3', title: 'Breathe', route: '/breathe', imagePlaceholderColor: 'bg-emerald-200', imagePlaceholder: require('../../assets/breathe.jpeg') },
     { id: '4', title: 'Play', route: '/play', imagePlaceholderColor: 'bg-pink-200', imagePlaceholder: require('../../assets/play.jpeg') },

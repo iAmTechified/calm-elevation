@@ -1,48 +1,79 @@
-
-import { View, Text, TouchableOpacity, ScrollView, Dimensions, TextInput } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, TouchableOpacity, ScrollView, TextInput, Dimensions } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { useLocalSearchParams, useRouter, Redirect } from 'expo-router';
-import { ChevronLeft, Star, ArrowRight, CheckCircle } from 'lucide-react-native';
-import { useState } from 'react';
+import { ChevronLeft, Quote, Sparkles, CheckCircle, ArrowRight } from 'lucide-react-native';
 import { useColorScheme } from 'nativewind';
 import ProgressHeader from '../../../components/ProgressHeader';
 import LessonNavigationControls from '../../../components/LessonNavigationControls';
 import { useSelfHealing } from '../../../hooks/useSelfHealing';
 import { useStats } from '../../../hooks/useStats';
 import { CheckInModal } from '../../../components/CheckInModal';
-import { healingLessons, LessonContent } from '../../../data/self-healing';
-
-const { width } = Dimensions.get('window');
+import { BOOKS, Lesson, LessonContent } from '../../../data/self-healing';
 
 export default function LessonScreen() {
     const router = useRouter();
     const { id } = useLocalSearchParams();
-    const { markDayComplete } = useSelfHealing();
+    const { markDayComplete, saveReflection, saveRating, state } = useSelfHealing();
     const { markHealingDayCompleted, recordMood } = useStats();
     const { colorScheme } = useColorScheme();
     const [currentPage, setCurrentPage] = useState(0);
     const [isCheckInVisible, setIsCheckInVisible] = useState(false);
     const insets = useSafeAreaInsets();
 
-    const lesson = healingLessons.find(l => l.id === id);
+    // Search across all books for matching lesson ID
+    let matchingLesson: Lesson | undefined;
+    let matchingBookId: string | undefined;
 
-    if (!lesson) return <Redirect href="/self-healing" />;
+    for (const book of BOOKS) {
+        const found = book.lessons.find(l => l.id === id);
+        if (found) {
+            matchingLesson = found;
+            matchingBookId = book.id;
+            break;
+        }
+    }
 
+    if (!matchingLesson || !matchingBookId) {
+        return <Redirect href="/self-healing" />;
+    }
+
+    const lesson = matchingLesson;
+    const bookId = matchingBookId;
     const pages = lesson.content;
     const progress = ((currentPage + 1) / pages.length) * 100;
     const isDark = colorScheme === 'dark';
+
+    const reflectionKey = `${bookId}-${lesson.day}`;
+    const initialReflection = state.reflectionsByBookDay[reflectionKey] || '';
+    const initialRating = state.ratingsByBookDay[reflectionKey] || {};
+
+    const [reflectionText, setReflectionText] = useState(initialReflection);
+    const [beforeScore, setBeforeScore] = useState<number | undefined>(initialRating.before);
+    const [afterScore, setAfterScore] = useState<number | undefined>(initialRating.after);
+
+    const handleSaveReflection = (text: string) => {
+        setReflectionText(text);
+        saveReflection(bookId, lesson.day, text);
+    };
+
+    const handleSaveRating = (before?: number, after?: number) => {
+        if (before !== undefined) setBeforeScore(before);
+        if (after !== undefined) setAfterScore(after);
+        saveRating(bookId, lesson.day, {
+            before: before !== undefined ? before : beforeScore,
+            after: after !== undefined ? after : afterScore,
+        });
+    };
 
     const nextPage = () => {
         if (currentPage < pages.length - 1) {
             setCurrentPage(currentPage + 1);
         } else {
             // Complete current lesson
-            if (typeof id === 'string') {
-                const dayNum = parseInt(lesson.day.toString());
-                markDayComplete(dayNum);
-                markHealingDayCompleted(dayNum);
-            }
+            markDayComplete(bookId, lesson.day);
+            markHealingDayCompleted(lesson.day);
             setIsCheckInVisible(true);
         }
     };
@@ -61,14 +92,14 @@ export default function LessonScreen() {
 
     return (
         <>
-            <SafeAreaView className="h-full bg-slate-50 dark:bg-slate-900" edges={['top', 'left', 'right', 'bottom']}>
+            <SafeAreaView className="h-full bg-slate-50 dark:bg-slate-950" edges={['top', 'left', 'right', 'bottom']}>
                 <StatusBar style="auto" />
 
-                {/* Header */}
+                {/* Progress Header */}
                 <ProgressHeader
                     progress={progress}
                     containerStyle="flex-row items-center justify-between px-6 py-4"
-                    trackStyle="h-2 bg-slate-200 dark:bg-slate-700 rounded-full mx-6"
+                    trackStyle="h-2 bg-slate-200 dark:bg-slate-800 rounded-full mx-6"
                     progressStyle="bg-indigo-500"
                     leftElement={
                         <TouchableOpacity onPress={() => router.back()} className="p-2 -ml-2">
@@ -77,21 +108,31 @@ export default function LessonScreen() {
                     }
                     rightElement={
                         <View className="flex-row items-center bg-indigo-100 dark:bg-indigo-900/50 px-3 py-1 rounded-full">
-                            <Text className="text-indigo-600 dark:text-indigo-300 font-bold mr-1">Day {lesson.day}</Text>
+                            <Text className="text-indigo-600 dark:text-indigo-300 font-bold text-xs">
+                                Day {lesson.day}
+                            </Text>
                         </View>
                     }
                 />
 
                 {/* Content Card */}
                 <View className="flex-1 px-6 pb-4 pt-2">
-                    <View className="flex-1 bg-white dark:bg-slate-800 rounded-3xl p-6 shadow-sm border border-slate-100 dark:border-slate-700 justify-center">
+                    <View className="flex-1 bg-white dark:bg-slate-900 rounded-3xl p-6 shadow-sm border border-slate-100 dark:border-slate-800 justify-center">
                         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ flexGrow: 1, justifyContent: 'center' }}>
-                            {renderContent(pages[currentPage], isDark)}
+                            {renderPageContent({
+                                page: pages[currentPage],
+                                isDark,
+                                reflectionText,
+                                setReflectionText: handleSaveReflection,
+                                beforeScore,
+                                afterScore,
+                                setRating: handleSaveRating,
+                            })}
                         </ScrollView>
                     </View>
                 </View>
 
-                {/* Footer Controls */}
+                {/* Navigation Footer */}
                 <View className="px-6 py-4" style={{ marginBottom: insets.bottom }}>
                     <LessonNavigationControls
                         currentPage={currentPage}
@@ -100,8 +141,8 @@ export default function LessonScreen() {
                         onNext={nextPage}
                     />
                 </View>
-
             </SafeAreaView>
+
             <CheckInModal
                 visible={isCheckInVisible}
                 onClose={() => {
@@ -114,27 +155,59 @@ export default function LessonScreen() {
     );
 }
 
-function renderContent(page: LessonContent, isDark: boolean) {
+interface RenderProps {
+    page: LessonContent;
+    isDark: boolean;
+    reflectionText: string;
+    setReflectionText: (text: string) => void;
+    beforeScore?: number;
+    afterScore?: number;
+    setRating: (before?: number, after?: number) => void;
+}
+
+function renderPageContent({
+    page,
+    isDark,
+    reflectionText,
+    setReflectionText,
+    beforeScore,
+    afterScore,
+    setRating,
+}: RenderProps) {
     const textColor = isDark ? 'text-slate-300' : 'text-slate-600';
-    const titleColor = isDark ? 'text-white' : 'text-slate-800';
+    const titleColor = isDark ? 'text-white' : 'text-slate-900';
 
     if (page.type === 'intro') {
         return (
-            <View className="items-center">
+            <View className="items-center py-2">
                 {page.image && (
-                    <View className={`w-24 h-24 ${page.imageColor || 'bg-blue-100'} rounded-full items-center justify-center mb-6`}>
-                        <Text className="text-5xl">{page.image}</Text>
+                    <View className={`w-20 h-20 ${page.imageColor || 'bg-blue-100'} rounded-full items-center justify-center mb-5 shadow-sm`}>
+                        <Text className="text-4xl">{page.image}</Text>
                     </View>
                 )}
 
                 {page.title && (
-                    <Text className={`text-3xl font-bold ${titleColor} text-center mb-6`}>
+                    <Text className={`text-2xl font-bold ${titleColor} text-center mb-4`}>
                         {page.title}
                     </Text>
                 )}
 
+                {page.quote && (
+                    <View className="bg-slate-50 dark:bg-slate-800/80 p-5 rounded-2xl border border-slate-100 dark:border-slate-700 mb-6 w-full relative">
+                        <Quote size={20} color="#818CF8" className="mb-2" />
+                        <Text className={`text-base font-semibold italic ${titleColor} mb-2`}>
+                            {page.quote}
+                        </Text>
+                        {page.author && (
+                            <Text className="text-xs font-bold text-indigo-600 dark:text-indigo-400 text-right">
+                                — {page.author}
+                            </Text>
+                        )}
+                    </View>
+                )}
+
                 {page.text.map((paragraph: string, index: number) => (
-                    <Text key={index} className={`text-lg ${textColor} leading-8 mb-6 text-center`}>
+                    <Text key={index} className={`text-base ${textColor} leading-7 mb-4 text-center`}>
                         {paragraph}
                     </Text>
                 ))}
@@ -144,49 +217,114 @@ function renderContent(page: LessonContent, isDark: boolean) {
 
     if (page.type === 'practice') {
         return (
-            <View>
-                <Text className={`text-2xl font-bold ${titleColor} mb-6`}>Today's Practice</Text>
+            <View className="py-2">
+                {page.title && (
+                    <Text className={`text-2xl font-bold ${titleColor} mb-4`}>
+                        {page.title}
+                    </Text>
+                )}
 
                 {page.text.map((paragraph: string, index: number) => (
-                    <Text key={index} className={`text-lg ${textColor} leading-8 mb-8`}>
+                    <Text key={index} className={`text-base ${textColor} leading-7 mb-6`}>
                         {paragraph}
                     </Text>
                 ))}
 
                 {page.questions && page.questions.map((q, idx) => (
-                    <View key={idx} className="mb-6 bg-slate-50 dark:bg-slate-700/50 p-4 rounded-xl">
-                        <Text className={`font-semibold ${titleColor} mb-3 text-lg`}>{q}</Text>
+                    <View key={idx} className="mb-5 bg-slate-50 dark:bg-slate-800/80 p-4 rounded-2xl border border-slate-100 dark:border-slate-700">
+                        <Text className={`font-semibold ${titleColor} mb-3 text-base`}>
+                            {q}
+                        </Text>
                         <TextInput
-                            placeholder="Write your thoughts..."
+                            value={reflectionText}
+                            onChangeText={setReflectionText}
+                            placeholder="Write your thoughts here..."
                             placeholderTextColor={isDark ? '#94a3b8' : '#cbd5e1'}
                             multiline
-                            className={`min-h-[100px] text-base ${titleColor} align-top`}
+                            numberOfLines={4}
+                            className={`min-h-[100px] text-base ${titleColor} align-top bg-white dark:bg-slate-900 p-3 rounded-xl border border-slate-200 dark:border-slate-700`}
                         />
                     </View>
                 ))}
             </View>
-        )
+        );
     }
 
-    // Default / Continuation / Conclusion
+    if (page.type === 'rating') {
+        const scores = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+
+        return (
+            <View className="py-2">
+                <Text className={`text-2xl font-bold ${titleColor} mb-3`}>
+                    {page.title || 'Anxiety & Confidence Rating'}
+                </Text>
+
+                <Text className={`text-base ${textColor} mb-6 leading-6`}>
+                    Track your confidence or anxiety level before and after completing today's challenge.
+                </Text>
+
+                {/* BEFORE Score */}
+                <View className="mb-6 bg-slate-50 dark:bg-slate-800/80 p-4 rounded-2xl border border-slate-100 dark:border-slate-700">
+                    <Text className="text-sm font-bold text-slate-700 dark:text-slate-200 mb-3">
+                        1. Rating BEFORE Challenge (1 = Very Low, 10 = Very High):
+                    </Text>
+                    <View className="flex-row flex-wrap justify-between gap-1.5">
+                        {scores.map(s => (
+                            <TouchableOpacity
+                                key={`before-${s}`}
+                                onPress={() => setRating(s, undefined)}
+                                className={`w-8 h-8 rounded-xl items-center justify-center ${
+                                    beforeScore === s
+                                        ? 'bg-indigo-600 text-white'
+                                        : 'bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700'
+                                }`}
+                            >
+                                <Text className={`font-bold text-xs ${beforeScore === s ? 'text-white' : titleColor}`}>
+                                    {s}
+                                </Text>
+                            </TouchableOpacity>
+                        ))}
+                    </View>
+                </View>
+
+                {/* AFTER Score */}
+                <View className="mb-4 bg-slate-50 dark:bg-slate-800/80 p-4 rounded-2xl border border-slate-100 dark:border-slate-700">
+                    <Text className="text-sm font-bold text-slate-700 dark:text-slate-200 mb-3">
+                        2. Rating AFTER Challenge (1 = Very Low, 10 = Very High):
+                    </Text>
+                    <View className="flex-row flex-wrap justify-between gap-1.5">
+                        {scores.map(s => (
+                            <TouchableOpacity
+                                key={`after-${s}`}
+                                onPress={() => setRating(undefined, s)}
+                                className={`w-8 h-8 rounded-xl items-center justify-center ${
+                                    afterScore === s
+                                        ? 'bg-emerald-600 text-white'
+                                        : 'bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700'
+                                }`}
+                            >
+                                <Text className={`font-bold text-xs ${afterScore === s ? 'text-white' : titleColor}`}>
+                                    {s}
+                                </Text>
+                            </TouchableOpacity>
+                        ))}
+                    </View>
+                </View>
+            </View>
+        );
+    }
+
+    // Default Page
     return (
-        <View className="justify-center flex-1">
+        <View className="justify-center flex-1 py-2">
             {page.title && (
-                <Text className={`text-2xl font-bold ${titleColor} mb-6`}>
+                <Text className={`text-2xl font-bold ${titleColor} mb-4`}>
                     {page.title}
                 </Text>
             )}
             {page.text.map((paragraph: string, index: number) => (
-                <Text key={index} className={`text-lg ${textColor} leading-8 mb-6 font-medium`}>
-                    {paragraph.includes('fight or flight') ? (
-                        <Text>
-                            {paragraph.split('fight or flight')[0]}
-                            <Text className={`font-bold ${isDark ? 'text-indigo-400' : 'text-indigo-600'}`}>fight or flight</Text>
-                            {paragraph.split('fight or flight')[1]}
-                        </Text>
-                    ) : (
-                        paragraph
-                    )}
+                <Text key={index} className={`text-base ${textColor} leading-7 mb-4`}>
+                    {paragraph}
                 </Text>
             ))}
         </View>

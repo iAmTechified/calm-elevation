@@ -173,7 +173,7 @@ export default function AppSettings() {
                 {/* Footer */}
                 <View className="mt-8 mb-4 items-center px-4">
                     <View className="flex-row gap-4 mb-4">
-                        <TouchableOpacity onPress={() => Linking.openURL('https://calmelevation.com/terms-and-conditions/')}>
+                        <TouchableOpacity onPress={() => Linking.openURL('https://calmelevation.com/terms/')}>
                             <Text className="text-slate-400 dark:text-slate-500 text-xs underline">Terms & Conditions</Text>
                         </TouchableOpacity>
                         <TouchableOpacity onPress={() => Linking.openURL('https://calmelevation.com/privacy-policy/')}>

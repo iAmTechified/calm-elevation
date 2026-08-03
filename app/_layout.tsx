@@ -108,6 +108,7 @@ export default function RootLayout() {
                     <Stack screenOptions={{ headerShown: false }}>
                         <Stack.Screen name="index" />
                         <Stack.Screen name="self-healing/index" />
+                        <Stack.Screen name="self-healing/book/[id]" />
                         <Stack.Screen name="self-healing/lesson/[id]" />
                     </Stack>
                     <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
