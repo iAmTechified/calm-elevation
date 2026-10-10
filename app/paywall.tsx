@@ -1,14 +1,13 @@
 import React, { useState, useMemo } from 'react';
 import { PurchasesPackage } from 'react-native-purchases';
-import { View, Text, TouchableOpacity, Image, Dimensions, ActivityIndicator, StyleSheet, ScrollView, Linking } from 'react-native';
+import { View, Text, TouchableOpacity, Image, useWindowDimensions, ActivityIndicator, StyleSheet, ScrollView, Linking } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { LinearGradient } from 'expo-linear-gradient';
 import { X, Check, Star, Crown } from 'lucide-react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useSubscriptionContext } from '../context/SubscriptionContext';
-
-const { width, height } = Dimensions.get('window');
+import { useTranslation } from 'react-i18next';
 
 const FEATURES = [
     'Unlimited Access to All Healing Plans',
@@ -18,11 +17,12 @@ const FEATURES = [
     'Priority Support'
 ];
 
-
 export default function PaywallScreen() {
+    const { t } = useTranslation();
     const router = useRouter();
     const params = useLocalSearchParams();
     const fromOnboarding = params.from === 'onboarding';
+    const { width, height } = useWindowDimensions();
 
     const { purchase, startFreeTrial, restore, offerings, loading: contextLoading } = useSubscriptionContext();
     const [selectedPlan, setSelectedPlan] = useState<'yearly' | 'monthly'>('yearly');
@@ -31,10 +31,13 @@ export default function PaywallScreen() {
     const { monthlyPackage, yearlyPackage, yearlyPricePerMonth } = useMemo(() => {
         if (!offerings) return { monthlyPackage: null, yearlyPackage: null, yearlyPricePerMonth: null };
 
-        // Try to find packages in current offering
         const current = offerings;
-        const monthly = current?.monthly || current?.availablePackages.find((p: PurchasesPackage) => p.packageType === 'MONTHLY');
-        const yearly = current?.annual || current?.availablePackages.find((p: PurchasesPackage) => p.packageType === 'ANNUAL');
+        const available = current?.availablePackages || [];
+
+        const monthly = current?.monthly 
+            || available.find((p: PurchasesPackage) => p.product.identifier.includes('monthly') || p.packageType === 'MONTHLY');
+        const yearly = current?.annual 
+            || available.find((p: PurchasesPackage) => p.product.identifier.includes('yearly') || p.packageType === 'ANNUAL');
 
         let pricePerMonth = '';
         if (yearly) {
@@ -45,12 +48,15 @@ export default function PaywallScreen() {
                     currency: yearly.product.currencyCode,
                 }).format(price);
             } catch (e) {
-                // Fallback for very old JS engines or errors
                 pricePerMonth = `${yearly.product.currencyCode} ${(price).toFixed(2)}`;
             }
         }
 
-        return { monthlyPackage: monthly, yearlyPackage: yearly, yearlyPricePerMonth: pricePerMonth };
+        console.log('[PaywallScreen] Available Packages:', available.map(p => ({ id: p.product.identifier, type: p.packageType, price: p.product.priceString })));
+        console.log('[PaywallScreen] Matched Monthly:', monthly?.product.identifier, monthly?.product.priceString);
+        console.log('[PaywallScreen] Matched Yearly:', yearly?.product.identifier, yearly?.product.priceString, 'Monthly Equivalent:', pricePerMonth);
+
+        return { monthlyPackage: monthly, yearlyPackage: yearly, yearlyPricePerMonth: pricePerMonth || null };
     }, [offerings]);
 
     // If still loading context or no offerings found yet, show loader or fallback
@@ -98,56 +104,55 @@ export default function PaywallScreen() {
     return (
         <View style={styles.container}>
             <StatusBar style="light" />
-            <ScrollView>
 
-                {/* Background Image with Overlay */}
-                <Image
-                    source={require('../assets/cal-cloud.png')}
-                    style={styles.backgroundImage}
-                    resizeMode="cover"
-                />
+            {/* Background Image with Overlay */}
+            <Image
+                source={require('../assets/cal-cloud.png')}
+                style={[styles.backgroundImage, { width, height: height * 0.6 }]}
+                resizeMode="cover"
+            />
 
-                <LinearGradient
-                    colors={['transparent', '#0F172A']}
-                    style={styles.topGradient}
-                />
+            <LinearGradient
+                colors={['transparent', '#0F172A']}
+                style={[styles.topGradient, { height: height * 0.6 }]}
+            />
 
-                <LinearGradient
-                    colors={['rgba(15,23,42,0)', '#0F172A', '#0F172A']}
-                    style={styles.bottomGradient}
-                />
+            <LinearGradient
+                colors={['rgba(15,23,42,0)', '#0F172A', '#0F172A']}
+                style={[styles.bottomGradient, { top: height * 0.3 }]}
+            />
 
-                <SafeAreaView style={styles.safeArea}>
-                    <View style={styles.header}>
-                        <TouchableOpacity
-                            onPress={handleClose}
-                            style={styles.closeButton}
-                        >
-                            <X size={20} color="#fff" />
-                        </TouchableOpacity>
-                    </View>
-
-                    <ScrollView
-                        style={styles.scrollView}
-                        contentContainerStyle={styles.scrollContent}
-                        showsVerticalScrollIndicator={false}
+            <SafeAreaView style={styles.safeArea}>
+                <View style={styles.header}>
+                    <TouchableOpacity
+                        onPress={handleClose}
+                        style={styles.closeButton}
                     >
+                        <X size={20} color="#fff" />
+                    </TouchableOpacity>
+                </View>
+
+                <ScrollView
+                    style={styles.scrollView}
+                    contentContainerStyle={styles.scrollContent}
+                    showsVerticalScrollIndicator={false}
+                >
                         {/* Header Content */}
                         <View style={styles.headerContent}>
                             <View style={styles.crownIconContainer}>
                                 <Crown size={32} color="#38BDF8" fill="#38BDF8" />
                             </View>
                             <Text style={styles.title}>
-                                Unlock Calm Premium
+                                {t('paywall.title')}
                             </Text>
                             <Text style={styles.subtitle}>
-                                Join thousands who have found their inner peace and conquered anxiety.
+                                {t('paywall.subtitle')}
                             </Text>
                         </View>
 
                         {/* Features */}
                         <View style={styles.featuresList}>
-                            {FEATURES.map((feature, index) => (
+                            {((t('paywall.features', { returnObjects: true }) as string[]) || FEATURES).map((feature, index) => (
                                 <View key={index} style={styles.featureItem}>
                                     <View style={styles.checkContainer}>
                                         <Check size={12} color="#fff" strokeWidth={4} />
@@ -159,46 +164,46 @@ export default function PaywallScreen() {
 
                         {/* Plan Selection */}
                         <View style={styles.plansContainer}>
-                            {isLoadingOfferings ? (
-                                <ActivityIndicator size="large" color="#38BDF8" style={{ marginVertical: 20 }} />
-                            ) : (
-                                <>
-                                    <TouchableOpacity
-                                        onPress={() => setSelectedPlan('yearly')}
-                                        activeOpacity={0.8}
-                                        style={[
-                                            styles.planCard,
-                                            selectedPlan === 'yearly' && styles.selectedPlanCard
-                                        ]}
-                                    >
-                                        <View style={styles.bestValueBadge}>
-                                            <Text style={styles.bestValueText}>BEST VALUE</Text>
-                                        </View>
-                                        <View>
-                                            <Text style={styles.planTitle}>Yearly Access</Text>
-                                            <Text style={styles.planPriceInfo}>{yearlyPackage?.product.priceString} / year</Text>
-                                        </View>
-                                        <View style={styles.planMonthlyInfo}>
-                                            <Text style={styles.monthlyPriceText}>{yearlyPricePerMonth}</Text>
-                                            <Text style={styles.perMonthText}>per month</Text>
-                                        </View>
-                                    </TouchableOpacity>
+                            <TouchableOpacity
+                                onPress={() => setSelectedPlan('yearly')}
+                                activeOpacity={0.8}
+                                style={[
+                                    styles.planCard,
+                                    selectedPlan === 'yearly' && styles.selectedPlanCard
+                                ]}
+                            >
+                                <View style={styles.bestValueBadge}>
+                                    <Text style={styles.bestValueText}>{t('paywall.bestValue')}</Text>
+                                </View>
+                                <View>
+                                    <Text style={styles.planTitle}>{t('paywall.yearlyAccess')}</Text>
+                                    <Text style={styles.planPriceInfo}>
+                                        {yearlyPackage?.product.priceString ? `${yearlyPackage.product.priceString} / ${t('paywall.perYear').replace('per ', '')}` : `$49.99 / ${t('paywall.perYear').replace('per ', '')}`}
+                                    </Text>
+                                </View>
+                                <View style={styles.planMonthlyInfo}>
+                                    <Text style={styles.monthlyPriceText}>
+                                        {yearlyPricePerMonth || '$4.16'}
+                                    </Text>
+                                    <Text style={styles.perMonthText}>{t('paywall.perMonth')}</Text>
+                                </View>
+                            </TouchableOpacity>
 
-                                    <TouchableOpacity
-                                        onPress={() => setSelectedPlan('monthly')}
-                                        activeOpacity={0.8}
-                                        style={[
-                                            styles.planCard,
-                                            selectedPlan === 'monthly' && styles.selectedPlanCard
-                                        ]}
-                                    >
-                                        <View>
-                                            <Text style={styles.planTitle}>Monthly Access</Text>
-                                            <Text style={styles.planPriceInfo}>{monthlyPackage?.product.priceString} / month</Text>
-                                        </View>
-                                    </TouchableOpacity>
-                                </>
-                            )}
+                            <TouchableOpacity
+                                onPress={() => setSelectedPlan('monthly')}
+                                activeOpacity={0.8}
+                                style={[
+                                    styles.planCard,
+                                    selectedPlan === 'monthly' && styles.selectedPlanCard
+                                ]}
+                            >
+                                <View>
+                                    <Text style={styles.planTitle}>{t('paywall.monthlyAccess')}</Text>
+                                    <Text style={styles.planPriceInfo}>
+                                        {monthlyPackage?.product.priceString ? `${monthlyPackage.product.priceString} / ${t('paywall.perMonth').replace('per ', '')}` : `$9.99 / ${t('paywall.perMonth').replace('per ', '')}`}
+                                    </Text>
+                                </View>
+                            </TouchableOpacity>
                         </View>
 
                         {/* CTA Button */}
@@ -215,7 +220,7 @@ export default function PaywallScreen() {
                                     <ActivityIndicator color="#fff" />
                                 ) : (
                                     <Text style={styles.ctaText}>
-                                        {selectedPlan === 'yearly' ? 'Unlock Full Access (Yearly)' : 'Subscribe Monthly'}
+                                        {t('common.continue')}
                                     </Text>
                                 )}
                             </LinearGradient>
@@ -223,26 +228,25 @@ export default function PaywallScreen() {
 
                         <Text style={styles.chargeDisclaimer}>
                             {selectedPlan === 'yearly'
-                                ? `Billed ${yearlyPricePerMonth + '/month' || 'yearly'}, Cancel Anytime`
-                                : `Billed ${monthlyPackage?.product.priceString + '/month' || 'monthly'}, Cancel Anytime`}
+                                ? (yearlyPricePerMonth ? t('paywall.billedMonthly', { price: yearlyPricePerMonth }) : t('paywall.billedAnnually'))
+                                : (monthlyPackage?.product.priceString ? t('paywall.billedMonthly', { price: monthlyPackage.product.priceString }) : t('paywall.billedMonthlyFallback'))}
                         </Text>
 
 
                         {/* Footer Links */}
                         <View style={styles.footer}>
                             <TouchableOpacity onPress={handleRestore}>
-                                <Text style={styles.footerLink}>Restore Purchase</Text>
+                                <Text style={styles.footerLink}>{t('paywall.restore')}</Text>
                             </TouchableOpacity>
                             <TouchableOpacity onPress={() => Linking.openURL('https://calmelevation.com/terms/')}>
-                                <Text style={styles.footerLink}>Terms of Service</Text>
+                                <Text style={styles.footerLink}>{t('paywall.terms')}</Text>
                             </TouchableOpacity>
                             <TouchableOpacity onPress={() => Linking.openURL('https://calmelevation.com/privacy-policy/')}>
-                                <Text style={styles.footerLink}>Privacy Policy</Text>
+                                <Text style={styles.footerLink}>{t('paywall.privacy')}</Text>
                             </TouchableOpacity>
                         </View>
                     </ScrollView>
                 </SafeAreaView>
-            </ScrollView>
         </View>
     );
 }
@@ -254,9 +258,9 @@ const styles = StyleSheet.create({
     },
     backgroundImage: {
         position: 'absolute',
-        width: width,
-        height: height * 0.6,
         top: 0,
+        left: 0,
+        right: 0,
         opacity: 0.5,
     },
     topGradient: {
@@ -264,11 +268,9 @@ const styles = StyleSheet.create({
         top: 0,
         left: 0,
         right: 0,
-        height: height * 0.6,
     },
     bottomGradient: {
         position: 'absolute',
-        top: height * 0.3,
         left: 0,
         right: 0,
         bottom: 0,
@@ -298,6 +300,9 @@ const styles = StyleSheet.create({
         paddingHorizontal: 24,
         justifyContent: 'flex-end',
         paddingBottom: 20,
+        maxWidth: 540,
+        width: '100%',
+        alignSelf: 'center',
     },
     headerContent: {
         alignItems: 'center',

@@ -1,7 +1,9 @@
 import { TouchableOpacity, View, Text } from 'react-native';
 import { CheckCircle2, Lock } from 'lucide-react-native';
+import { useTranslation } from 'react-i18next';
 
 function SelfLessonCard({ lesson, isCompleted, isUnlocked, isPaywalled, onPress }: { lesson: any, isCompleted: boolean, isUnlocked: boolean, isPaywalled: boolean, onPress: () => void }) {
+    const { t } = useTranslation();
 
     // Determine styles based on state
     const bgStyle = isCompleted ? 'rgba(236, 253, 245, 1)' : !isUnlocked ? 'rgba(241, 245, 249, 1)' : 'white';
@@ -23,7 +25,7 @@ function SelfLessonCard({ lesson, isCompleted, isUnlocked, isPaywalled, onPress 
             }}
         >
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-                <Text style={{ fontSize: 16, fontWeight: '600', color: !isUnlocked ? '#94a3b8' : '#38bdf8' }}>Day {lesson.day}</Text>
+                <Text style={{ fontSize: 16, fontWeight: '600', color: !isUnlocked ? '#94a3b8' : '#38bdf8' }}>{t('selfHealing.dayNumber', { day: lesson.day })}</Text>
                 {isCompleted ? (
                     <CheckCircle2 size={18} color="#10B981" />
                 ) : (isUnlocked && !isPaywalled) ? null : (
@@ -39,7 +41,7 @@ function SelfLessonCard({ lesson, isCompleted, isUnlocked, isPaywalled, onPress 
 
             {isPaywalled && (
                 <View style={{ position: 'absolute', top: 0, right: 0, backgroundColor: '#f59e0b', paddingHorizontal: 6, paddingVertical: 2, borderTopRightRadius: 16, borderBottomLeftRadius: 8 }}>
-                    <Text style={{ color: 'white', fontSize: 8, fontWeight: '800' }}>PREMIUM</Text>
+                    <Text style={{ color: 'white', fontSize: 8, fontWeight: '800' }}>{t('common.premium')}</Text>
                 </View>
             )}
         </TouchableOpacity>

@@ -11,20 +11,22 @@ import { Sparkles, Crown, ChevronRight } from 'lucide-react-native';
 import { useSubscriptionContext } from '../../context/SubscriptionContext';
 import { useFocusEffect } from 'expo-router';
 import { useStats } from '../../hooks/useStats';
-
-const DATA = [
-    { id: '1', title: 'Self Healing & Confidence', route: '/self-healing', imagePlaceholderColor: 'bg-lime-200', imagePlaceholder: require('../../assets/visualize.jpeg') },
-    { id: '2', title: 'Learn', route: '/learn', imagePlaceholderColor: 'bg-blue-200', imagePlaceholder: require('../../assets/learn.jpeg') },
-    { id: '3', title: 'Breathe', route: '/breathe', imagePlaceholderColor: 'bg-emerald-200', imagePlaceholder: require('../../assets/breathe.jpeg') },
-    { id: '4', title: 'Play', route: '/play', imagePlaceholderColor: 'bg-pink-200', imagePlaceholder: require('../../assets/play.jpeg') },
-    { id: '5', title: 'Journal', route: '/journal', imagePlaceholderColor: 'bg-orange-200', imagePlaceholder: require('../../assets/journal.jpeg') },
-    { id: '6', title: 'Sleep', route: '/sleep', imagePlaceholderColor: 'bg-indigo-300', imagePlaceholder: require('../../assets/night.jpeg') },
-] as const;
+import { useTranslation } from 'react-i18next';
 
 export default function HomeScreen() {
+    const { t } = useTranslation();
     const { stats, recordMood, refresh: refreshStats } = useStats();
     const [isCheckInVisible, setIsCheckInVisible] = useState(false);
     const { subscription, checkExpiry } = useSubscriptionContext();
+
+    const cardData = [
+        { id: '1', title: t('home.cards.selfHealing'), route: '/self-healing', imagePlaceholderColor: 'bg-lime-200', imagePlaceholder: require('../../assets/visualize.jpeg') },
+        { id: '2', title: t('home.cards.learn'), route: '/learn', imagePlaceholderColor: 'bg-blue-200', imagePlaceholder: require('../../assets/learn.jpeg') },
+        { id: '3', title: t('home.cards.breathe'), route: '/breathe', imagePlaceholderColor: 'bg-emerald-200', imagePlaceholder: require('../../assets/breathe.jpeg') },
+        { id: '4', title: t('home.cards.play'), route: '/play', imagePlaceholderColor: 'bg-pink-200', imagePlaceholder: require('../../assets/play.jpeg') },
+        { id: '5', title: t('home.cards.journal'), route: '/journal', imagePlaceholderColor: 'bg-orange-200', imagePlaceholder: require('../../assets/journal.jpeg') },
+        { id: '6', title: t('home.cards.sleep'), route: '/sleep', imagePlaceholderColor: 'bg-indigo-300', imagePlaceholder: require('../../assets/night.jpeg') },
+    ];
 
     useFocusEffect(
         useCallback(() => {
@@ -72,17 +74,17 @@ export default function HomeScreen() {
                                 </View>
                                 <View className="flex-1">
                                     <Text className="text-slate-700 dark:text-slate-200 font-semibold text-xs">
-                                        {subscription.isFreeTrial ? "Free Trial Active" : "Upgrade to Premium"}
+                                        {subscription.isFreeTrial ? t('home.freeTrialActive') : t('home.upgradeToPremium')}
                                     </Text>
                                     <Text className="text-slate-400 text-[10px]">
-                                        {subscription.isFreeTrial ? "Upgrade to keep full access" : "Unlock full access to all features"}
+                                        {subscription.isFreeTrial ? t('home.freeTrialSubtext') : t('home.upgradeSubtext')}
                                     </Text>
                                 </View>
                                 <ChevronRight size={14} color="#94a3b8" />
                             </TouchableOpacity>
                         )}
 
-                        <Text className='text-4xl font-medium text-center mt-6 mb-2 text-primaryLight dark:text-white'>My Journey</Text>
+                        <Text className='text-4xl font-medium text-center mt-6 mb-2 text-primaryLight dark:text-white'>{t('home.title')}</Text>
 
                         {/* Gauge Section */}
                         <View className="mt-2">
@@ -91,14 +93,14 @@ export default function HomeScreen() {
                     </View>
                     <View className="flex-1 p-1 rounded-[50px]">
                         <FlatList
-                            data={DATA}
+                            data={cardData}
                             keyExtractor={(item) => item.id}
                             numColumns={2}
                             columnWrapperStyle={{ justifyContent: 'space-between', paddingHorizontal: 15 }}
                             contentContainerStyle={{ paddingBottom: 10 }}
                             renderItem={({ item }) => (
                                 <PressableCard
-                                    onPress={() => router.push(item.route)}
+                                    onPress={() => router.push(item.route as any)}
                                     title={item.title}
                                     imagePlaceholderColor={item.imagePlaceholderColor}
                                     imageSource={item.imagePlaceholder}

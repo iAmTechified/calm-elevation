@@ -7,6 +7,7 @@ import { StatusBar } from 'expo-status-bar';
 import ProgressHeader from '../../components/ProgressHeader';
 import Back from '../../components/Back';
 import { useJournal } from '../../hooks/useJournal';
+import { useTranslation } from 'react-i18next';
 
 const { width } = Dimensions.get('window');
 
@@ -58,6 +59,7 @@ export default function MoodSelectionScreen() {
     const router = useRouter();
     const params = useLocalSearchParams();
     const { getEntryById } = useJournal();
+    const { t } = useTranslation();
     const [selectedMood, setSelectedMood] = useState<string | null>(null);
     const insets = useSafeAreaInsets();
 
@@ -96,7 +98,7 @@ export default function MoodSelectionScreen() {
 
             <ScrollView className="flex-1 px-6" contentContainerStyle={{ paddingBottom: 100 }}>
                 <Text className="text-3xl font-bold text-slate-700 dark:text-white text-center mb-8 mt-4">
-                    How are you feeling?
+                    {t('journal.howAreYouFeeling')}
                 </Text>
 
                 <View className="flex-row flex-wrap justify-between">
@@ -115,8 +117,8 @@ export default function MoodSelectionScreen() {
                                         resizeMode="cover"
                                     />
                                 </View>
-                                <Text className="text-slate-600 dark:text-slate-400 text-center mt-2 font-medium bg-transparent">
-                                    {mood.label}
+                                <Text className="text-slate-600 dark:text-slate-400 text-center mt-2 font-medium bg-transparent capitalize">
+                                    {t('journal.moods.' + mood.id, mood.label)}
                                 </Text>
                             </Pressable>
                         );
@@ -134,7 +136,7 @@ export default function MoodSelectionScreen() {
                     disabled={!selectedMood}
                     className={`nav-button h-14 rounded-full items-center justify-center flex-row shadow-sm ${selectedMood ? 'bg-teal-500' : 'bg-slate-300 dark:bg-slate-700'}`}
                 >
-                    <Text className="text-white text-xl font-sans font-semibold mr-2">{params.id ? 'Continue' : 'Continue'}</Text>
+                    <Text className="text-white text-xl font-sans font-semibold mr-2">{t('common.continue')}</Text>
                 </TouchableOpacity>
             </View>
         </SafeAreaView>

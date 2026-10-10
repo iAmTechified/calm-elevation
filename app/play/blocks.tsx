@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, Dimensions } from 'react-native';
+import { View, Text, TouchableOpacity, useWindowDimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { ArrowLeft, Trash2 } from 'lucide-react-native';
 import Svg, { Path, G } from 'react-native-svg';
 import { useColorScheme } from 'nativewind';
 import { useStats } from '../../hooks/useStats';
+import { useTranslation } from 'react-i18next';
 
-const { width } = Dimensions.get('window');
 const GRID_SIZE = 5;
 const BLOCK_WIDTH = 50;
 const BLOCK_HEIGHT = 40; // visual height of top face
@@ -21,6 +21,8 @@ const LAYER_HEIGHT = 15; // pixels to shift up per layer
 
 export default function BlocksScreen() {
     const router = useRouter();
+    const { t } = useTranslation();
+    const { width, height } = useWindowDimensions();
     const { colorScheme } = useColorScheme();
     const isDark = colorScheme === 'dark';
     const { updateEmotionalState } = useStats();
@@ -48,7 +50,7 @@ export default function BlocksScreen() {
 
     // Calculate center offset to center the grid on screen
     const centerX = width / 2;
-    const centerY = 200;
+    const centerY = Math.max(160, Math.min(height * 0.28, 240));
 
     const renderBlock = (r: number, c: number, h: number) => {
         const x = (c - r) * (BLOCK_WIDTH / 2);
@@ -170,7 +172,7 @@ export default function BlocksScreen() {
                 </Svg>
 
                 <View className="absolute bottom-12 w-full items-center">
-                    <Text className="text-slate-500 dark:text-slate-400 font-medium">Tap empty spots to build. Tap blocks to grow.</Text>
+                    <Text className="text-slate-500 dark:text-slate-400 font-medium">{t('play.blocksInstruction')}</Text>
                 </View>
             </View>
 

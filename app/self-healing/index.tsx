@@ -9,12 +9,22 @@ import { useSelfHealing } from '../../hooks/useSelfHealing';
 import { BOOKS, Book } from '../../data/self-healing';
 import Back from '../../components/Back';
 import PhysicalBookBanner from '../../components/PhysicalBookBanner';
+import { useTranslation } from 'react-i18next';
 
 export default function SelfHealingScreen() {
     const router = useRouter();
+    const { t, i18n } = useTranslation();
     const { getBookCompletedDays, getTotalCompletedLessonsCount } = useSelfHealing();
 
     const totalCompleted = getTotalCompletedLessonsCount();
+
+    // Sort books so that the active language appears first
+    const activeLangCode = i18n.language === 'nl' ? 'NL' : 'EN';
+    const sortedBooks = [...BOOKS].sort((a, b) => {
+        if (a.language === activeLangCode && b.language !== activeLangCode) return -1;
+        if (b.language === activeLangCode && a.language !== activeLangCode) return 1;
+        return 0;
+    });
 
     return (
         <View className="flex-1 h-full bg-slate-50 dark:bg-slate-950">
@@ -34,10 +44,10 @@ export default function SelfHealingScreen() {
                     <Back onPress={() => router.back()} style="bg-white dark:bg-slate-800 shadow-sm" iconColor="black" />
                     <View className="items-center">
                         <Text className="text-xl font-bold text-slate-900 dark:text-white">
-                            Self Healing & Confidence
+                            {t('selfHealing.title')}
                         </Text>
                         <Text className="text-xs font-medium text-slate-500 dark:text-slate-400">
-                            Guided Workbooks by Joseph I.
+                            {t('selfHealing.subtitle')}
                         </Text>
                     </View>
                     <View className="w-10" />
@@ -51,46 +61,46 @@ export default function SelfHealingScreen() {
                     {/* Top Progress Tracker */}
                     <View className="mb-6 bg-white dark:bg-slate-900 rounded-3xl p-5 border border-slate-100 dark:border-slate-800 shadow-sm">
                         <View className="flex-row items-center justify-between mb-3">
-                            <View className="flex-row items-center">
-                                <View className="p-2.5 bg-indigo-100 dark:bg-indigo-900/40 rounded-2xl mr-3">
+                            <View className="flex-row items-center flex-1 min-w-0 mr-3">
+                                <View className="p-2.5 bg-indigo-100 dark:bg-indigo-900/40 rounded-2xl mr-3 shrink-0">
                                     <Award size={22} color="#6366F1" />
                                 </View>
-                                <View>
-                                    <Text className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
-                                        Overall Progress
+                                <View className="flex-1 min-w-0">
+                                    <Text className="text-xs font-semibold text-slate-400 uppercase tracking-wider" numberOfLines={1}>
+                                        {t('selfHealing.overallProgress')}
                                     </Text>
-                                    <Text className="text-xl font-bold text-slate-900 dark:text-white">
-                                        {totalCompleted} Lessons Completed
+                                    <Text className="text-xl font-bold text-slate-900 dark:text-white" numberOfLines={1} adjustsFontSizeToFit>
+                                        {t('selfHealing.lessonsCompleted', { count: totalCompleted })}
                                     </Text>
                                 </View>
                             </View>
 
-                            <View className="flex-row items-center bg-amber-100 dark:bg-amber-900/40 px-3 py-1.5 rounded-full border border-amber-200 dark:border-amber-800/40">
+                            <View className="flex-row items-center bg-amber-100 dark:bg-amber-900/40 px-3 py-1.5 rounded-full border border-amber-200 dark:border-amber-800/40 shrink-0">
                                 <Flame size={16} color="#F59E0B" className="mr-1" />
                                 <Text className="text-amber-700 dark:text-amber-300 font-bold text-xs">
-                                    Active Streak
+                                    {t('selfHealing.activeStreak')}
                                 </Text>
                             </View>
                         </View>
 
                         <Text className="text-xs text-slate-500 dark:text-slate-400 leading-4">
-                            Select a workbook below to start or continue your daily 30-day journey.
+                            {t('selfHealing.selectWorkbook')}
                         </Text>
                     </View>
 
                     {/* Section Header */}
                     <View className="flex-row items-center justify-between mb-4">
                         <Text className="text-lg font-bold text-slate-900 dark:text-white">
-                            Available Workbooks (4 Editions)
+                            {t('selfHealing.availableWorkbooks')}
                         </Text>
                         <Text className="text-xs font-semibold text-indigo-600 dark:text-indigo-400">
-                            EN & NL
+                            {activeLangCode === 'NL' ? '🇳🇱 NL & 🇬🇧 EN' : '🇬🇧 EN & 🇳🇱 NL'}
                         </Text>
                     </View>
 
                     {/* 4 Book Tiles */}
                     <View className="gap-y-4">
-                        {BOOKS.map((book: Book) => {
+                        {sortedBooks.map((book: Book) => {
                             const completedCount = getBookCompletedDays(book.id).length;
                             const progressPercent = Math.round((completedCount / book.totalDays) * 100);
 
@@ -102,7 +112,7 @@ export default function SelfHealingScreen() {
                                     className="bg-white dark:bg-slate-900 rounded-3xl p-5 border border-slate-100 dark:border-slate-800 shadow-sm flex-row items-center justify-between"
                                 >
                                     <View className="flex-1 mr-3">
-                                        <View className="flex-row items-center mb-2">
+                                        <View className="flex-row items-center flex-wrap gap-y-1 mb-2">
                                             <View className={`px-2.5 py-0.5 rounded-full ${book.coverColor} mr-2`}>
                                                 <Text className="text-white font-bold text-[10px]">
                                                     {book.language === 'EN' ? '🇬🇧 English' : '🇳🇱 Nederlands'}
@@ -131,7 +141,7 @@ export default function SelfHealingScreen() {
                                                 />
                                             </View>
                                             <Text className="text-xs font-bold text-slate-600 dark:text-slate-300">
-                                                {completedCount}/{book.totalDays} Days
+                                                {t('selfHealing.daysSummary', { completed: completedCount, total: book.totalDays })}
                                             </Text>
                                         </View>
                                     </View>

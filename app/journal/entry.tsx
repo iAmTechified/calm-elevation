@@ -8,35 +8,37 @@ import ProgressHeader from '../../components/ProgressHeader';
 import Back from '../../components/Back';
 import { useJournal } from '../../hooks/useJournal';
 import { useStats } from '../../hooks/useStats';
-
-const questions = [
-    {
-        id: 'accomplished',
-        title: '3 things you accomplished today, big or small:',
-        placeholder: '3 things you accomplished today, big or small:',
-    },
-    {
-        id: 'weighing',
-        title: 'Is something weighing you down? Write it down and let it go.',
-        placeholder: 'Is something weighing you down? Write it down and let it go:',
-    },
-    {
-        id: 'grateful',
-        title: 'What are you feeling grateful for?',
-        placeholder: 'What are you feeling grateful for?',
-    },
-    {
-        id: 'notes',
-        title: 'Additional Notes:',
-        placeholder: 'Additional Notes:',
-    },
-];
+import { useTranslation } from 'react-i18next';
 
 export default function JournalEntryScreen() {
     const router = useRouter();
+    const { t } = useTranslation();
     const params = useLocalSearchParams();
     const [currentStep, setCurrentStep] = useState(0);
     const [answers, setAnswers] = useState<Record<string, string>>({});
+
+    const questions = [
+        {
+            id: 'accomplished',
+            title: t('journal.questions.accomplished.title'),
+            placeholder: t('journal.questions.accomplished.placeholder'),
+        },
+        {
+            id: 'weighing',
+            title: t('journal.questions.weighing.title'),
+            placeholder: t('journal.questions.weighing.placeholder'),
+        },
+        {
+            id: 'grateful',
+            title: t('journal.questions.grateful.title'),
+            placeholder: t('journal.questions.grateful.placeholder'),
+        },
+        {
+            id: 'notes',
+            title: t('journal.questions.notes.title'),
+            placeholder: t('journal.questions.notes.placeholder'),
+        },
+    ];
 
     const currentQuestion = questions[currentStep];
     const isLastStep = currentStep === questions.length - 1;

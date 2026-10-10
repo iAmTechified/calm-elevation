@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, ScrollView, TouchableOpacity, Image, Dimensions } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { Settings as SettingsIcon, Trophy, Calendar as CalendarIcon, Star } from 'lucide-react-native';
@@ -8,6 +8,7 @@ import { useJournal } from '../../../hooks/useJournal';
 import { useSubscription } from '../../../hooks/useSubscription';
 import { useFocusEffect } from 'expo-router';
 import { useCallback, useState, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 
 const MOODS = [
     require('../../../assets/moods/determined.jpeg'),
@@ -72,14 +73,14 @@ const CircularProgress = ({ current, total, label, image }: { current: number, t
                     <Text className="text-[#3A8E91] font-bold text-xs">{current} / {total}</Text>
                 </View>
             </View>
-            <Text className="text-center text-slate-600 dark:text-slate-300 font-medium text-sm leading-tight h-10">{label}</Text>
+            <Text className="text-center text-slate-600 dark:text-slate-300 font-medium text-sm leading-tight min-h-[40px]">{label}</Text>
         </View>
     );
 }
 
 export default function StatsScreen() {
     const router = useRouter();
-    const screenWidth = Dimensions.get('window').width;
+    const { t } = useTranslation();
 
     const { stats, refresh: refreshStats, getCourseProgress } = useStats();
     const { entries, journalStreak, totalEntries, totalWords, refresh: refreshJournal } = useJournal();
@@ -151,7 +152,7 @@ export default function StatsScreen() {
                 {/* Header */}
                 <View className="px-6 py-4 bg-white dark:bg-slate-900 border-b border-slate-50 dark:border-slate-800 flex-row justify-between items-center shadow-sm z-10">
                     <View className="w-8" />
-                    <Text className="text-2xl font-bold text-[#1e293b] dark:text-white text-center">My Stats</Text>
+                    <Text className="text-2xl font-bold text-[#1e293b] dark:text-white text-center">{t('stats.title')}</Text>
                     <TouchableOpacity onPress={() => router.push('../app-settings')} className="bg-[#E0F2F1] dark:bg-[#1e293b] p-2 rounded-full">
                         <SettingsIcon size={24} color="#3A8E91" />
                     </TouchableOpacity>
@@ -163,12 +164,12 @@ export default function StatsScreen() {
                     {/* Subscription Card */}
                     <View className="bg-white dark:bg-slate-800 rounded-3xl p-6 mb-6 shadow-sm border border-slate-100 dark:border-slate-700">
                         <View className="flex-row justify-between items-center mb-4">
-                            <Text className="text-xl font-bold text-slate-700 dark:text-white">Subscription</Text>
+                            <Text className="text-xl font-bold text-slate-700 dark:text-white">{t('stats.subscription')}</Text>
                             <View className={`px-3 py-1 rounded-full ${subscription.isSubscribed ? subscription.isFreeTrial ? 'bg-amber-100' : 'bg-green-100' : 'bg-red-50'}`}>
                                 <Text className={`text-xs font-bold ${subscription.isSubscribed ? subscription.isFreeTrial ? 'text-amber-700' : 'text-green-700' : 'text-red-600'}`}>
                                     {subscription.isSubscribed
-                                        ? subscription.isFreeTrial ? 'FREE TRIAL' : 'PREMIUM'
-                                        : 'EXPIRED'}
+                                        ? subscription.isFreeTrial ? t('stats.freeTrialBadge') : t('stats.premiumBadge')
+                                        : t('stats.expiredBadge')}
                                 </Text>
                             </View>
                         </View>
@@ -178,24 +179,27 @@ export default function StatsScreen() {
                                 <View>
                                     {subscription.isFreeTrial ? (
                                         <>
-                                            <Text className="text-slate-500 dark:text-slate-400 text-sm mb-1">Limited Access Trial</Text>
-                                            <Text className="text-slate-800 dark:text-slate-200 text-lg font-semibold">3-Day Free Trial</Text>
+                                            <Text className="text-slate-500 dark:text-slate-400 text-sm mb-1">{t('stats.limitedAccessTrial')}</Text>
+                                            <Text className="text-slate-800 dark:text-slate-200 text-lg font-semibold">{t('stats.threeDayFreeTrial')}</Text>
                                             <Text className="text-slate-400 text-xs mt-1">
                                                 {subscription.expiryDate ?
-                                                    `Expires on ${new Date(subscription.expiryDate).toLocaleDateString()} at ${new Date(subscription.expiryDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`
+                                                    t('stats.expiresOn', {
+                                                        date: new Date(subscription.expiryDate).toLocaleDateString(),
+                                                        time: new Date(subscription.expiryDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                                                    })
                                                     : ''}
                                             </Text>
-                                            <Text className="text-slate-500 text-xs mt-2 italic">Upgrade to unlock all content.</Text>
+                                            <Text className="text-slate-500 text-xs mt-2 italic">{t('stats.upgradeToUnlock')}</Text>
                                         </>
                                     ) : (
                                         <>
-                                            <Text className="text-slate-500 text-sm mb-1">Current Plan</Text>
+                                            <Text className="text-slate-500 text-sm mb-1">{t('stats.currentPlan')}</Text>
                                             <Text className="text-slate-800 dark:text-slate-200 text-lg font-semibold capitalize">
-                                                {subscription.planId === 'yearly' ? 'Yearly Premium' : 'Monthly Premium'}
+                                                {subscription.planId === 'yearly' ? t('stats.yearlyPremium') : t('stats.monthlyPremium')}
                                             </Text>
                                             {subscription.expiryDate && (
                                                 <Text className="text-slate-400 text-xs mt-1">
-                                                    Expires on {new Date(subscription.expiryDate).toLocaleDateString()}
+                                                    {t('stats.expiresOnDate', { date: new Date(subscription.expiryDate).toLocaleDateString() })}
                                                 </Text>
                                             )}
                                         </>
@@ -203,7 +207,7 @@ export default function StatsScreen() {
                                 </View>
                             ) : (
                                 <Text className="text-slate-500 text-sm">
-                                    Your free trial has expired. Upgrade to continue your journey and unlock all features.
+                                    {t('stats.trialExpiredNotice')}
                                 </Text>
                             )}
                         </View>
@@ -215,9 +219,9 @@ export default function StatsScreen() {
                                 className={`py-3 rounded-xl items-center ${(!subscription.isSubscribed || subscription.isFreeTrial) ? 'bg-[#3A8E91]' : 'bg-[#E0F2F1]'}`}
                             >
                                 <Text className={`font-bold ${(!subscription.isSubscribed || subscription.isFreeTrial) ? 'text-white' : 'text-[#3A8E91]'}`}>
-                                {(!subscription.isSubscribed || subscription.isFreeTrial) ? 'Unlock Full Access' : 'Manage Subscription'}
-                            </Text>
-                        </TouchableOpacity>
+                                    {(!subscription.isSubscribed || subscription.isFreeTrial) ? t('stats.unlockFullAccess') : t('stats.manageSubscription')}
+                                </Text>
+                            </TouchableOpacity>
                         ) : ""}
                     </View>
 
@@ -234,7 +238,7 @@ export default function StatsScreen() {
 
                     {/* Mood Chart */}
                     <View className="bg-white dark:bg-slate-800 rounded-3xl p-4 mb-6 shadow-sm border border-slate-100 dark:border-slate-700">
-                        <Text className="text-xl font-bold text-slate-700 dark:text-white text-center mb-6">My Daily Mood</Text>
+                        <Text className="text-xl font-bold text-slate-700 dark:text-white text-center mb-6">{t('stats.myDailyMood')}</Text>
                         <View className="flex-row">
                             {/* Y Axis Icons */}
                             <View className="justify-between mr-2 py-2 h-[200px]">
@@ -260,25 +264,9 @@ export default function StatsScreen() {
                                                 <View
                                                     className="absolute w-4 h-4 rounded-full bg-[#3A8E91] shadow-sm ring-2 ring-white"
                                                     style={{
-                                                        top: (data.moodIndex * 50) - 8 + 12 // 200px / 4 intervals = 50px step. Plus offset
-                                                        // Actually, 5 items spread over 200px.
-                                                        // Index 0: 0% -> top 
-                                                        // Index 4: 100% -> bottom
-                                                        // Top is 0.
-                                                        // The items are centered on the grid lines?
-                                                        // The Y Axis icons are space-between. 
-                                                        // Let's assume equidistant. 
-                                                        // 0 -> 0%
-                                                        // 1 -> 25%
-                                                        // 2 -> 50%
-                                                        // 3 -> 75%
-                                                        // 4 -> 100%
-                                                        // top: `${data.moodIndex * 25}%` is roughly correct but we need to center on the icon height.
-                                                        // The grid lines are at top: i*25%.
-                                                        // So we align to that.
+                                                        top: (data.moodIndex * 50) - 8 + 12
                                                     }}
                                                 >
-                                                    {/* Adjusting top position via style override for cleaner look */}
                                                     <View className="absolute w-full h-full rounded-full bg-[#3A8E91]" style={{ top: -2 }} />
                                                 </View>
                                             )}
@@ -286,9 +274,6 @@ export default function StatsScreen() {
                                     ))}
                                 </View>
 
-                                {/* Re-rendering dots carefully with absolute positioning over the whole grid container might be easier, but per-column is okay if aligned. 
-                                    To align perfectly with horizontal lines (top: 0%, 25%, 50%, 75%, 100%):
-                                */}
                                 <View className="absolute top-0 left-0 w-full h-[200px] flex-row justify-between pl-[1px]">
                                     {chartData.map((data, i) => (
                                         <View key={i} className="flex-1 items-center relative h-full">
@@ -308,7 +293,9 @@ export default function StatsScreen() {
                                 {/* X Axis Labels */}
                                 <View className="flex-row justify-between mt-2">
                                     {chartData.map((data, i) => (
-                                        <Text key={i} className="text-[10px] text-slate-400 font-medium w-8 text-center">{data.label}</Text>
+                                        <View key={i} className="flex-1 items-center">
+                                            <Text className="text-[10px] text-slate-400 font-medium text-center">{data.label}</Text>
+                                        </View>
                                     ))}
                                 </View>
                             </View>
@@ -317,22 +304,22 @@ export default function StatsScreen() {
 
                     {/* Stats List */}
                     <StatsCard
-                        title="Daily Streak"
-                        value={`${stats.currentStreak} Day${stats.currentStreak !== 1 ? 's' : ''}`}
+                        title={t('stats.dailyStreak')}
+                        value={`${stats.currentStreak} ${stats.currentStreak === 1 ? t('common.day') : t('common.days')}`}
                         color="text-[#3A8E91]"
                         icon={<Image source={require('../../../assets/cal.png')} className="w-16 h-16" resizeMode="contain" />}
                     />
 
                     <StatsCard
-                        title="Bravery Points"
+                        title={t('stats.braveryPoints')}
                         value={`${stats.braveryPoints}`}
                         color="text-[#3A8E91]"
                         icon={<Image source={require('../../../assets/cal_success.png')} className="w-20 h-20" resizeMode="contain" />}
                     />
 
                     <StatsCard
-                        title={"Healing Journey"}
-                        value={`${stats.completedHealingDays?.length || 0}/60 Days`}
+                        title={t('stats.healingJourney')}
+                        value={`${stats.completedHealingDays?.length || 0}/60 ${t('common.days')}`}
                         color="text-[#3A8E91]"
                         icon={
                             <View className="relative w-16 h-16 items-center justify-center">
@@ -349,19 +336,19 @@ export default function StatsScreen() {
                             <CircularProgress
                                 current={getCourseProgress('understanding-anxiety').completed}
                                 total={getCourseProgress('understanding-anxiety').total}
-                                label="Understanding Lessons"
+                                label={t('stats.understandingLessons')}
                                 image={require('../../../assets/cal.png')}
                             />
                             <CircularProgress
                                 current={getCourseProgress('short-term-relief').completed}
                                 total={getCourseProgress('short-term-relief').total}
-                                label="Short Term Lessons"
+                                label={t('stats.shortTermLessons')}
                                 image={require('../../../assets/cal.png')}
                             />
                             <CircularProgress
                                 current={getCourseProgress('long-term-resilience').completed}
                                 total={getCourseProgress('long-term-resilience').total}
-                                label="Long Term Lessons"
+                                label={t('stats.longTermLessons')}
                                 image={require('../../../assets/cal.png')}
                             />
                         </View>
@@ -373,20 +360,10 @@ export default function StatsScreen() {
                             <Image source={require('../../../assets/cal_meditate.jpeg')} className="w-16 h-16" resizeMode="contain" />
                         </View>
                         <View className="flex-1 items-end">
-                            <Text className="text-slate-500 dark:text-slate-400 font-medium text-right text-base mb-1">Time in Breathr</Text>
-                            <Text className="text-3xl font-bold text-[#3A8E91]">{stats.timeBreathr} min{stats.timeBreathr !== 1 ? 's' : ''}</Text>
+                            <Text className="text-slate-500 dark:text-slate-400 font-medium text-right text-base mb-1">{t('stats.timeInBreathr')}</Text>
+                            <Text className="text-3xl font-bold text-[#3A8E91]">{stats.timeBreathr} {stats.timeBreathr === 1 ? t('common.min') : t('common.mins')}</Text>
                         </View>
                     </View>
-
-                    {/* <View className="bg-white dark:bg-slate-800 rounded-3xl p-4 mb-4 flex-row items-center justify-between shadow-sm border border-slate-100 dark:border-slate-700 min-h-[100px]">
-                        <View className="w-20 items-center justify-center">
-                            <Image source={require('../../../assets/cal.png')} className="w-16 h-16" resizeMode="contain" />
-                        </View>
-                        <View className="flex-1 items-end">
-                            <Text className="text-slate-500 dark:text-slate-400 font-medium text-right text-base mb-1">Time in Visualizr</Text>
-                            <Text className="text-3xl font-bold text-[#3A8E91]">{stats.timeVisualizr} min{stats.timeVisualizr !== 1 ? 's' : ''}</Text>
-                        </View>
-                    </View> */}
 
                     {/* Journal Streak */}
                     <View className="bg-white dark:bg-slate-800 rounded-3xl p-6 mb-4 flex-row items-center justify-between shadow-sm border border-slate-100 dark:border-slate-700">
@@ -399,19 +376,19 @@ export default function StatsScreen() {
                             </View>
                         </View>
                         <View className="items-end flex-1">
-                            <Text className="text-slate-500 dark:text-slate-400 font-medium text-right text-base mb-1">Daily Journal Streak</Text>
-                            <Text className="text-3xl font-bold text-[#3A8E91]">{journalStreak} Day{journalStreak !== 1 ? 's' : ''}</Text>
+                            <Text className="text-slate-500 dark:text-slate-400 font-medium text-right text-base mb-1">{t('stats.dailyJournalStreak')}</Text>
+                            <Text className="text-3xl font-bold text-[#3A8E91]">{journalStreak} {journalStreak === 1 ? t('common.day') : t('common.days')}</Text>
                         </View>
                     </View>
 
                     {/* Journal Stats Summary */}
                     <View className="flex-row justify-between mb-6">
                         <View className="bg-white dark:bg-slate-800 rounded-2xl p-4 shadow-sm border border-slate-50 dark:border-slate-700 flex-1 mr-2">
-                            <Text className="text-slate-400 dark:text-slate-500 text-xs font-medium mb-1 capitalize">Total Entries</Text>
+                            <Text className="text-slate-400 dark:text-slate-500 text-xs font-medium mb-1 capitalize">{t('stats.totalEntries')}</Text>
                             <Text className="text-xl font-bold text-slate-700 dark:text-white uppercase">{totalEntries}</Text>
                         </View>
                         <View className="bg-white dark:bg-slate-800 rounded-2xl p-4 shadow-sm border border-slate-50 dark:border-slate-700 flex-1 ml-2">
-                            <Text className="text-slate-400 dark:text-slate-500 text-xs font-medium mb-1 capitalize">Words Written</Text>
+                            <Text className="text-slate-400 dark:text-slate-500 text-xs font-medium mb-1 capitalize">{t('stats.wordsWritten')}</Text>
                             <Text className="text-xl font-bold text-slate-700 dark:text-white uppercase">{totalWords}</Text>
                         </View>
                     </View>

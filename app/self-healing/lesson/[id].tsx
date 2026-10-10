@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, TextInput, Dimensions } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, TextInput } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { useLocalSearchParams, useRouter, Redirect } from 'expo-router';
@@ -11,9 +11,11 @@ import { useSelfHealing } from '../../../hooks/useSelfHealing';
 import { useStats } from '../../../hooks/useStats';
 import { CheckInModal } from '../../../components/CheckInModal';
 import { BOOKS, Lesson, LessonContent } from '../../../data/self-healing';
+import { useTranslation } from 'react-i18next';
 
 export default function LessonScreen() {
     const router = useRouter();
+    const { t } = useTranslation();
     const { id } = useLocalSearchParams();
     const { markDayComplete, saveReflection, saveRating, state } = useSelfHealing();
     const { markHealingDayCompleted, recordMood } = useStats();
@@ -109,7 +111,7 @@ export default function LessonScreen() {
                     rightElement={
                         <View className="flex-row items-center bg-indigo-100 dark:bg-indigo-900/50 px-3 py-1 rounded-full">
                             <Text className="text-indigo-600 dark:text-indigo-300 font-bold text-xs">
-                                Day {lesson.day}
+                                {t('selfHealing.dayNumber', { day: lesson.day })}
                             </Text>
                         </View>
                     }
@@ -117,11 +119,12 @@ export default function LessonScreen() {
 
                 {/* Content Card */}
                 <View className="flex-1 px-6 pb-4 pt-2">
-                    <View className="flex-1 bg-white dark:bg-slate-900 rounded-3xl p-6 shadow-sm border border-slate-100 dark:border-slate-800 justify-center">
-                        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ flexGrow: 1, justifyContent: 'center' }}>
+                    <View className="flex-1 bg-white dark:bg-slate-900 rounded-3xl p-6 shadow-sm border border-slate-100 dark:border-slate-800">
+                        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ flexGrow: 1 }}>
                             {renderPageContent({
                                 page: pages[currentPage],
                                 isDark,
+                                t,
                                 reflectionText,
                                 setReflectionText: handleSaveReflection,
                                 beforeScore,
@@ -133,7 +136,7 @@ export default function LessonScreen() {
                 </View>
 
                 {/* Navigation Footer */}
-                <View className="px-6 py-4" style={{ marginBottom: insets.bottom }}>
+                <View className="px-6 py-4">
                     <LessonNavigationControls
                         currentPage={currentPage}
                         totalPages={pages.length}
@@ -158,6 +161,7 @@ export default function LessonScreen() {
 interface RenderProps {
     page: LessonContent;
     isDark: boolean;
+    t: (key: string, options?: any) => string;
     reflectionText: string;
     setReflectionText: (text: string) => void;
     beforeScore?: number;
@@ -168,6 +172,7 @@ interface RenderProps {
 function renderPageContent({
     page,
     isDark,
+    t,
     reflectionText,
     setReflectionText,
     beforeScore,
@@ -238,7 +243,7 @@ function renderPageContent({
                         <TextInput
                             value={reflectionText}
                             onChangeText={setReflectionText}
-                            placeholder="Write your thoughts here..."
+                            placeholder={t('selfHealing.reflectionPlaceholder')}
                             placeholderTextColor={isDark ? '#94a3b8' : '#cbd5e1'}
                             multiline
                             numberOfLines={4}
@@ -256,24 +261,24 @@ function renderPageContent({
         return (
             <View className="py-2">
                 <Text className={`text-2xl font-bold ${titleColor} mb-3`}>
-                    {page.title || 'Anxiety & Confidence Rating'}
+                    {page.title || t('selfHealing.ratingTitle')}
                 </Text>
 
                 <Text className={`text-base ${textColor} mb-6 leading-6`}>
-                    Track your confidence or anxiety level before and after completing today's challenge.
+                    {t('selfHealing.ratingSubtext')}
                 </Text>
 
                 {/* BEFORE Score */}
                 <View className="mb-6 bg-slate-50 dark:bg-slate-800/80 p-4 rounded-2xl border border-slate-100 dark:border-slate-700">
                     <Text className="text-sm font-bold text-slate-700 dark:text-slate-200 mb-3">
-                        1. Rating BEFORE Challenge (1 = Very Low, 10 = Very High):
+                        {t('selfHealing.ratingBefore')}
                     </Text>
-                    <View className="flex-row flex-wrap justify-between gap-1.5">
+                    <View className="flex-row items-center justify-between gap-1">
                         {scores.map(s => (
                             <TouchableOpacity
                                 key={`before-${s}`}
                                 onPress={() => setRating(s, undefined)}
-                                className={`w-8 h-8 rounded-xl items-center justify-center ${
+                                className={`flex-1 aspect-square max-w-[32px] rounded-xl items-center justify-center ${
                                     beforeScore === s
                                         ? 'bg-indigo-600 text-white'
                                         : 'bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700'
@@ -290,14 +295,14 @@ function renderPageContent({
                 {/* AFTER Score */}
                 <View className="mb-4 bg-slate-50 dark:bg-slate-800/80 p-4 rounded-2xl border border-slate-100 dark:border-slate-700">
                     <Text className="text-sm font-bold text-slate-700 dark:text-slate-200 mb-3">
-                        2. Rating AFTER Challenge (1 = Very Low, 10 = Very High):
+                        {t('selfHealing.ratingAfter')}
                     </Text>
-                    <View className="flex-row flex-wrap justify-between gap-1.5">
+                    <View className="flex-row items-center justify-between gap-1">
                         {scores.map(s => (
                             <TouchableOpacity
                                 key={`after-${s}`}
                                 onPress={() => setRating(undefined, s)}
-                                className={`w-8 h-8 rounded-xl items-center justify-center ${
+                                className={`flex-1 aspect-square max-w-[32px] rounded-xl items-center justify-center ${
                                     afterScore === s
                                         ? 'bg-emerald-600 text-white'
                                         : 'bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700'

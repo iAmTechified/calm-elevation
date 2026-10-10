@@ -14,10 +14,13 @@ import {
     AlertTriangle,
     LogOut,
     ExternalLink,
-    Crown
+    Crown,
+    Globe
 } from 'lucide-react-native';
 import { useColorScheme } from 'nativewind';
 import { StatusBar } from 'expo-status-bar';
+import { useTranslation } from 'react-i18next';
+import { changeAppLanguage } from '../../i18n';
 
 import { useNotifications } from '../../hooks/useNotifications';
 
@@ -83,6 +86,7 @@ const SettingRow = ({
 
 export default function AppSettings() {
     const router = useRouter();
+    const { t, i18n } = useTranslation();
     const { colorScheme, setColorScheme } = useColorScheme();
     const [haptic, setHaptic] = React.useState(true);
     const [quotes, setQuotes] = React.useState(true);
@@ -90,6 +94,11 @@ export default function AppSettings() {
 
     const toggleTheme = () => {
         setColorScheme(colorScheme === 'dark' ? 'light' : 'dark');
+    };
+
+    const toggleLanguage = () => {
+        const nextLang = i18n.language === 'nl' ? 'en' : 'nl';
+        changeAppLanguage(nextLang);
     };
 
     return (
@@ -105,7 +114,7 @@ export default function AppSettings() {
                     <X size={24} color={colorScheme === 'dark' ? '#fff' : '#334155'} />
                 </TouchableOpacity>
                 <View className="flex-1 items-center mr-10">
-                    <Text className="text-xl font-bold text-slate-800 dark:text-white">Settings</Text>
+                    <Text className="text-xl font-bold text-slate-800 dark:text-white">{t('settings.title')}</Text>
                 </View>
             </View>
 
@@ -114,14 +123,22 @@ export default function AppSettings() {
                 {/* Top Section */}
                 <View className="mt-2 bg-white dark:bg-slate-900">
                     <SettingRow
-                        label="Unlock Premium"
+                        label={t('settings.unlockPremium')}
                         type="link"
                         icon={Crown}
                         color="#F59E0B"
                         onPress={() => router.push('/paywall?from=settings')}
                     />
                     <SettingRow
-                        label="Notifications"
+                        label={t('settings.language')}
+                        type="dropdown"
+                        icon={Globe}
+                        color="#3A8E91"
+                        value={i18n.language === 'nl' ? 'Nederlands' : 'English'}
+                        onPress={toggleLanguage}
+                    />
+                    <SettingRow
+                        label={t('settings.notifications')}
                         type="switch"
                         switchValue={areNotificationsEnabled}
                         onSwitchChange={toggleNotifications}
@@ -129,14 +146,11 @@ export default function AppSettings() {
                         color="#3A8E91"
                     />
                     <SettingRow
-                        label="Theme"
+                        label={t('settings.theme')}
                         type="dropdown"
-                        value={colorScheme === 'dark' ? "Dark" : "Light"}
-                        onPress={toggleTheme} // Making the row clickable for simplicity
+                        value={colorScheme === 'dark' ? t('settings.dark') : t('settings.light')}
+                        onPress={toggleTheme}
                     />
-                    {/* Overlay hack to make dropdown clickable since row is disabled on specific types? No I fixed that logic */}
-                    <TouchableOpacity onPress={toggleTheme} className="absolute top-[120px] w-full h-[60px] opacity-0" />
-
                 </View>
 
                 {/* Reminder Card - Dynamic Prompt */}
@@ -144,13 +158,13 @@ export default function AppSettings() {
                     <View className="mx-4 mt-8 bg-orange-100 dark:bg-slate-800 rounded-3xl p-6 flex-row items-center shadow-sm">
                         <View className="flex-1 mr-4">
                             <Text className="text-slate-800 dark:text-white font-medium text-lg mb-4 leading-6">
-                                Daily practice leads to long term change
+                                {t('settings.reminderTitle')}
                             </Text>
                             <TouchableOpacity
                                 onPress={() => toggleNotifications(true)}
                                 className="bg-[#3A8E91] py-3 px-6 rounded-full self-start shadow-sm shadow-[#3A8E91]/20"
                             >
-                                <Text className="text-white font-bold text-center">Set Reminders</Text>
+                                <Text className="text-white font-bold text-center">{t('settings.setReminders')}</Text>
                             </TouchableOpacity>
                         </View>
                         <View className="justify-center items-center">
@@ -166,7 +180,7 @@ export default function AppSettings() {
                         onPress={() => router.push('/app-settings/disclaimer')}
                         className="p-4 border-b border-slate-100 dark:border-slate-700 active:bg-slate-50 dark:active:bg-slate-700"
                     >
-                        <Text className="text-slate-700 dark:text-slate-200 font-medium text-base">Disclaimer</Text>
+                        <Text className="text-slate-700 dark:text-slate-200 font-medium text-base">{t('settings.disclaimer')}</Text>
                     </TouchableOpacity>
                 </View>
 
@@ -174,10 +188,10 @@ export default function AppSettings() {
                 <View className="mt-8 mb-4 items-center px-4">
                     <View className="flex-row gap-4 mb-4">
                         <TouchableOpacity onPress={() => Linking.openURL('https://calmelevation.com/terms/')}>
-                            <Text className="text-slate-400 dark:text-slate-500 text-xs underline">Terms & Conditions</Text>
+                            <Text className="text-slate-400 dark:text-slate-500 text-xs underline">{t('settings.terms')}</Text>
                         </TouchableOpacity>
                         <TouchableOpacity onPress={() => Linking.openURL('https://calmelevation.com/privacy-policy/')}>
-                            <Text className="text-slate-400 dark:text-slate-500 text-xs underline">Privacy Policy</Text>
+                            <Text className="text-slate-400 dark:text-slate-500 text-xs underline">{t('settings.privacy')}</Text>
                         </TouchableOpacity>
                     </View>
                 </View>

@@ -10,11 +10,13 @@ import { CheckInModal } from '../../components/CheckInModal';
 
 import { sleepTracks } from '../../data/sleep';
 import { useStats } from '../../hooks/useStats';
+import { useTranslation } from 'react-i18next';
 
 export default function SleepPlayerScreen() {
     const router = useRouter();
     const { id } = useLocalSearchParams();
     const { updateEmotionalState } = useStats();
+    const { t } = useTranslation();
 
     const track = sleepTracks.find(t => t.id === id);
     const audioSource = track?.audioSource;
@@ -185,7 +187,7 @@ export default function SleepPlayerScreen() {
                 <View className="w-10" />
             </View>
 
-            <View className="flex-1 items-center justify-center -mt-20" pointerEvents="box-none">
+            <View className="flex-1 items-center justify-center -mt-20 overflow-hidden" pointerEvents="box-none">
                 {/* Rings Animation (Static for now) */}
                 <View className="items-center justify-center relative" pointerEvents="none">
                     <View className="absolute w-[500px] h-[500px] rounded-full border border-white/5" />
@@ -219,7 +221,7 @@ export default function SleepPlayerScreen() {
                 </TouchableOpacity>
 
                 <Text className="text-white/80 text-xl font-medium mb-8 text-center">
-                    {track?.title || 'Sleep Sound'}
+                    {track ? t('sleep.tracks.' + track.id, track.title) : 'Sleep Sound'}
                 </Text>
 
                 {/* Slider / Progress Bar */}

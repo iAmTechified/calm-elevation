@@ -5,9 +5,11 @@ import { StatusBar } from 'expo-status-bar';
 import { useRouter } from 'expo-router';
 import { ArrowLeft, HelpCircle } from 'lucide-react-native';
 import HeroHeader from '../../components/HeroHeader';
+import { useTranslation } from 'react-i18next';
 
 export default function SelfHealingScreen() {
     const router = useRouter();
+    const { t } = useTranslation();
 
     const practices = [
         { id: 1, title: '2 Min Body Scan', duration: '2 mins', color: 'bg-orange-100', icon: 'bg-teal-400' },
@@ -33,18 +35,18 @@ export default function SelfHealingScreen() {
                     {/* Meditating Monster Placeholder */}
                     <View className="w-48 h-48 bg-teal-400 rounded-full items-center justify-center border-4 border-white shadow-sm relative">
                         <View className="w-32 h-20 bg-white/30 rounded-full absolute bottom-4" />
-                        <Text className="text-white font-bold">Meditate</Text>
+                        <Text className="text-white font-bold">{t('visualize.meditate')}</Text>
                     </View>
                 </HeroHeader>
 
                 <View className="px-6 mb-6">
-                    <Text className="text-3xl font-bold text-slate-800 text-center text-[#1E3A8A]">Visualize</Text>
+                    <Text className="text-3xl font-bold text-slate-800 text-center text-[#1E3A8A]">{t('visualize.title')}</Text>
                 </View>
 
                 {/* Description */}
                 <View className="px-8 mb-8">
                     <Text className="text-slate-600 text-center leading-relaxed text-xl font-medium">
-                        Listen to the body scans or visualizations below to get rooted when you are feeling anxious.
+                        {t('visualize.description')}
                     </Text>
                 </View>
 

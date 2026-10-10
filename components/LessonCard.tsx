@@ -1,5 +1,6 @@
 import { Pressable, Text, View, ImageSourcePropType } from "react-native";
 import { Image } from "expo-image";
+import { useTranslation } from "react-i18next";
 
 
 interface LessonCardProps {
@@ -21,6 +22,7 @@ export default function LessonCard({
     imageSource,
     style
 }: LessonCardProps) {
+    const { t } = useTranslation();
     const progress = totalLessons > 0 ? (completedLessons / totalLessons) * 100 : 0;
 
     return (
@@ -44,7 +46,7 @@ export default function LessonCard({
             {/* Content Section */}
             <View className="p-5 py-2 pt-4">
                 <Text className="text-slate-500 dark:text-slate-400 font-bold font-sans text-sm mb-1 tracking-wide">
-                    {completedLessons}/{totalLessons} Completed
+                    {completedLessons}/{totalLessons} {t('common.completed')}
                 </Text>
 
                 <Text className="text-slate-800 dark:text-gray-100 text-xl font-bold font-sans mb-2 tracking-tight">

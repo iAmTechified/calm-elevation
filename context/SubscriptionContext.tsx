@@ -2,14 +2,14 @@ import React, { createContext, useContext, useState, useEffect, useCallback, Rea
 import { AppState, Alert, Platform } from 'react-native';
 import Purchases, { PurchasesPackage, PurchasesOffering, CustomerInfo, PurchasesEntitlementInfo } from 'react-native-purchases';
 import { secureStorage } from '../lib/secureStorage';
+import i18n from '../i18n';
 
 const SUBSCRIPTION_KEY = 'calm_elevation_sub_secure_v1';
 const INSTALL_DATE_KEY = 'calm_elevation_install_date';
 
-// Product IDs provided by the user
 const PRODUCT_IDS = {
-    monthly: 'calm_elevation_subscription:calm-elevation-monthly-premium',
-    yearly: 'calm_elevation_subscription_yearly:calm-elevation-yearly-premium'
+    monthly: Platform.OS === 'ios' ? 'calm_elevation_monthly_premium' : 'calm_elevation_subscription:calm-elevation-monthly-premium',
+    yearly: Platform.OS === 'ios' ? 'calm_elevation_yearly_premium' : 'calm_elevation_subscription_yearly:calm-elevation-yearly-premium'
 };
 
 // RevenueCat API Keys - PLACEHOLDERS
@@ -153,7 +153,7 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
             // 1. Initialize RevenueCat
             if (Platform.OS === 'ios' || Platform.OS === 'android') {
                 try {
-                    Purchases.setLogLevel(Purchases.LOG_LEVEL.ERROR);
+                    Purchases.setLogLevel(Purchases.LOG_LEVEL.DEBUG);
                     const apiKey = Platform.OS === 'ios' ? API_KEYS.apple : API_KEYS.google;
 
                     if (!apiKey) {
@@ -161,26 +161,34 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
                         console.log(`[SubscriptionContext] No API key found for ${Platform.OS}. Skipping RevenueCat configuration.`);
                         setIsConfigured(false);
                     } else {
+                        console.log(`[SubscriptionContext] Configuring RevenueCat for platform: ${Platform.OS}`);
                         Purchases.configure({ apiKey });
-
-                        // Verify configuration by trying to get offerings (ignoring result)
-                        // If configure failed silently or threw catchable error, this helps confirm.
-                        // But actually, configure stays synchronous mostly, but let's assume if we reached here we are good.
-                        // However, we should be careful. 'configure' is void.
-
-                        // We immediately try to get offerings to confirm connectivity/config
-                        const offers = await Purchases.getOfferings();
-                        if (offers.current) {
-                            setOfferings(offers.current);
-                        } else if (offers.all.current) {
-                            setOfferings(offers.all.current);
-                        }
-                        setIsConfigured(true); // Mark as successful
+                        setIsConfigured(true);
                         isConfiguredRef.current = true;
+
+                        try {
+                            const offers = await Purchases.getOfferings();
+                            console.log('[SubscriptionContext] Raw Offerings fetched:', offers);
+
+                            let activeOffering = offers.current;
+                            if (!activeOffering || !activeOffering.availablePackages || activeOffering.availablePackages.length === 0) {
+                                const allOfferings = Object.values(offers.all || {});
+                                activeOffering = allOfferings.find(o => o.availablePackages && o.availablePackages.length > 0) || activeOffering;
+                            }
+
+                            if (activeOffering && activeOffering.availablePackages && activeOffering.availablePackages.length > 0) {
+                                console.log('[SubscriptionContext] Setting active offering packages:', activeOffering.availablePackages.map(p => p.product.identifier));
+                                setOfferings(activeOffering);
+                            } else {
+                                console.warn('[SubscriptionContext] No packages found in RevenueCat offerings!');
+                            }
+                        } catch (offerErr) {
+                            console.log("[SubscriptionContext] Offerings fetch failed (normal on Simulator without host daemon or in sandbox init):", offerErr);
+                        }
                     }
 
                 } catch (rcError) {
-                    console.log("RevenueCat configuration or offerings fetch failed (expected in Expo Go):", rcError);
+                    console.log("RevenueCat configuration failed:", rcError);
                     setIsConfigured(false);
                     isConfiguredRef.current = false;
                 }
@@ -261,50 +269,48 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
                 return false;
             }
 
-            if (!offerings) {
-                // If no offerings (perhaps API key is invalid)
-                console.log(offerings);
-                Alert.alert("Error", "Please contact support");
-                return false;
-            }
-
-            console.log('offerings', offerings);
-            console.log('offerings.availablePackages', offerings.availablePackages);
-            console.log('offerings.monthly', offerings.monthly);
-            console.log('offerings.yearly', offerings.annual);
+            let customerInfoResult: CustomerInfo | null = null;
+            const targetProductId = PRODUCT_IDS[sku];
 
             let packageToBuy: PurchasesPackage | undefined;
-            // offerings is PurchasesOffering. It has .monthly, .annual, etc.
-            if (sku === 'monthly') {
-                packageToBuy = offerings.availablePackages.find((p: PurchasesPackage) => p.product.identifier === PRODUCT_IDS.monthly)
-                    || offerings.monthly
-                    || offerings.availablePackages.find((p: PurchasesPackage) => p.packageType === 'MONTHLY');
+            if (offerings && offerings.availablePackages) {
+                if (sku === 'monthly') {
+                    packageToBuy = offerings.availablePackages.find((p: PurchasesPackage) => p.product.identifier === targetProductId || p.product.identifier.includes('monthly'))
+                        || offerings.monthly
+                        || offerings.availablePackages.find((p: PurchasesPackage) => p.packageType === 'MONTHLY');
+                } else {
+                    packageToBuy = offerings.availablePackages.find((p: PurchasesPackage) => p.product.identifier === targetProductId || p.product.identifier.includes('yearly'))
+                        || offerings.annual
+                        || offerings.availablePackages.find((p: PurchasesPackage) => p.packageType === 'ANNUAL');
+                }
+            }
+
+            if (packageToBuy) {
+                console.log('[SubscriptionContext] Purchasing package:', packageToBuy.product.identifier);
+                const res = await Purchases.purchasePackage(packageToBuy);
+                customerInfoResult = res.customerInfo;
             } else {
-                packageToBuy = offerings.availablePackages.find((p: PurchasesPackage) => p.product.identifier === PRODUCT_IDS.yearly)
-                    || offerings.annual
-                    || offerings.availablePackages.find((p: PurchasesPackage) => p.packageType === 'ANNUAL');
+                console.log('[SubscriptionContext] Offering package not found, attempting direct product purchase for:', targetProductId);
+                const res = await Purchases.purchaseProduct(targetProductId);
+                customerInfoResult = res.customerInfo;
             }
 
-            if (!packageToBuy) {
-                Alert.alert("Error", "Selected plan not found in offerings.");
-                return false;
-            }
+            // Check if ANY entitlement is active
+            const hasActiveEntitlement = customerInfoResult && Object.keys(customerInfoResult.entitlements.active).length > 0;
 
-            const { customerInfo } = await Purchases.purchasePackage(packageToBuy);
-
-            // Check entitlement
-            if (customerInfo.entitlements.active['Calmelevation Pro']) {
-                Alert.alert("Success", "You are now fully subscribed!");
-                await updateSubscriptionStatus(customerInfo);
+            if (hasActiveEntitlement) {
+                Alert.alert(i18n.t('common.success'), i18n.t('paywall.subscribedSuccess'));
+                await updateSubscriptionStatus(customerInfoResult);
                 return true;
             } else {
-                Alert.alert("Notice", "Purchase completed but subscription is not yet active. Please try restoring purchases.");
-                return false;
+                Alert.alert(i18n.t('common.success'), i18n.t('paywall.purchaseCompleted'));
+                await updateSubscriptionStatus(customerInfoResult);
+                return true;
             }
         } catch (error: any) {
             if (!error.userCancelled) {
                 console.error('Purchase failed', error);
-                Alert.alert("Error", error.message || "Purchase failed. Please try again.");
+                Alert.alert(i18n.t('common.error'), error.message || i18n.t('paywall.purchaseFailed'));
             }
             return false;
         } finally {
@@ -316,21 +322,21 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
         setLoading(true);
         try {
             if (!isConfigured) {
-                Alert.alert("Error", "Please contact support.");
+                Alert.alert(i18n.t('common.error'), "Please contact support.");
                 return false;
             }
 
             const customerInfo = await Purchases.restorePurchases();
             if (customerInfo.entitlements.active['Calmelevation Pro']) {
-                Alert.alert("Success", "Purchases restored!");
+                Alert.alert(i18n.t('common.success'), i18n.t('paywall.restoreSuccess'));
                 await updateSubscriptionStatus(customerInfo);
                 return true;
             } else {
-                Alert.alert("Restore", "No active subscription found to restore.");
+                Alert.alert(i18n.t('paywall.restore'), i18n.t('paywall.noActiveSubscription'));
                 return false;
             }
         } catch (error: any) {
-            Alert.alert("Error", error.message || "Restore failed.");
+            Alert.alert(i18n.t('common.error'), error.message || i18n.t('paywall.restoreFailed'));
             return false;
         } finally {
             setLoading(false);

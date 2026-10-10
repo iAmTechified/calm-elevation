@@ -7,17 +7,29 @@ import { ChevronRight, X } from 'lucide-react-native';
 import Back from '../../../components/Back';
 import HeroHeader from '../../../components/HeroHeader';
 
-import { COURSES, LESSONS } from '../../../data/learn';
+import { COURSES, getLocalizedLessons } from '../../../data/learn';
+import { useTranslation } from 'react-i18next';
+
+const COURSE_KEYS: Record<string, string> = {
+    'understanding-anxiety': 'understandingAnxiety',
+    'short-term-relief': 'shortTermRelief',
+    'long-term-resilience': 'longTermResilience',
+};
 
 export default function CourseScreen() {
     const router = useRouter();
+    const { t, i18n } = useTranslation();
     const { id } = useLocalSearchParams();
 
     const courseId = typeof id === 'string' ? id : 'understanding-anxiety';
     const course = COURSES[courseId] || COURSES['understanding-anxiety'];
+    const courseKey = COURSE_KEYS[course.id];
+    const courseTitle = courseKey ? t(`learn.courses.${courseKey}.title`, course.title) : course.title;
+    const courseDesc = courseKey ? t(`learn.courses.${courseKey}.description`, course.description) : course.description;
 
-    // Get lessons for this course
-    const courseLessons = LESSONS.filter(l => l.courseId === course.id);
+    // Get lessons for this course in the current language
+    const lessons = getLocalizedLessons(i18n.language);
+    const courseLessons = lessons.filter(l => l.courseId === course.id);
 
     return (
         <View className={`flex-1 font-sans ${course.color} dark:bg-slate-900`}>
@@ -30,11 +42,11 @@ export default function CourseScreen() {
                     {/* Bottom Sheet Content */}
                     <View className="z-[150] flex-1 bg-white dark:bg-slate-900 rounded-t-[40px] h-full px-8 pt-10 mt-[200px] z-[999] shadow-sm">
                         <Text className="text-3xl font-semibold font-sans text-primaryLight dark:text-white text-center mb-4">
-                            {course.title}
+                            {courseTitle}
                         </Text>
 
                         <Text className="text-lg font-sans text-primaryLight dark:text-slate-400 text-center text-lg leading-6 mb-8 px-2">
-                            {course.description}
+                            {courseDesc}
                         </Text>
 
                         <View className="gap-4 mb-20">

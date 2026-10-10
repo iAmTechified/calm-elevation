@@ -7,6 +7,7 @@ import { ArrowLeft, RefreshCw } from 'lucide-react-native';
 import * as Haptics from 'expo-haptics';
 import { useStats } from '../../hooks/useStats';
 import { useColorScheme } from 'nativewind';
+import { useTranslation } from 'react-i18next';
 
 const { width, height } = Dimensions.get('window');
 
@@ -109,6 +110,7 @@ const getSplinePath = (points: Point[]) => {
 
 export default function ZenGardenScreen() {
     const router = useRouter();
+    const { t } = useTranslation();
     const { colorScheme } = useColorScheme();
     const isDark = colorScheme === 'dark';
     const { updateEmotionalState } = useStats();
@@ -352,7 +354,7 @@ export default function ZenGardenScreen() {
                 {isSkipping && (
                     <View className="absolute top-10 w-full items-center">
                         <Text className="text-slate-400 dark:text-slate-300 font-medium tracking-widest bg-white/80 dark:bg-slate-800/80 px-4 py-1 rounded-full overflow-hidden">
-                            SLOW DOWN
+                            {t('play.slowDown')}
                         </Text>
                     </View>
                 )}
@@ -361,8 +363,7 @@ export default function ZenGardenScreen() {
                 {paths.length === 0 && stones.length === 0 && !currentPathD && (
                     <View pointerEvents="none" className="absolute inset-0 items-center justify-center">
                         <Text className="text-slate-400/60 dark:text-slate-500/60 text-lg font-medium text-center px-10">
-                            Move slowly to shape the sand.{"\n"}
-                            Breathe.
+                            {t('play.zenInstruction')}
                         </Text>
                     </View>
                 )}
@@ -376,7 +377,7 @@ export default function ZenGardenScreen() {
                         className={`items-center justify-center p-4 rounded-3xl ${activeTool === 'rake' ? (isDark ? 'bg-slate-700' : 'bg-[#E6DEC7]') : 'bg-transparent'}`}
                     >
                         <Text className="text-2xl mb-1 opacity-80">🧹</Text>
-                        <Text className="text-xs font-bold text-[#57534E] dark:text-slate-300">Rake</Text>
+                        <Text className="text-xs font-bold text-[#57534E] dark:text-slate-300">{t('play.rake')}</Text>
                     </TouchableOpacity>
 
                     <TouchableOpacity
@@ -384,7 +385,7 @@ export default function ZenGardenScreen() {
                         className={`items-center justify-center p-4 rounded-3xl ${activeTool === 'stone' ? (isDark ? 'bg-slate-700' : 'bg-[#E6DEC7]') : 'bg-transparent'}`}
                     >
                         <Text className="text-2xl mb-1 opacity-80">🪨</Text>
-                        <Text className="text-xs font-bold text-[#57534E] dark:text-slate-300">Stone</Text>
+                        <Text className="text-xs font-bold text-[#57534E] dark:text-slate-300">{t('play.stone')}</Text>
                     </TouchableOpacity>
                 </View>
             </SafeAreaView>

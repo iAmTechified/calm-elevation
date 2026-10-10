@@ -2,6 +2,7 @@ import React, { ReactNode } from 'react';
 import { View, ImageSourcePropType, ViewStyle } from 'react-native';
 import { Image, ImageContentFit } from 'expo-image';
 import { useRouter } from 'expo-router';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Back from './Back';
 
 interface HeroHeaderProps {
@@ -26,6 +27,7 @@ export default function HeroHeader({
     imageResizeMode = "cover"
 }: HeroHeaderProps) {
     const router = useRouter();
+    const insets = useSafeAreaInsets();
 
     const getContentFit = (): ImageContentFit => {
         switch (imageResizeMode) {
@@ -38,7 +40,10 @@ export default function HeroHeader({
 
     return (
         <View className={`absolute top-0 w-full pb-8 ${className} z-[50]`}>
-            <View className="flex-row p-6 pt-16 justify-between items-center z-[50]">
+            <View
+                className="flex-row p-6 justify-between items-center z-[50]"
+                style={{ paddingTop: Math.max(insets.top, 16) + 12 }}
+            >
                 <View>
                     <Back
                         onPress={onBack || (() => router.back())}

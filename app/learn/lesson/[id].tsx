@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, ScrollView, Dimensions, Image } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { useLocalSearchParams, useRouter } from 'expo-router';
@@ -10,12 +10,12 @@ import { useStats } from '../../../hooks/useStats';
 import { CheckInModal } from '../../../components/CheckInModal';
 import { useColorScheme } from 'nativewind';
 
-const { width } = Dimensions.get('window');
-
-import { LESSONS } from '../../../data/learn';
+import { getLocalizedLesson } from '../../../data/learn';
+import { useTranslation } from 'react-i18next';
 
 export default function LessonScreen() {
     const router = useRouter();
+    const { t, i18n } = useTranslation();
     const { id } = useLocalSearchParams();
     const [isCheckInVisible, setIsCheckInVisible] = useState(false);
     const { markLessonCompleted, recordMood } = useStats();
@@ -24,14 +24,14 @@ export default function LessonScreen() {
     const { colorScheme } = useColorScheme();
     const [currentPage, setCurrentPage] = useState(0);
 
-    const lesson = LESSONS.find(l => l.id === id);
+    const lesson = getLocalizedLesson(typeof id === 'string' ? id : '', i18n.language);
     // Safety check if lesson not found
     if (!lesson) {
         return (
             <SafeAreaView className="flex-1 bg-slate-50 dark:bg-slate-900 items-center justify-center">
-                <Text className="text-slate-800 dark:text-white">Lesson not found</Text>
+                <Text className="text-slate-800 dark:text-white">{t('learn.lessonNotFound')}</Text>
                 <TouchableOpacity onPress={() => router.back()} className="mt-4 p-4 bg-sky-500 rounded-xl">
-                    <Text className="text-white font-bold">Go Back</Text>
+                    <Text className="text-white font-bold">{t('common.goBack')}</Text>
                 </TouchableOpacity>
             </SafeAreaView>
         );
@@ -88,9 +88,9 @@ export default function LessonScreen() {
 
             {/* Content Card */}
             <View className="flex-1 px-6 pb-4">
-                <View className="flex-1 bg-white dark:bg-slate-800 rounded-3xl p-6 shadow-sm border border-slate-100 dark:border-slate-700 justify-center">
-                    <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ flexGrow: 1, justifyContent: 'center' }}>
-                        {currentContent(pages[currentPage], colorScheme === 'dark')}
+                <View className="flex-1 bg-white dark:bg-slate-800 rounded-3xl p-6 shadow-sm border border-slate-100 dark:border-slate-700">
+                    <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ flexGrow: 1 }}>
+                        {currentContent(pages[currentPage], colorScheme === 'dark', t)}
                     </ScrollView>
                 </View>
             </View>
@@ -118,7 +118,7 @@ export default function LessonScreen() {
     );
 }
 
-function currentContent(page: any, isDark: boolean) {
+function currentContent(page: any, isDark: boolean, t: (key: string) => string) {
     if (page.type === 'intro' || page.type === 'conclusion') {
         return (
             <>
@@ -139,7 +139,7 @@ function currentContent(page: any, isDark: boolean) {
         return (
             <View className="bg-emerald-50 dark:bg-emerald-900/20 p-6 rounded-2xl border border-emerald-100 dark:border-emerald-800">
                 <Text className="text-2xl font-bold text-emerald-800 dark:text-emerald-300 text-center mb-6">
-                    {page.title || 'Exercise'}
+                    {page.title || t('learn.exercise')}
                 </Text>
 
                 {page.text.map((paragraph: string, index: number) => (

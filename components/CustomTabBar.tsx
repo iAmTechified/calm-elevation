@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, Text, TouchableOpacity, Dimensions } from 'react-native';
-import { BottomTabBarProps } from '@react-navigation/bottom-tabs';
+import { View, StyleSheet, Text, TouchableOpacity } from 'react-native';
+import { BottomTabBarProps } from 'expo-router/tabs';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Animated, { useAnimatedStyle, useSharedValue, withSequence, withSpring } from 'react-native-reanimated';
 import { Plus, Sparkles } from 'lucide-react-native';
@@ -85,7 +85,7 @@ export default function CustomTabBar({ state, descriptors, navigation }: BottomT
 
     return (
         <>
-            <View style={[styles.container, { paddingBottom: insets.bottom, backgroundColor: colors.background, borderTopColor: colors.border }]}>
+            <View style={[styles.container, { height: 66 + insets.bottom, paddingBottom: insets.bottom, backgroundColor: colors.background, borderTopColor: colors.border }]}>
                 {/* Left Tab (Journey) */}
                 {state.routes[0] && (
                     <TabButton
@@ -164,7 +164,6 @@ const styles = StyleSheet.create({
         backgroundColor: '#FFF',
         borderTopWidth: 1,
         borderTopColor: '#F1F5F9', // slate-100
-        height: 100, // Fixed height to accommodate button
         alignItems: 'center',
         justifyContent: 'space-between',
         paddingHorizontal: 20,
@@ -174,8 +173,8 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         height: '100%',
-        paddingTop: 20,
-        paddingBottom: 20,
+        paddingTop: 8,
+        paddingBottom: 8,
     },
     centerParams: {
         width: 80,

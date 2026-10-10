@@ -1,3 +1,5 @@
+import { getCurrentLanguage } from '../i18n';
+
 export type ChatMessage = {
     id: string;
     role: 'user' | 'assistant' | 'system';
@@ -10,52 +12,58 @@ export type ChatMessage = {
 
 const SYSTEM_PROMPT = `You are Cal, the friendly AI guide for the Calm Elevation app. 
 Your goal is to help users navigate the app and find the right tools for their mental well-being.
+Always reply in the user's language (primarily Dutch if the user writes in Dutch or their app is in Dutch, or English if in English).
 The app has these main sections:
 - Learn: Educational content about mental health.
 - Breathe: Breathing exercises.
 - Play: Relaxing games like 'Inner Balance' and 'Bubble Pop'.
 - Journal: For writing down thoughts and gratitude.
 - Sleep: Sleep sounds and stories.
-- Self-Healing: A 60-day healing program.
+- Self-Healing: A healing workbook program.
 - Visualize: Guided visualizations.
 
-If a user asks for help with something specific (e.g., "I can't sleep"), recommend the relevant section (e.g., Sleep) and offer to take them there.
-If a user talks about something completely unrelated to mental health or the app (e.g., "Write code for me" or "What is the capital of France"), politely explain that you are specialized in mental wellness and guiding them through the Calm Elevation app.
+If a user asks for help with something specific (e.g., "I can't sleep" or "Ik kan niet slapen"), recommend the relevant section and offer to take them there.
 Always be empathetic, calm, and supportive.
 `;
 
 const GROQ_API_KEY = process.env.EXPO_PUBLIC_GROQ_API_KEY;
 
-// Fallback logic for when no API key is present, offline use, or API failure
+// Bilingual Fallback logic for completely offline use
 const FALLBACK_RESPONSES = [
     {
-        keywords: ['sleep', 'insomnia', 'awake', 'tired'],
-        response: "I hear you. Creating a restful environment is key. Our Sleep section has sounds and stories to help you drift off. Shall we go there?",
+        keywords: ['sleep', 'insomnia', 'awake', 'tired', 'slaap', 'slapen', 'moe', 'wakker'],
+        responseEn: "I hear you. Creating a restful environment is key. Our Sleep section has sounds and stories to help you drift off. Shall we go there?",
+        responseNl: "Ik begrijp het. Een rustgevende omgeving is essentieel. Onze Slaap-sectie bevat geluiden om je te helpen ontspannen. Zullen we daarheen gaan?",
         action: { type: 'navigate', target: '/sleep' }
     },
     {
-        keywords: ['anxiety', 'panic', 'stress', 'worried', 'nervous'],
-        response: "I understand. It sounds like you could use a moment of calm. The Breathe section or our 'Inner Balance' game in Play might help.",
+        keywords: ['anxiety', 'panic', 'stress', 'worried', 'nervous', 'angst', 'paniek', 'spanning', 'bezorgd', 'onrustig'],
+        responseEn: "I understand. It sounds like you could use a moment of calm. The Breathe section or our 'Inner Balance' game in Play might help.",
+        responseNl: "Ik begrijp het. Het klinkt alsof je een moment van rust kunt gebruiken. De Adem-sectie of ons spel 'Innerlijke Balans' in Spelen kan helpen.",
         action: { type: 'navigate', target: '/breathe' }
     },
     {
-        keywords: ['sad', 'depressed', 'down', 'unhappy'],
-        response: "I'm sorry you're feeling this way. Sometimes writing it down helps. Would you like to open your Journal?",
+        keywords: ['sad', 'depressed', 'down', 'unhappy', 'verdrietig', 'somber', 'neerslachtig', 'ongelukkig'],
+        responseEn: "I'm sorry you're feeling this way. Sometimes writing it down helps. Would you like to open your Journal?",
+        responseNl: "Wat vervelend dat je je zo voelt. Soms helpt het om het van je af te schrijven. Wil je je Dagboek openen?",
         action: { type: 'navigate', target: '/journal' }
     },
     {
-        keywords: ['learn', 'understand', 'psychology', 'education'],
-        response: "Knowledge is power. The Learn section has great courses on understanding your mind.",
+        keywords: ['learn', 'understand', 'psychology', 'education', 'leren', 'begrijpen', 'psychologie', 'kennis'],
+        responseEn: "Knowledge is power. The Learn section has great courses on understanding your mind.",
+        responseNl: "Kennis is kracht. De Leren-sectie biedt waardevolle lessen om je geest beter te begrijpen.",
         action: { type: 'navigate', target: '/learn' }
     },
     {
-        keywords: ['game', 'play', 'bored', 'fun'],
-        response: "Relaxing games can be a great distraction. Check out the Play section.",
+        keywords: ['game', 'play', 'bored', 'fun', 'spel', 'spelen', 'verveeld', 'leuk'],
+        responseEn: "Relaxing games can be a great distraction. Check out the Play section.",
+        responseNl: "Ontspannende spellen kunnen een fijne afleiding zijn. Bekijk de Speel-sectie.",
         action: { type: 'navigate', target: '/play' }
     },
     {
-        keywords: ['heal', 'program', 'course', '60 days'],
-        response: "Our Self-Healing program is designed to support you over 60 days. Would you like to check today's session?",
+        keywords: ['heal', 'program', 'course', '60 days', 'heling', 'programma', 'werkboek', 'cursus'],
+        responseEn: "Our Self-Healing program is designed to support you. Would you like to check today's session?",
+        responseNl: "Ons Zelfhelingsprogramma is ontworpen om je te ondersteunen. Wil je de sessie van vandaag bekijken?",
         action: { type: 'navigate', target: '/self-healing' }
     }
 ];
@@ -116,15 +124,17 @@ export async function sendMessageToAI(message: string, history: ChatMessage[] = 
         }
     }
 
-    // Fallback Logic (Mock AI)
+    // Fallback Logic (Mock AI - 100% Offline)
     const lowerMsg = message.toLowerCase();
+    const currentLang = getCurrentLanguage();
+    const isNl = currentLang === 'nl';
 
     for (const item of FALLBACK_RESPONSES) {
         if (item.keywords.some(k => lowerMsg.includes(k))) {
             return {
                 id: Date.now().toString(),
                 role: 'assistant',
-                content: item.response,
+                content: isNl ? item.responseNl : item.responseEn,
                 action: item.action as any
             };
         }
@@ -133,6 +143,8 @@ export async function sendMessageToAI(message: string, history: ChatMessage[] = 
     return {
         id: Date.now().toString(),
         role: 'assistant',
-        content: "I'm here to support your journey with Calm Elevation. You can tell me how you're feeling, or I can guide you to our Sleep, Breathe, Play, or Learn sections.",
+        content: isNl
+            ? "Ik ben hier om je reis met Calm Elevation te ondersteunen. Vertel me gerust hoe je je voelt, of ik kan je begeleiden naar de onderdelen Slaap, Adem, Spelen of Leren."
+            : "I'm here to support your journey with Calm Elevation. You can tell me how you're feeling, or I can guide you to our Sleep, Breathe, Play, or Learn sections.",
     };
 }

@@ -1,7 +1,6 @@
 import "../global.css";
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
+import { DarkTheme, DefaultTheme, ThemeProvider, Stack } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Stack } from 'expo-router';
 import { useColorScheme } from 'nativewind';
 import { StatusBar } from 'expo-status-bar';
 import {
@@ -30,6 +29,7 @@ import { useEffect, useState } from 'react';
 import { useNotifications } from '../hooks/useNotifications';
 import { SubscriptionProvider } from '../context/SubscriptionContext';
 import { StatsProvider } from '../context/StatsContext';
+import { initI18n } from '../i18n';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 try {
@@ -64,6 +64,21 @@ export default function RootLayout() {
     const { isInitialized } = useNotifications();
 
     const [themeInitialized, setThemeInitialized] = useState(false);
+    const [i18nInitialized, setI18nInitialized] = useState(false);
+
+    useEffect(() => {
+        const initializeLanguage = async () => {
+            try {
+                await initI18n();
+            } catch (err) {
+                console.warn('Failed to initialize language:', err);
+            } finally {
+                setI18nInitialized(true);
+            }
+        };
+
+        initializeLanguage();
+    }, []);
 
     useEffect(() => {
         const initializeTheme = async () => {
@@ -88,16 +103,16 @@ export default function RootLayout() {
             // Hide splash screen even on error to let the app show
             SplashScreen.hideAsync();
         }
-        if (loaded && isInitialized) {
-            console.log('Fonts and notifications loaded, hiding splash screen');
+        if (loaded && isInitialized && themeInitialized && i18nInitialized) {
+            console.log('Fonts, notifications, theme, and language loaded, hiding splash screen');
             SplashScreen.hideAsync().then(() => console.log('SplashScreen.hideAsync() called')).catch(console.warn);
         } else {
-            console.log('Fonts or notifications not loaded yet');
+            console.log('Fonts, notifications, theme, or language not loaded yet');
         }
-    }, [loaded, error, isInitialized]);
+    }, [loaded, error, isInitialized, themeInitialized, i18nInitialized]);
 
     // Only wait if there is no error and not loaded. If there is an error, we proceed (with default fonts).
-    if ((!loaded && !error) || !themeInitialized) {
+    if ((!loaded && !error) || !themeInitialized || !i18nInitialized) {
         return null;
     }
 

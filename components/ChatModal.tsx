@@ -20,6 +20,7 @@ import { Colors } from '../constants/Colors';
 import { sendMessageToAI, ChatMessage } from '../lib/chat';
 import { router } from 'expo-router';
 import { ScrollView } from 'react-native-gesture-handler';
+import { useTranslation } from 'react-i18next';
 
 if (
     Platform.OS === 'android' &&
@@ -34,18 +35,23 @@ interface ChatModalProps {
 }
 
 export default function ChatModal({ visible, onClose }: ChatModalProps) {
+    const { t } = useTranslation();
     const colorScheme = useColorScheme();
     const theme = colorScheme === 'dark' ? Colors.dark : Colors.light;
     const isDark = colorScheme === 'dark';
 
     const [messageText, setMessageText] = useState('');
-    const [messages, setMessages] = useState<ChatMessage[]>([
-        {
-            id: '1',
-            content: "Hi! I'm Cal. How are you feeling right now?",
-            role: 'assistant',
-        },
-    ]);
+    const [messages, setMessages] = useState<ChatMessage[]>([]);
+
+    useEffect(() => {
+        setMessages([
+            {
+                id: '1',
+                content: t('chat.calWelcome'),
+                role: 'assistant',
+            },
+        ]);
+    }, [t]);
     const [isTyping, setIsTyping] = useState(false);
 
     const flatListRef = useRef<FlatList>(null);
@@ -178,10 +184,10 @@ export default function ChatModal({ visible, onClose }: ChatModalProps) {
                                         <Bot size={20} color={theme.primary} style={{ marginRight: 8 }} />
                                         <View>
                                             <Text style={[styles.headerTitle, { color: theme.text }]}>
-                                                Chat with Cal
+                                                {t('chat.chatWithCal')}
                                             </Text>
                                             <Text style={[styles.headerSubtitle, { color: theme.textSecondary }]}>
-                                                AI Wellness Companion
+                                                {t('chat.aiCompanion')}
                                             </Text>
                                         </View>
                                     </View>
@@ -236,7 +242,7 @@ export default function ChatModal({ visible, onClose }: ChatModalProps) {
                                                 borderColor: isDark ? '#334155' : '#E9ECEF',
                                             },
                                         ]}
-                                        placeholder="Type a message..."
+                                        placeholder={t('chat.typeAMessage')}
                                         placeholderTextColor={theme.textSecondary}
                                         value={messageText}
                                         onChangeText={setMessageText}

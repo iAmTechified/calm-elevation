@@ -8,6 +8,7 @@ import { ChevronLeft, ChevronRight, Star } from 'lucide-react-native';
 import Back from '../../components/Back';
 import { useJournal } from '../../hooks/useJournal';
 import { useColorScheme } from 'nativewind';
+import { useTranslation } from 'react-i18next';
 
 const { width } = Dimensions.get('window');
 
@@ -21,15 +22,19 @@ const getFirstDayOfMonth = (month: number, year: number) => {
     return new Date(year, month, 1).getDay();
 };
 
-const MONTHS = [
+const DEFAULT_MONTHS = [
     'January', 'February', 'March', 'April', 'May', 'June',
     'July', 'August', 'September', 'October', 'November', 'December'
 ];
 
 export default function JournalScreen() {
     const router = useRouter();
+    const { t } = useTranslation();
     const { entries, refresh } = useJournal();
     const { colorScheme } = useColorScheme();
+
+    const months = (t('journal.months', { returnObjects: true }) as string[]) || DEFAULT_MONTHS;
+    const weekDays = (t('journal.weekDays', { returnObjects: true }) as string[]) || ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
 
     const now = useMemo(() => new Date(), []);
     const [viewDate, setViewDate] = useState(new Date(now.getFullYear(), now.getMonth(), 1));
@@ -50,8 +55,6 @@ export default function JournalScreen() {
     const todayDate = now.getDate();
     const todayMonth = now.getMonth();
     const todayYear = now.getFullYear();
-
-    const weekDays = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
 
     const handlePrevMonth = () => {
         setViewDate(new Date(currentYear, currentMonth - 1, 1));
@@ -123,7 +126,7 @@ export default function JournalScreen() {
             {/* Header */}
             <View className="px-6 py-4 flex-row items-center justify-start">
                 <Back onPress={() => router.back()} style='bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700' iconColor={undefined} />
-                <Text className="pl-6 text-2xl font-sans font-semibold text-primaryLight dark:text-white">My Journal</Text>
+                <Text className="pl-6 text-2xl font-sans font-semibold text-primaryLight dark:text-white">{t('journal.title')}</Text>
             </View>
 
             <ScrollView className="flex-1 h-full" contentContainerStyle={{ paddingBottom: 0 }}>
@@ -131,7 +134,7 @@ export default function JournalScreen() {
                 <View className="px-6 pt-12 pb-16 flex-row justify-between items-start relative overflow-hidden">
                     <View className="z-10 mt-4">
                         <View className="flex-row items-center">
-                            <Text className="text-4xl font-bold text-primaryLight dark:text-sky-400 tracking-tight">{MONTHS[currentMonth]}</Text>
+                            <Text className="text-4xl font-bold text-primaryLight dark:text-sky-400 tracking-tight">{months[currentMonth]}</Text>
                             <View className="flex-row ml-4">
                                 <TouchableOpacity onPress={handlePrevMonth} className="p-1">
                                     <ChevronLeft size={24} color={colorScheme === 'dark' ? '#94a3b8' : '#334155'} />
@@ -180,7 +183,7 @@ export default function JournalScreen() {
                     <View className="absolute bottom-0 w-full h-24 bg-sky-300 dark:bg-slate-700 rounded-t-[100px] opacity-40 scale-125 translate-x-10" />
 
                     <Text className="text-center text-primaryLight dark:text-sky-400 text-lg font-bold px-10 z-10 leading-6">
-                        {entries.length > 0 ? "Review your progress\nor add a new entry" : "Select a date to begin your\njournal entry"}
+                        {entries.length > 0 ? t('journal.reviewProgress') : t('journal.selectDate')}
                     </Text>
                 </View>
 

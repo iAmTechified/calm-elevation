@@ -1,6 +1,7 @@
 import React, { useState, useMemo, useRef } from 'react';
 import { View, PanResponder, TouchableOpacity, Text, ViewStyle } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
+import { useTranslation } from 'react-i18next';
 
 interface SignaturePadProps {
     onChange?: (hasSignature: boolean) => void;
@@ -11,6 +12,7 @@ interface SignaturePadProps {
 }
 
 export default function SignaturePad({ onChange, color = '#254F51', strokeWidth = 3, style, containerStyle }: SignaturePadProps) {
+    const { t } = useTranslation();
     const [paths, setPaths] = useState<string[]>([]);
     const [currentPath, setCurrentPath] = useState<string | null>(null);
     const currentPathRef = useRef<string | null>(null);
@@ -77,7 +79,7 @@ export default function SignaturePad({ onChange, color = '#254F51', strokeWidth 
                 </Svg>
             </View>
             <TouchableOpacity onPress={handleClear} className="mt-3 self-end px-2 py-1">
-                <Text className="text-slate-400 font-sans text-xs uppercase tracking-wider">Clear Signature</Text>
+                <Text className="text-slate-400 font-sans text-xs uppercase tracking-wider">{t('onboarding.clearSignature')}</Text>
             </TouchableOpacity>
         </View>
     );

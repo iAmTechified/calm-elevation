@@ -7,9 +7,11 @@ import { Send, ArrowLeft, Sparkles, MessageSquare } from 'lucide-react-native';
 import { sendMessageToAI, ChatMessage } from '../../lib/chat';
 import { LinearGradient } from 'expo-linear-gradient';
 import { StatusBar } from 'expo-status-bar';
+import { useTranslation } from 'react-i18next';
 
 export default function ChatScreen() {
     const router = useRouter();
+    const { t } = useTranslation();
     const [input, setInput] = useState('');
     const [messages, setMessages] = useState<ChatMessage[]>([]);
     const [isLoading, setIsLoading] = useState(false);
@@ -21,10 +23,10 @@ export default function ChatScreen() {
             {
                 id: 'init',
                 role: 'assistant',
-                content: "Hi, I'm Cal. How are you feeling today? I can help guide you to the right place in the app."
+                content: t('chat.calWelcome')
             }
         ]);
-    }, []);
+    }, [t]);
 
     const handleSend = async () => {
         if (!input.trim() || isLoading) return;
@@ -50,7 +52,7 @@ export default function ChatScreen() {
             setMessages(prev => [...prev, {
                 id: Date.now().toString(),
                 role: 'assistant',
-                content: "I'm having a little trouble connecting right now. Please try again."
+                content: t('chat.connectionError')
             }]);
         } finally {
             setIsLoading(false);
@@ -79,7 +81,7 @@ export default function ChatScreen() {
                             onPress={() => navigateTo(item.action!.target)}
                             className="mt-3 bg-white/90 border border-primary/20 py-2 px-4 rounded-xl flex-row items-center justify-center"
                         >
-                            <Text className="text-primaryLight font-medium mr-2">Go to Section</Text>
+                            <Text className="text-primaryLight font-medium mr-2">{t('chat.goToSection')}</Text>
                             <ArrowLeft size={14} color="#0e7490" style={{ transform: [{ rotate: '180deg' }] }} />
                         </TouchableOpacity>
                     )}
@@ -98,8 +100,8 @@ export default function ChatScreen() {
                     <ArrowLeft size={24} color="#333" />
                 </TouchableOpacity>
                 <View className="items-center">
-                    <Text className="font-semibold text-lg text-slate-800">Cal AI Guide</Text>
-                    <Text className="text-xs text-slate-500">Always here to help</Text>
+                    <Text className="font-semibold text-lg text-slate-800">{t('chat.calAiGuide')}</Text>
+                    <Text className="text-xs text-slate-500">{t('chat.alwaysHereToHelp')}</Text>
                 </View>
                 <View className="w-10" />
             </View>
@@ -126,7 +128,7 @@ export default function ChatScreen() {
                 <View className="flex-row items-center bg-gray-50 rounded-full px-4 py-2 border border-gray-200">
                     <TextInput
                         className="flex-1 text-base text-slate-800 max-h-20 py-2"
-                        placeholder="Type a message..."
+                        placeholder={t('chat.typeAMessage')}
                         placeholderTextColor="#94a3b8"
                         value={input}
                         onChangeText={setInput}

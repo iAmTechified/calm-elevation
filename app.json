@@ -19,12 +19,9 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.calmelevation.app",
       "infoPlist": {
-        "UIBackgroundModes": [
-          "audio"
-        ],
         "ITSAppUsesNonExemptEncryption": false
       },
-      "buildNumber": "2"
+      "buildNumber": "9"
     },
     "android": {
       "adaptiveIcon": {
@@ -51,7 +48,13 @@
       "expo-web-browser",
       "expo-font",
       "expo-notifications",
-      "expo-asset"
+      "expo-asset",
+      "expo-audio",
+      "expo-build-properties",
+      "expo-image",
+      "expo-secure-store",
+      "expo-splash-screen",
+      "expo-status-bar"
     ],
     "scheme": "calm-elevation",
     "experiments": {

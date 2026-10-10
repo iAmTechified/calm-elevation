@@ -6,6 +6,14 @@ import { useRouter } from 'expo-router';
 import HeroHeader from '../../components/HeroHeader';
 import { Lock } from 'lucide-react-native';
 import { useAccess } from '../../hooks/useAccess';
+import { useTranslation } from 'react-i18next';
+
+const GAME_TRANSLATION_KEYS: Record<string, string> = {
+    'zen-garden': 'zenGarden',
+    'bubble-pop': 'bubblePop',
+    'mindful-maze': 'mindfulMaze',
+    'blocks': 'blocks'
+};
 
 const games = [
     {
@@ -36,6 +44,7 @@ const games = [
 
 export default function PlayScreen() {
     const router = useRouter();
+    const { t } = useTranslation();
     const { isLocked } = useAccess();
 
     return (
@@ -51,11 +60,11 @@ export default function PlayScreen() {
                 <ScrollView className="pb-20" showsVerticalScrollIndicator={false}>
                     <View className="flex-1 bg-white dark:bg-slate-900 rounded-t-[40px] h-full px-6 pt-10 mt-[200px] z-[999] shadow-sm pb-20">
                         <Text className="text-3xl font-semibold font-sans text-[#1e3a8a] dark:text-sky-400 text-center mb-4">
-                            Play
+                            {t('play.title')}
                         </Text>
 
                         <Text className="text-lg font-sans text-slate-500 dark:text-slate-400 text-center leading-7 font-medium px-2 mb-8">
-                            Wind down or lift your mood with calming, mindful play that gently brings you back to the present.
+                            {t('play.subtitle')}
                         </Text>
 
                         <View className="flex-row flex-wrap justify-between gap-y-6">
@@ -88,7 +97,7 @@ export default function PlayScreen() {
                                         </View>
                                         <View className="p-4 bg-sky-50 dark:bg-slate-800 items-center justify-center">
                                             <Text className="text-slate-700 dark:text-gray-100 font-bold text-base text-center">
-                                                {game.title}
+                                                {GAME_TRANSLATION_KEYS[game.id] ? t(`play.games.${GAME_TRANSLATION_KEYS[game.id]}`, { defaultValue: game.title }) : game.title}
                                             </Text>
                                         </View>
                                         {locked && (

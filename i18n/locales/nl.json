@@ -1,0 +1,352 @@
+{
+  "common": {
+    "save": "Opslaan",
+    "cancel": "Annuleren",
+    "close": "Sluiten",
+    "back": "Terug",
+    "goBack": "Ga Terug",
+    "continue": "Doorgaan",
+    "done": "Klaar",
+    "delete": "Verwijderen",
+    "start": "Starten",
+    "review": "Herbekijken",
+    "premium": "PREMIUM",
+    "freeTrial": "Gratis Proefperiode Actief",
+    "loading": "Laden...",
+    "completed": "Voltooid",
+    "day": "Dag",
+    "days": "Dagen",
+    "min": "min",
+    "mins": "min",
+    "hr": "uur",
+    "hrs": "uur",
+    "success": "Succes",
+    "error": "Fout"
+  },
+  "tabs": {
+    "journey": "Mijn Reis",
+    "stats": "Statistieken"
+  },
+  "home": {
+    "title": "Mijn Reis",
+    "freeTrialActive": "Gratis Proefperiode Actief",
+    "freeTrialSubtext": "Upgrade voor blijvende volledige toegang",
+    "upgradeToPremium": "Upgrade naar Premium",
+    "upgradeSubtext": "Ontgrendel alle functies en lessen",
+    "cards": {
+      "selfHealing": "Zelfheling & Zelfvertrouwen",
+      "learn": "Leren",
+      "breathe": "Ademen",
+      "play": "Spelen",
+      "journal": "Dagboek",
+      "sleep": "Slapen"
+    }
+  },
+  "checkIn": {
+    "greeting": "Fijn dat je er bent!",
+    "subtext": "Regelmatig inchecken is een waardevolle stap naar meer welzijn en innerlijke rust.",
+    "prompt": "Hoe voel je je vandaag?",
+    "moods": {
+      "worried": "Bezorgd",
+      "sad": "Verdrietig",
+      "okay": "Oké",
+      "good": "Goed",
+      "great": "Geweldig"
+    }
+  },
+  "onboarding": {
+    "clearSignature": "Handtekening Wissen",
+    "signingDisclaimer": "Door te ondertekenen, verbind je je aan jouw helingsreis",
+    "welcome": {
+      "title": "Hoi, ik ben Cal",
+      "subtitle": "Ik ben blij dat je er bent. Welkom bij jouw app voor zelfheling, paniekverlichting en ontspanning.",
+      "startJourney": "Start mijn reis",
+      "termsAgreement": "Door door te gaan, ga je akkoord met onze algemene voorwaarden"
+    },
+    "steps": {
+      "step1": {
+        "title": "Zorg voor Cal",
+        "description": "Zorg voor Cal en jezelf door eenvoudige dagelijkse zelfzorgdoelen te voltooien en punten te verzamelen.",
+        "cta": "Doorgaan"
+      },
+      "step2": {
+        "title": "Klaar om te beginnen?",
+        "description": "Geef jezelf de kans op innerlijke rust door je toe te wijden aan Calm Elevation. Plaats hieronder je handtekening.",
+        "cta": "Ik verbind me!"
+      },
+      "notifications": {
+        "title": "Blijf Verbonden",
+        "description": "Schakel meldingen in om dagelijkse aanmoedigingen en herinneringen van Cal te ontvangen.",
+        "cta": "Meldingen Inschakelen"
+      },
+      "step3": {
+        "title": "Gefeliciteerd!",
+        "description": "Blijf samen met Cal ontdekken, leer omgaan met spanning en breng rust terug in je leven. Je kunt dit.",
+        "cta": "Aan de slag"
+      }
+    }
+  },
+  "settings": {
+    "title": "Instellingen",
+    "unlockPremium": "Ontgrendel Premium",
+    "notifications": "Meldingen",
+    "theme": "Thema",
+    "language": "Taal",
+    "english": "English",
+    "dutch": "Nederlands",
+    "dark": "Donker",
+    "light": "Licht",
+    "reminderTitle": "Dagelijkse oefening brengt blijvende verandering",
+    "setReminders": "Herinneringen Instellen",
+    "disclaimer": "Disclaimer",
+    "terms": "Algemene Voorwaarden",
+    "privacy": "Privacybeleid"
+  },
+  "selfHealing": {
+    "title": "Zelfheling & Zelfvertrouwen",
+    "subtitle": "Begeleide Werkboeken door Joseph I.",
+    "overallProgress": "Totale Voortgang",
+    "lessonsCompleted": "{{count}} Lessen Voltooid",
+    "activeStreak": "Actieve Reeks",
+    "selectWorkbook": "Kies hieronder een werkboek om je dagelijkse 30-daagse reis te starten of voort te zetten.",
+    "availableWorkbooks": "Beschikbare Werkboeken",
+    "daysSummary": "{{completed}}/{{total}} Dagen",
+    "daysCount": "• {{count}} Dagen",
+    "author": "Auteur: {{author}}",
+    "readingProgress": "Leesvoortgang",
+    "dayNumber": "Dag {{day}}",
+    "start": "Starten",
+    "review": "Herbekijken",
+    "filterAll": "Alles",
+    "filterEn": "English",
+    "filterNl": "Nederlands",
+    "reflectionPlaceholder": "Schrijf hier je gedachten...",
+    "ratingTitle": "Angst- & Zelfvertrouwensbeoordeling",
+    "ratingSubtext": "Houd je niveau van zelfvertrouwen of spanning bij voor en na de uitdaging van vandaag.",
+    "ratingBefore": "1. Score VOOR de uitdaging (1 = Zeer laag, 10 = Zeer hoog):",
+    "ratingAfter": "2. Score NA de uitdaging (1 = Zeer laag, 10 = Zeer hoog):"
+  },
+  "sleep": {
+    "title": "Slaapoase",
+    "subtitle": "Val sneller in slaap met rustgevende omgevingsgeluiden",
+    "categoryNature": "Natuur",
+    "tracks": {
+      "night": "Diepe Nacht",
+      "thunder": "Verre Donder",
+      "forest": "Rustgevend Bos",
+      "ocean": "Rollende Golven",
+      "river": "Stromende Rivier",
+      "wind": "Zachte Wind",
+      "rain": "Zachte Regen",
+      "fireplace": "Gezellige Open Haard"
+    }
+  },
+  "learn": {
+    "title": "Kenniscentrum",
+    "subtitle": "Beheers de technieken om angst te overwinnen en de controle te herwinnen.",
+    "lessonNotFound": "Les niet gevonden",
+    "exercise": "Oefening",
+    "courses": {
+      "understandingAnxiety": {
+        "title": "Angst Begrijpen",
+        "description": "Vind gemoedsrust door te leren wat angst werkelijk is, hoe je lichaam een paniekaanval ervaart en waarom dit gebeurt. Kennis geeft kracht."
+      },
+      "shortTermRelief": {
+        "title": "Korte Termijn Verlichting",
+        "description": "Leer snelle, effectieve technieken om spanning te hanteren op momenten dat je je overweldigd voelt. Hulpmiddelen voor je noodkit."
+      },
+      "longTermResilience": {
+        "title": "Lange Termijn Veerkracht",
+        "description": "Bouw duurzame gewoonten en inzichten op om je mentale gezondheid te transformeren. Ga van overleven naar floreren."
+      }
+    }
+  },
+  "breathe": {
+    "title": "Ademen",
+    "duration": "DUUR",
+    "beginSession": "Sessie Beginnen",
+    "inhale": "Inademen",
+    "hold": "Vasthouden",
+    "exhale": "Uitademen",
+    "inhaleDeeply": "DIEP INADEMEN",
+    "exhaleSlowly": "RUSTIG UITADEMEN",
+    "sessionComplete": "Sessie Voltooid",
+    "sessionSubtext": "Je hebt een moment voor jezelf genomen. Neem deze rust mee in je dag.",
+    "returnHome": "Terug naar Start"
+  },
+  "journal": {
+    "title": "Mijn Dagboek",
+    "howAreYouFeeling": "Hoe voel je je?",
+    "newEntry": "Nieuw Bericht",
+    "entryNotFound": "Inzending niet gevonden",
+    "deleteEntry": "Inzending Verwijderen",
+    "confirmDelete": "Weet je zeker dat je deze inzending wilt verwijderen?",
+    "months": [
+      "Januari", "Februari", "Maart", "April", "Mei", "Juni",
+      "Juli", "Augustus", "September", "Oktober", "November", "December"
+    ],
+    "weekDays": ["Z", "M", "D", "W", "D", "V", "Z"],
+    "reviewProgress": "Bekijk je voortgang\nof voeg een nieuw bericht toe",
+    "selectDate": "Kies een datum om je\ndagboekbericht te beginnen",
+    "moods": {
+      "sad": "verdrietig",
+      "determined": "vastberaden",
+      "angry": "boos",
+      "relaxed": "ontspannen",
+      "worried": "bezorgd",
+      "frightened": "bang",
+      "unmotivated": "ongemotiveerd",
+      "hungry": "hongerig",
+      "strong": "sterk",
+      "indifferent": "onverschillig",
+      "sleepy": "slaperig",
+      "calm": "kalm",
+      "crying": "huilerig",
+      "depressed": "somber",
+      "dizzy": "duizelig",
+      "happy": "blij",
+      "overwhelmed": "overweldigd",
+      "stressed": "gestrest"
+    },
+    "questions": {
+      "accomplished": {
+        "title": "3 dingen die je vandaag hebt bereikt, groot of klein:",
+        "placeholder": "3 dingen die je vandaag hebt bereikt, groot of klein:"
+      },
+      "weighing": {
+        "title": "Zit je ergens mee? Schrijf het op en laat het los.",
+        "placeholder": "Zit je ergens mee? Schrijf het op en laat het los:"
+      },
+      "grateful": {
+        "title": "Waar ben je dankbaar voor?",
+        "placeholder": "Waar ben je dankbaar voor?"
+      },
+      "notes": {
+        "title": "Aanvullende notities:",
+        "placeholder": "Aanvullende notities:"
+      }
+    }
+  },
+  "play": {
+    "title": "Spelen",
+    "subtitle": "Kom tot rust of verbeter je stemming met kalmerende, aandachtige spellen die je zachtjes terugbrengen naar het hier en nu.",
+    "games": {
+      "zenGarden": "Zentuin",
+      "bubblePop": "Bellen Blazen",
+      "mindfulMaze": "Aandachtig Doolhof",
+      "blocks": "Blokken"
+    },
+    "paused": "Gepauzeerd",
+    "takeBreath": "Haal even adem...",
+    "resume": "Hervatten",
+    "slowDown": "RUSTIGER AAN",
+    "zenInstruction": "Beweeg langzaam om het zand te vormen.\nHaal adem.",
+    "rake": "Hark",
+    "stone": "Steen",
+    "mazeInstruction": "Kantel je telefoon om Cal door het doolhof te leiden.",
+    "blocksInstruction": "Tik op lege plekken om te bouwen. Tik op blokken om ze hoger te maken.",
+    "touchLight": "Raak het licht aan om te beginnen"
+  },
+  "physicalBook": {
+    "tag": "Gedrukte Werkboeken",
+    "title": "Liever een Fysiek Boek?",
+    "description": "Vraag hardcover- of paperback-edities aan van de werkboeken van Joseph I. voor rustig offline schrijven.",
+    "visitShop": "Winkel Bekijken"
+  },
+  "visualize": {
+    "title": "Visualiseren",
+    "meditate": "Mediteren",
+    "description": "Luister naar de bodyscan of visualisaties hieronder om te aarden wanneer je spanning ervaart."
+  },
+  "chat": {
+    "calWelcome": "Hoi, ik ben Cal. Hoe voel je je vandaag? Ik kan je helpen de juiste plek in de app te vinden.",
+    "chatWithCal": "Chat met Cal",
+    "aiCompanion": "AI Welzijnsgids",
+    "calAiGuide": "Cal AI Gids",
+    "alwaysHereToHelp": "Altijd hier om te helpen",
+    "typeAMessage": "Typ een bericht...",
+    "goToSection": "Ga naar onderdeel",
+    "connectionError": "Ik kan momenteel even geen verbinding maken. Probeer het opnieuw."
+  },
+  "stats": {
+    "title": "Mijn Statistieken",
+    "subscription": "Abonnement",
+    "freeTrialBadge": "PROEFPERIODE",
+    "premiumBadge": "PREMIUM",
+    "expiredBadge": "VERLOPEN",
+    "limitedAccessTrial": "Beperkte Proefperiode",
+    "threeDayFreeTrial": "3 Dagen Gratis Proefperiode",
+    "expiresOn": "Verloopt op {{date}} om {{time}}",
+    "expiresOnDate": "Verloopt op {{date}}",
+    "upgradeToUnlock": "Upgrade om alle inhoud te ontgrendelen.",
+    "currentPlan": "Huidig Abonnement",
+    "yearlyPremium": "Jaarlijks Premium",
+    "monthlyPremium": "Maandelijks Premium",
+    "trialExpiredNotice": "Je gratis proefperiode is verlopen. Upgrade om door te gaan en alle functies te ontgrendelen.",
+    "unlockFullAccess": "Volledige Toegang Ontgrendelen",
+    "manageSubscription": "Abonnement Beheren",
+    "myDailyMood": "Mijn Dagelijkse Stemming",
+    "dailyStreak": "Dagelijkse Reeks",
+    "braveryPoints": "Dapperheidspunten",
+    "healingJourney": "Genezingsreis",
+    "daysStreak": "Dagen Reeks",
+    "totalPractices": "Totaal Oefeningen",
+    "mindfulMinutes": "Aandachtige Minuten",
+    "weeklyMood": "Wekelijkse Stemmingsmeter",
+    "achievements": "Mijlpalen & Prestaties",
+    "understandingLessons": "Inzichtlessen",
+    "shortTermLessons": "Korte Termijn Lessen",
+    "longTermLessons": "Lange Termijn Lessen",
+    "timeInBreathr": "Tijd in Breathr",
+    "dailyJournalStreak": "Dagelijkse Dagboekreeks",
+    "totalEntries": "Totaal Inzendingen",
+    "wordsWritten": "Geschreven Woorden"
+  },
+  "paywall": {
+    "title": "Ontgrendel Calm Premium",
+    "subtitle": "Sluit je aan bij duizenden die innerlijke rust hebben gevonden en angst hebben overwonnen.",
+    "bestValue": "BESTE WAARDE",
+    "yearlyAccess": "Jaarlijkse Toegang",
+    "monthlyAccess": "Maandelijkse Toegang",
+    "perMonth": "per maand",
+    "perYear": "per jaar",
+    "features": [
+      "Onbeperkte toegang tot alle helingsplannen",
+      "Geavanceerde slaaptracking & natuurgeluiden",
+      "Gepersonaliseerde dagelijkse check-ins",
+      "Exclusieve meditaties & visualisaties",
+      "Prioritaire ondersteuning"
+    ],
+    "startTrial": "Start 7 Dagen Gratis Proefperiode",
+    "continue": "Doorgaan",
+    "terms": "Gebruiksvoorwaarden",
+    "privacy": "Privacybeleid",
+    "restore": "Aankopen Herstellen",
+    "unlockYearly": "Volledige Toegang Ontgrendelen (Jaarlijks)",
+    "subscribeMonthly": "Maandelijks Abonneren",
+    "billedMonthly": "Gefactureerd {{price}}/mnd • Altijd opzegbaar",
+    "billedAnnually": "Jaarlijks gefactureerd • Altijd opzegbaar",
+    "billedMonthlyFallback": "Maandelijks gefactureerd • Altijd opzegbaar",
+    "subscribedSuccess": "Je bent nu volledig geabonneerd!",
+    "purchaseCompleted": "Aankoop voltooid!",
+    "purchaseFailed": "Aankoop mislukt. Probeer het opnieuw.",
+    "restoreSuccess": "Aankopen hersteld!",
+    "noActiveSubscription": "Geen actief abonnement gevonden om te herstellen.",
+    "restoreFailed": "Herstel mislukt."
+  },
+  "disclaimer": {
+    "title": "Disclaimer",
+    "appName": "Calm Elevation – Disclaimer",
+    "intro": "Calm Elevation is een zelfhulp- en welzijnsapplicatie ontworpen ter ondersteuning van ontspanning, stressvermindering, paniekverlichting en emotioneel welzijn. De inhoud in deze app—inclusief oefeningen, audio, tekst en begeleiding—is uitsluitend bedoeld voor educatieve en informatieve doeleinden.",
+    "notMedicalTitle": "Geen Medisch of Geestelijk Gezondheidsadvies",
+    "notMedicalP1": "Calm Elevation biedt geen medisch, psychologisch of psychiatrisch advies, diagnose of behandeling. De app is geen vervanging voor professionele medische zorg, therapie of geestelijke gezondheidszorg.",
+    "notMedicalP2": "Raadpleeg altijd een gekwalificeerde arts of erkende zorgverlener bij vragen over een medische of psychische aandoening. Negeer nooit professioneel advies en stel het zoeken ervan niet uit vanwege iets wat je in deze app hebt gelezen of ervaren.",
+    "emergencyTitle": "Noodsituaties",
+    "emergencyP1": "Calm Elevation is niet bedoeld voor gebruik in noodsituaties.",
+    "emergencyP2": "Als je een acute mentale crisis ervaart of denkt dat jij of iemand anders in direct gevaar is, neem dan onmiddellijk contact op met de lokale alarmdiensten (112) of een hulplijn voor crisisondersteuning (zoals 113 Zelfmoordpreventie).",
+    "noGuaranteesTitle": "Geen Garanties",
+    "noGuaranteesText": "Individuele resultaten kunnen variëren. Calm Elevation garandeert geen specifieke uitkomsten of verlichting van angst, paniek of andere emotionele klachten.",
+    "discretionTitle": "Gebruik naar Eigen Inzicht",
+    "discretionText": "Door Calm Elevation te gebruiken, erken je dat je zelf verantwoordelijk bent voor je eigen welzijn en keuzes. Gebruik de app naar eigen inzicht en stop het gebruik als je je ongemakkelijk of overstuur voelt."
+  }
+}

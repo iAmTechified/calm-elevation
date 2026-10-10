@@ -595,3 +595,15 @@ export const LESSONS: Lesson[] = [
         ]
     }
 ];
+
+import { LESSONS_NL } from './learn-nl';
+
+export function getLocalizedLessons(lang: string = 'en'): Lesson[] {
+    return lang === 'nl' ? LESSONS_NL : LESSONS;
+}
+
+export function getLocalizedLesson(id: string, lang: string = 'en'): Lesson | undefined {
+    const list = getLocalizedLessons(lang);
+    return list.find(l => l.id === id) || LESSONS.find(l => l.id === id);
+}
+

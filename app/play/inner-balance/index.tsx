@@ -20,6 +20,7 @@ import {
 import * as Haptics from 'expo-haptics';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useTranslation } from 'react-i18next';
 
 const { width, height } = Dimensions.get('window');
 // const CENTER_X = width / 2;
@@ -33,6 +34,7 @@ type GameState = 'idle' | 'active' | 'stabilizing' | 'centered';
 
 export default function InnerBalanceGame() {
     const router = useRouter();
+    const { t } = useTranslation();
     const [gameState, setGameState] = useState<GameState>('idle');
     const [sessionTime, setSessionTime] = useState(0);
 
@@ -282,7 +284,7 @@ export default function InnerBalanceGame() {
 
                         {/* Guide Text */}
                         <Animated.Text style={[styles.guideText, textStyle]}>
-                            Touch the light to begin
+                            {t('play.touchLight')}
                         </Animated.Text>
                     </View>
                 </GestureDetector>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
-import { View, Text, TouchableOpacity, Dimensions, Image, Pressable, Platform } from 'react-native';
+import { View, Text, TouchableOpacity, useWindowDimensions, Image, Pressable, Platform } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { ArrowLeft, Pause, Play, Volume2, VolumeX, X, RotateCcw } from 'lucide-react-native';
@@ -19,8 +19,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { BlurView } from 'expo-blur';
 import { useStats } from '../../hooks/useStats';
 import { useColorScheme } from 'nativewind';
-
-const { width, height } = Dimensions.get('window');
+import { useTranslation } from 'react-i18next';
 
 // --- Configuration ---
 const SPAWN_INTERVAL = 500; // Reduced spawn rate
@@ -52,16 +51,18 @@ const BubbleItem = React.memo(({
     onPop,
     onMiss,
     soundEnabled,
-    isPlaying
+    isPlaying,
+    screenHeight
 }: {
     data: BubbleData,
     onPop: (id: number, isMascot: boolean, x: number, y: number) => void,
     onMiss: (id: number) => void,
     soundEnabled: boolean,
-    isPlaying: boolean
+    isPlaying: boolean,
+    screenHeight: number
 }) => {
     // Initial positions
-    const translateY = useSharedValue(height + data.size);
+    const translateY = useSharedValue(screenHeight + data.size);
     const scale = useSharedValue(0.2); // Start small
     const opacity = useSharedValue(1);
     const wobble = useSharedValue(0);
@@ -80,7 +81,7 @@ const BubbleItem = React.memo(({
             const targetPos = -data.size * 2;
 
             // Calculate remaining time to maintain constant speed
-            const totalDistance = height + data.size - targetPos;
+            const totalDistance = screenHeight + data.size - targetPos;
             const remainingDistance = Math.abs(currentPos - targetPos);
             // Safety check for 0
             if (totalDistance <= 0) return;
@@ -200,6 +201,8 @@ const BubbleItem = React.memo(({
 
 export default function BubblePopScreen() {
     const router = useRouter();
+    const { t } = useTranslation();
+    const { width: screenWidth, height: screenHeight } = useWindowDimensions();
     const { colorScheme } = useColorScheme();
     const isDark = colorScheme === 'dark';
     const [bubbles, setBubbles] = useState<BubbleData[]>([]);
@@ -216,7 +219,7 @@ export default function BubblePopScreen() {
             if (current.length >= MAX_BUBBLES) return current;
 
             const size = Math.random() * 40 + 50; // 50-90px
-            const x = Math.random() * (width - size);
+            const x = Math.random() * Math.max(10, screenWidth - size);
             const isMascot = Math.random() < 0.05; // 5% chance
 
             // Speed variance: Mascot bubbles are slightly faster
@@ -233,7 +236,7 @@ export default function BubblePopScreen() {
                 isMascot,
             }];
         });
-    }, [isPlaying]);
+    }, [isPlaying, screenWidth]);
 
     // Loop manager
     useEffect(() => {
@@ -310,6 +313,7 @@ export default function BubblePopScreen() {
                             onMiss={handleMiss}
                             soundEnabled={soundEnabled}
                             isPlaying={isPlaying}
+                            screenHeight={screenHeight}
                         />
                     ))}
                 </View>
@@ -341,13 +345,13 @@ export default function BubblePopScreen() {
                 {!isPlaying && (
                     <BlurView intensity={20} className="absolute inset-0 z-30 justify-center items-center">
                         <View className="bg-white/90 dark:bg-slate-800/90 p-8 rounded-3xl items-center shadow-2xl">
-                            <Text className="text-2xl font-bold text-slate-800 dark:text-white mb-2">Paused</Text>
-                            <Text className="text-slate-500 dark:text-slate-400 mb-6 font-medium">Take a breath...</Text>
+                            <Text className="text-2xl font-bold text-slate-800 dark:text-white mb-2">{t('play.paused')}</Text>
+                            <Text className="text-slate-500 dark:text-slate-400 mb-6 font-medium">{t('play.takeBreath')}</Text>
                             <TouchableOpacity
                                 onPress={() => setIsPlaying(true)}
                                 className="bg-sky-500 px-8 py-3 rounded-xl shadow-lg shadow-sky-200"
                             >
-                                <Text className="text-white font-bold text-lg">Resume</Text>
+                                <Text className="text-white font-bold text-lg">{t('play.resume')}</Text>
                             </TouchableOpacity>
                         </View>
                     </BlurView>

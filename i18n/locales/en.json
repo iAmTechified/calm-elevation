@@ -1,0 +1,352 @@
+{
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "close": "Close",
+    "back": "Back",
+    "goBack": "Go Back",
+    "continue": "Continue",
+    "done": "Done",
+    "delete": "Delete",
+    "start": "Start",
+    "review": "Review",
+    "premium": "PREMIUM",
+    "freeTrial": "Free Trial Active",
+    "loading": "Loading...",
+    "completed": "Completed",
+    "day": "Day",
+    "days": "Days",
+    "min": "min",
+    "mins": "mins",
+    "hr": "hr",
+    "hrs": "hrs",
+    "success": "Success",
+    "error": "Error"
+  },
+  "tabs": {
+    "journey": "My Journey",
+    "stats": "My Stats"
+  },
+  "home": {
+    "title": "My Journey",
+    "freeTrialActive": "Free Trial Active",
+    "freeTrialSubtext": "Upgrade to keep full access",
+    "upgradeToPremium": "Upgrade to Premium",
+    "upgradeSubtext": "Unlock full access to all features",
+    "cards": {
+      "selfHealing": "Self Healing & Confidence",
+      "learn": "Learn",
+      "breathe": "Breathe",
+      "play": "Play",
+      "journal": "Journal",
+      "sleep": "Sleep"
+    }
+  },
+  "checkIn": {
+    "greeting": "Yay, I'm glad you're here!",
+    "subtext": "Showing up consistently is an important step to enhance our well-being.",
+    "prompt": "How's it going today?",
+    "moods": {
+      "worried": "Worried",
+      "sad": "Sad",
+      "okay": "Okay",
+      "good": "Good",
+      "great": "Great"
+    }
+  },
+  "onboarding": {
+    "clearSignature": "Clear Signature",
+    "signingDisclaimer": "By signing, you agree to commit to your healing journey",
+    "welcome": {
+      "title": "Hi, I'm Cal",
+      "subtitle": "I’m happy you’re here. Welcome to our award winning app for self healing, panic and stress relief.",
+      "startJourney": "Start my journey",
+      "termsAgreement": "By continuing, you agree with our T&C"
+    },
+    "steps": {
+      "step1": {
+        "title": "Take care of Cal",
+        "description": "Take care of Cal and yourself by completing simple daily self care goals, collecting points as you go (and grow).",
+        "cta": "Continue"
+      },
+      "step2": {
+        "title": "Ready to commit?",
+        "description": "Give yourself the chance of anxiety relief by committing to Calm Elevation. Sign below.",
+        "cta": "I commit myself!"
+      },
+      "notifications": {
+        "title": "Stay Connected",
+        "description": "Enable notifications to receive daily encouragement and reminders from Cal to keep your healing journey on track.",
+        "cta": "Enable Notifications"
+      },
+      "step3": {
+        "title": "Congratulations!",
+        "description": "Stick with Cal as you explore Calm Elevation, learn to manage anxiety and return calm to your life. Be patient and kind. You got this.",
+        "cta": "Get Started"
+      }
+    }
+  },
+  "settings": {
+    "title": "Settings",
+    "unlockPremium": "Unlock Premium",
+    "notifications": "Notifications",
+    "theme": "Theme",
+    "language": "Language",
+    "english": "English",
+    "dutch": "Nederlands",
+    "dark": "Dark",
+    "light": "Light",
+    "reminderTitle": "Daily practice leads to long term change",
+    "setReminders": "Set Reminders",
+    "disclaimer": "Disclaimer",
+    "terms": "Terms & Conditions",
+    "privacy": "Privacy Policy"
+  },
+  "selfHealing": {
+    "title": "Self Healing & Confidence",
+    "subtitle": "Guided Workbooks by Joseph I.",
+    "overallProgress": "Overall Progress",
+    "lessonsCompleted": "{{count}} Lessons Completed",
+    "activeStreak": "Active Streak",
+    "selectWorkbook": "Select a workbook below to start or continue your daily 30-day journey.",
+    "availableWorkbooks": "Available Workbooks",
+    "daysSummary": "{{completed}}/{{total}} Days",
+    "daysCount": "• {{count}} Days",
+    "author": "Author: {{author}}",
+    "readingProgress": "Reading Progress",
+    "dayNumber": "Day {{day}}",
+    "start": "Start",
+    "review": "Review",
+    "filterAll": "All",
+    "filterEn": "English",
+    "filterNl": "Nederlands",
+    "reflectionPlaceholder": "Write your thoughts here...",
+    "ratingTitle": "Anxiety & Confidence Rating",
+    "ratingSubtext": "Track your confidence or anxiety level before and after completing today's challenge.",
+    "ratingBefore": "1. Rating BEFORE Challenge (1 = Very Low, 10 = Very High):",
+    "ratingAfter": "2. Rating AFTER Challenge (1 = Very Low, 10 = Very High):"
+  },
+  "sleep": {
+    "title": "Sleep Sanctuary",
+    "subtitle": "Fall asleep faster with calming ambient sounds",
+    "categoryNature": "Nature",
+    "tracks": {
+      "night": "Deep Night",
+      "thunder": "Distant Thunder",
+      "forest": "Safe Forest",
+      "ocean": "Rolling Waves",
+      "river": "River Stream",
+      "wind": "Gentle Wind",
+      "rain": "Soft Rain",
+      "fireplace": "Cozy Fireplace"
+    }
+  },
+  "learn": {
+    "title": "Knowledge Hub",
+    "subtitle": "Master the tools to conquer anxiety and regain control.",
+    "lessonNotFound": "Lesson not found",
+    "exercise": "Exercise",
+    "courses": {
+      "understandingAnxiety": {
+        "title": "Understanding Anxiety",
+        "description": "Find peace of mind by learning what anxiety actually is, how your body experiences a panic attack, and why it happens. Knowledge is power."
+      },
+      "shortTermRelief": {
+        "title": "Short Term Relief",
+        "description": "Learn quick, effective techniques to manage anxiety in the moment when you feel overwhelmed. Tools for your emergency kit."
+      },
+      "longTermResilience": {
+        "title": "Long Term Resilience",
+        "description": "Build long-term habits and understanding to transform your mental health journey. Move from surviving to thriving."
+      }
+    }
+  },
+  "breathe": {
+    "title": "Breathe",
+    "duration": "DURATION",
+    "beginSession": "Begin Session",
+    "inhale": "Inhale",
+    "hold": "Hold",
+    "exhale": "Exhale",
+    "inhaleDeeply": "INHALE DEEPLY",
+    "exhaleSlowly": "EXHALE SLOWLY",
+    "sessionComplete": "Session Complete",
+    "sessionSubtext": "You've taken a moment for yourself. Carry this calmness with you.",
+    "returnHome": "Return Home"
+  },
+  "journal": {
+    "title": "My Journal",
+    "howAreYouFeeling": "How are you feeling?",
+    "newEntry": "New Entry",
+    "entryNotFound": "Entry not found",
+    "deleteEntry": "Delete Entry",
+    "confirmDelete": "Are you sure you want to delete this journal entry?",
+    "months": [
+      "January", "February", "March", "April", "May", "June",
+      "July", "August", "September", "October", "November", "December"
+    ],
+    "weekDays": ["S", "M", "T", "W", "T", "F", "S"],
+    "reviewProgress": "Review your progress\nor add a new entry",
+    "selectDate": "Select a date to begin your\njournal entry",
+    "moods": {
+      "sad": "sad",
+      "determined": "determined",
+      "angry": "angry",
+      "relaxed": "relaxed",
+      "worried": "worried",
+      "frightened": "frightened",
+      "unmotivated": "unmotivated",
+      "hungry": "hungry",
+      "strong": "strong",
+      "indifferent": "indifferent",
+      "sleepy": "sleepy",
+      "calm": "calm",
+      "crying": "crying",
+      "depressed": "depressed",
+      "dizzy": "dizzy",
+      "happy": "happy",
+      "overwhelmed": "overwhelmed",
+      "stressed": "stressed"
+    },
+    "questions": {
+      "accomplished": {
+        "title": "3 things you accomplished today, big or small:",
+        "placeholder": "3 things you accomplished today, big or small:"
+      },
+      "weighing": {
+        "title": "Is something weighing you down? Write it down and let it go.",
+        "placeholder": "Is something weighing you down? Write it down and let it go:"
+      },
+      "grateful": {
+        "title": "What are you feeling grateful for?",
+        "placeholder": "What are you feeling grateful for?"
+      },
+      "notes": {
+        "title": "Additional Notes:",
+        "placeholder": "Additional Notes:"
+      }
+    }
+  },
+  "play": {
+    "title": "Play",
+    "subtitle": "Wind down or lift your mood with calming, mindful play that gently brings you back to the present.",
+    "games": {
+      "zenGarden": "Zen Garden",
+      "bubblePop": "Bubble Pop",
+      "mindfulMaze": "Mindful Maze",
+      "blocks": "Blocks"
+    },
+    "paused": "Paused",
+    "takeBreath": "Take a breath...",
+    "resume": "Resume",
+    "slowDown": "SLOW DOWN",
+    "zenInstruction": "Move slowly to shape the sand.\nBreathe.",
+    "rake": "Rake",
+    "stone": "Stone",
+    "mazeInstruction": "Tilt your phone to guide Cal through the maze.",
+    "blocksInstruction": "Tap empty spots to build. Tap blocks to grow.",
+    "touchLight": "Touch the light to begin"
+  },
+  "physicalBook": {
+    "tag": "Printed Workbooks",
+    "title": "Prefer a Physical Copy?",
+    "description": "Request hardcover or paperback editions of Joseph I.'s workbooks for quiet offline journaling.",
+    "visitShop": "Visit Shop"
+  },
+  "visualize": {
+    "title": "Visualize",
+    "meditate": "Meditate",
+    "description": "Listen to the body scans or visualizations below to get rooted when you are feeling anxious."
+  },
+  "chat": {
+    "calWelcome": "Hi, I'm Cal. How are you feeling today? I can help guide you to the right place in the app.",
+    "chatWithCal": "Chat with Cal",
+    "aiCompanion": "AI Wellness Companion",
+    "calAiGuide": "Cal AI Guide",
+    "alwaysHereToHelp": "Always here to help",
+    "typeAMessage": "Type a message...",
+    "goToSection": "Go to Section",
+    "connectionError": "I'm having a little trouble connecting right now. Please try again."
+  },
+  "stats": {
+    "title": "My Stats",
+    "subscription": "Subscription",
+    "freeTrialBadge": "FREE TRIAL",
+    "premiumBadge": "PREMIUM",
+    "expiredBadge": "EXPIRED",
+    "limitedAccessTrial": "Limited Access Trial",
+    "threeDayFreeTrial": "3-Day Free Trial",
+    "expiresOn": "Expires on {{date}} at {{time}}",
+    "expiresOnDate": "Expires on {{date}}",
+    "upgradeToUnlock": "Upgrade to unlock all content.",
+    "currentPlan": "Current Plan",
+    "yearlyPremium": "Yearly Premium",
+    "monthlyPremium": "Monthly Premium",
+    "trialExpiredNotice": "Your free trial has expired. Upgrade to continue your journey and unlock all features.",
+    "unlockFullAccess": "Unlock Full Access",
+    "manageSubscription": "Manage Subscription",
+    "myDailyMood": "My Daily Mood",
+    "dailyStreak": "Daily Streak",
+    "braveryPoints": "Bravery Points",
+    "healingJourney": "Healing Journey",
+    "daysStreak": "Days Streak",
+    "totalPractices": "Total Practices",
+    "mindfulMinutes": "Mindful Minutes",
+    "weeklyMood": "Weekly Mood Tracker",
+    "achievements": "Milestones & Achievements",
+    "understandingLessons": "Understanding Lessons",
+    "shortTermLessons": "Short Term Lessons",
+    "longTermLessons": "Long Term Lessons",
+    "timeInBreathr": "Time in Breathr",
+    "dailyJournalStreak": "Daily Journal Streak",
+    "totalEntries": "Total Entries",
+    "wordsWritten": "Words Written"
+  },
+  "paywall": {
+    "title": "Unlock Calm Premium",
+    "subtitle": "Join thousands who have found their inner peace and conquered anxiety.",
+    "bestValue": "BEST VALUE",
+    "yearlyAccess": "Yearly Access",
+    "monthlyAccess": "Monthly Access",
+    "perMonth": "per month",
+    "perYear": "per year",
+    "features": [
+      "Unlimited Access to All Healing Plans",
+      "Advanced Sleep Tracking & Sounds",
+      "Personalized Daily Check-ins",
+      "Exclusive Meditation Library",
+      "Priority Support"
+    ],
+    "startTrial": "Start 7-Day Free Trial",
+    "continue": "Continue",
+    "terms": "Terms of Use",
+    "privacy": "Privacy Policy",
+    "restore": "Restore Purchases",
+    "unlockYearly": "Unlock Full Access (Yearly)",
+    "subscribeMonthly": "Subscribe Monthly",
+    "billedMonthly": "Billed {{price}}/month, Cancel Anytime",
+    "billedAnnually": "Billed annually, Cancel Anytime",
+    "billedMonthlyFallback": "Billed monthly, Cancel Anytime",
+    "subscribedSuccess": "You are now fully subscribed!",
+    "purchaseCompleted": "Purchase completed!",
+    "purchaseFailed": "Purchase failed. Please try again.",
+    "restoreSuccess": "Purchases restored!",
+    "noActiveSubscription": "No active subscription found to restore.",
+    "restoreFailed": "Restore failed."
+  },
+  "disclaimer": {
+    "title": "Disclaimer",
+    "appName": "Calm Elevation – Disclaimer",
+    "intro": "Calm Elevation is a self-help and wellness application designed to support relaxation, stress reduction, panic relief, and emotional well-being. The content provided in this app—including exercises, audio, text, and guidance—is for educational and informational purposes only.",
+    "notMedicalTitle": "Not Medical or Mental Health Advice",
+    "notMedicalP1": "Calm Elevation does not provide medical, psychological, or psychiatric advice, diagnosis, or treatment. The app is not a substitute for professional medical care, therapy, or mental health services.",
+    "notMedicalP2": "Always seek the advice of a qualified healthcare provider or licensed mental health professional regarding any medical or mental health condition. Never disregard professional advice or delay seeking it because of something you have read or experienced in this app.",
+    "emergencyTitle": "Emergency Situations",
+    "emergencyP1": "Calm Elevation is not intended for use in emergencies.",
+    "emergencyP2": "If you are experiencing a mental health crisis or feel that you or someone else may be in immediate danger, please contact your local emergency number or a trusted crisis support service right away.",
+    "noGuaranteesTitle": "No Guarantees",
+    "noGuaranteesText": "Individual results may vary. Calm Elevation does not guarantee specific outcomes or relief from anxiety, panic, or other emotional conditions.",
+    "discretionTitle": "Use at Your Own Discretion",
+    "discretionText": "By using Calm Elevation, you acknowledge that you are responsible for your own well-being and decisions. Use the app at your own discretion and stop using it if you feel uncomfortable or distressed."
+  }
+}

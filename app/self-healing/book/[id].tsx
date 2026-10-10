@@ -9,9 +9,11 @@ import { BOOKS, Book, Lesson } from '../../../data/self-healing';
 import { useSelfHealing } from '../../../hooks/useSelfHealing';
 import { useAccess } from '../../../hooks/useAccess';
 import Back from '../../../components/Back';
+import { useTranslation } from 'react-i18next';
 
 export default function BookOverviewScreen() {
     const router = useRouter();
+    const { t } = useTranslation();
     const { id } = useLocalSearchParams();
     const { getBookCompletedDays, isDayUnlocked } = useSelfHealing();
     const { isLocked } = useAccess();
@@ -45,7 +47,7 @@ export default function BookOverviewScreen() {
                             <Text className="text-xs font-bold text-indigo-600 dark:text-indigo-400 mr-1.5 uppercase tracking-wider">
                                 {book.language === 'EN' ? '🇬🇧 English' : '🇳🇱 Nederlands'}
                             </Text>
-                            <Text className="text-xs text-slate-400 font-medium">• {book.totalDays} Days</Text>
+                            <Text className="text-xs text-slate-400 font-medium">• {book.totalDays} {t('common.days')}</Text>
                         </View>
                         <Text className="text-lg font-bold text-slate-900 dark:text-white text-center" numberOfLines={1}>
                             {book.title}
@@ -64,7 +66,7 @@ export default function BookOverviewScreen() {
                         <View className="flex-row items-center mb-2">
                             <BookOpen size={20} color="#FFFFFF" className="mr-2" />
                             <Text className="text-white/80 font-bold text-xs uppercase tracking-wider">
-                                Author: {book.author}
+                                {t('selfHealing.author', { author: book.author })}
                             </Text>
                         </View>
 
@@ -79,8 +81,8 @@ export default function BookOverviewScreen() {
                         {/* Progress Bar inside Card */}
                         <View className="bg-black/20 p-3 rounded-2xl">
                             <View className="flex-row items-center justify-between mb-1.5">
-                                <Text className="text-xs font-semibold text-white/80">Reading Progress</Text>
-                                <Text className="text-xs font-bold text-white">{completedDays.length} / {book.totalDays} Days ({progressPercent}%)</Text>
+                                <Text className="text-xs font-semibold text-white/80">{t('selfHealing.readingProgress')}</Text>
+                                <Text className="text-xs font-bold text-white">{completedDays.length} / {book.totalDays} {t('common.days')} ({progressPercent}%)</Text>
                             </View>
                             <View className="h-2 bg-white/30 rounded-full overflow-hidden">
                                 <View className="h-full bg-white rounded-full" style={{ width: `${progressPercent}%` }} />
@@ -144,7 +146,7 @@ export default function BookOverviewScreen() {
 
                                                 <View className="flex-1">
                                                     <Text className="text-xs font-semibold text-slate-400 mb-0.5">
-                                                        Day {lesson.day}
+                                                        {t('selfHealing.dayNumber', { day: lesson.day })}
                                                     </Text>
                                                     <Text className="text-base font-bold text-slate-900 dark:text-white" numberOfLines={1}>
                                                         {lesson.title}
@@ -160,7 +162,7 @@ export default function BookOverviewScreen() {
                                                 ) : unlocked ? (
                                                     <View className="px-3 py-1 bg-indigo-50 dark:bg-indigo-950/50 rounded-full border border-indigo-100 dark:border-indigo-900/40">
                                                         <Text className="text-xs font-bold text-indigo-600 dark:text-indigo-400">
-                                                            {completed ? 'Review' : 'Start'}
+                                                            {completed ? t('selfHealing.review') : t('selfHealing.start')}
                                                         </Text>
                                                     </View>
                                                 ) : (

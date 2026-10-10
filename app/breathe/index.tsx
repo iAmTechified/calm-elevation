@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { View, Text, TouchableOpacity, Image, Dimensions, StyleSheet, Pressable } from 'react-native';
+import { View, Text, TouchableOpacity, Image, useWindowDimensions, StyleSheet, Pressable } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { useRouter } from 'expo-router';
@@ -23,19 +23,20 @@ import Back from '../../components/Back';
 import { useStats } from '../../hooks/useStats';
 import { useColorScheme } from 'nativewind';
 import { CheckInModal } from '../../components/CheckInModal';
+import { useTranslation } from 'react-i18next';
 
 // Assets
 const IMG_YOGA = require('../../assets/breathr.jpeg');
 const IMG_MEDITATE = require('../../assets/cal-cloud.png');
 const IMG_SUCCESS = require('../../assets/cal_success.png');
 
-const { width, height } = Dimensions.get('window');
-
 const INHALE_DURATION = 4000;
 const EXHALE_DURATION = 6000;
 
 export default function BreatheScreen() {
+    const { t } = useTranslation();
     const router = useRouter();
+    const { width, height } = useWindowDimensions();
 
     const { colorScheme } = useColorScheme();
     const isDark = colorScheme === 'dark';
@@ -202,7 +203,7 @@ export default function BreatheScreen() {
                 <StatusBar style="auto" />
                 <LinearGradient
                     colors={isDark ? ['#0f172a', '#1e293b', '#0f172a'] : ['#e0f2fe', '#fff', '#f0f9ff']}
-                    style={StyleSheet.absoluteFillObject}
+                    style={StyleSheet.absoluteFill}
                 />
 
                 {/* Main Visual - Mascot as Focal Point */}
@@ -221,7 +222,7 @@ export default function BreatheScreen() {
                     {/* Top Bar */}
                     <View className="px-6 py-4 flex-row items-center justify-between z-10">
                         <Back onPress={() => router.back()} style={isDark ? 'bg-slate-800' : 'bg-white'} iconColor={isDark ? '#fff' : '#000'} />
-                        <Text className="text-2xl font-sans font-semibold text-primaryLight dark:text-white tracking-wide">Breathe</Text>
+                        <Text className="text-2xl font-sans font-semibold text-primaryLight dark:text-white tracking-wide">{t('breathe.title')}</Text>
                         <View className="w-10" />
                     </View>
 
@@ -240,7 +241,7 @@ export default function BreatheScreen() {
                                 <Text className="text-3xl font-semibold text-slate-800 dark:text-white tabular-nums">
                                     {formatTime(durationSeconds)}
                                 </Text>
-                                <Text className="text-xs font-semibold text-primaryLight dark:text-slate-400 tracking-[0.2em] mt-1">DURATION</Text>
+                                <Text className="text-xs font-semibold text-primaryLight dark:text-slate-400 tracking-[0.2em] mt-1">{t('breathe.duration')}</Text>
                             </View>
 
                             <TouchableOpacity
@@ -253,7 +254,7 @@ export default function BreatheScreen() {
                         <TouchableOpacity
                             onPress={startSession}
                             className="w-full bg-teal-600 h-16 rounded-full flex-row items-center justify-center shadow-lg shadow-teal-600/30 active:scale-[0.98] transition-all">
-                            <Text className="text-white font-semibold text-xl mr-2">Begin Session</Text>
+                            <Text className="text-white font-semibold text-xl mr-2">{t('breathe.beginSession')}</Text>
                             <ChevronRight size={20} color="white" stroke="#fff" strokeWidth={4} />
                         </TouchableOpacity>
                     </View>
@@ -274,7 +275,7 @@ export default function BreatheScreen() {
                     locations={[0.2, 0.4, 0.6]}
                     start={{ x: 0, y: 0 }}
                     end={{ x: 1, y: 1 }}
-                    style={StyleSheet.absoluteFillObject}
+                    style={StyleSheet.absoluteFill}
                     className='opacity-10'
                     dither
                 />
@@ -282,7 +283,9 @@ export default function BreatheScreen() {
 
                 {/* Huge Background Timer */}
                 <View className="absolute inset-0 items-center justify-center z-[99] pointer-events-none">
-                    <Text className="text-[120px] font-bold text-primaryLight/15 tabular-nums">
+                    <Text
+                        style={{ fontSize: Math.min(width * 0.26, 110) }}
+                        className="font-bold text-primaryLight/15 tabular-nums">
                         {Math.floor(timeLeft / 60)}:{(timeLeft % 60).toString().padStart(2, '0')}
                     </Text>
                 </View>
@@ -296,7 +299,9 @@ export default function BreatheScreen() {
                             <X size={20} color={isDark ? "#fff" : "black"} stroke={isDark ? "#fff" : "#000"} fill={isDark ? "#fff" : "#000"} strokeWidth={5} />
                         </TouchableOpacity>
                         <View className="bg-white/10 dark:bg-slate-800/20 px-4 py-1 rounded-full">
-                            <Text className="text-black/60 dark:text-white/60 font-semibold text-lg tracking-widest uppercase">{breathState}</Text>
+                            <Text className="text-black/60 dark:text-white/60 font-semibold text-lg tracking-widest uppercase">
+                                {t(`breathe.${breathState}`, { defaultValue: breathState })}
+                            </Text>
                         </View>
                         <TouchableOpacity
                             onPress={() => setIsHapticsEnabled(!isHapticsEnabled)}
@@ -316,7 +321,7 @@ export default function BreatheScreen() {
                     {/* Footer / Instructions */}
                     <View className="items-center pb-12">
                         <Text className="text-primaryLight dark:text-white text-3xl font-semibold font-sans tracking-widest opacity-80">
-                            {breathState === 'inhale' ? 'INHALE DEEPLY' : 'EXHALE SLOWLY'}
+                            {breathState === 'inhale' ? t('breathe.inhaleDeeply') : t('breathe.exhaleSlowly')}
                         </Text>
                     </View>
                 </SafeAreaView>
@@ -327,9 +332,6 @@ export default function BreatheScreen() {
     // --------------------------------------------------------------------------------
     // RENDER: COMPLETED
     // --------------------------------------------------------------------------------
-    const { CheckInModal } = require('../../components/CheckInModal'); // Dynamic require to avoid cycle if any? Or just regular import.
-    // Actually better to use top level import. Fixing in next step if needed.
-
     if (phase === 'completed') {
         return (
             <View className="flex-1 bg-white dark:bg-slate-900">
@@ -339,7 +341,7 @@ export default function BreatheScreen() {
                     locations={[0.2, 0.4, 0.6]}
                     start={{ x: 0, y: 0 }}
                     end={{ x: 1, y: 1 }}
-                    style={StyleSheet.absoluteFillObject}
+                    style={StyleSheet.absoluteFill}
                     className='opacity-10'
                     dither
                 />
@@ -354,15 +356,19 @@ export default function BreatheScreen() {
                         />
                     </View>
 
-                    <Text className="text-3xl font-semibold font-sans text-slate-800 dark:text-white mb-3 text-center">Session Complete</Text>
+                    <Text className="text-3xl font-semibold font-sans text-slate-800 dark:text-white mb-3 text-center">
+                        {t('breathe.sessionComplete')}
+                    </Text>
                     <Text className="text-slate-500 dark:text-slate-400 font-sans text-lg text-center mb-12 leading-relaxed max-w-[80%]">
-                        You've taken a moment for yourself. Carry this calmness with you.
+                        {t('breathe.sessionSubtext')}
                     </Text>
 
                     <Pressable
                         onPress={closeCompleted}
                         className="bg-slate-900 dark:bg-white w-full py-5 rounded-full shadow-xl shadow-slate-900/20 active:scale-[0.98]">
-                        <Text className="text-white dark:text-slate-900 text-center font-semibold font-sans text-lg tracking-wide">Return Home</Text>
+                        <Text className="text-white dark:text-slate-900 text-center font-semibold font-sans text-lg tracking-wide">
+                            {t('breathe.returnHome')}
+                        </Text>
                     </Pressable>
                 </Animated.View>
 

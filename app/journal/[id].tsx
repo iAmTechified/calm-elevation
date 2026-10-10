@@ -8,6 +8,7 @@ import { Trash2, Edit3, Calendar } from 'lucide-react-native';
 import Back from '../../components/Back';
 import { useJournal } from '../../hooks/useJournal';
 import { useColorScheme } from 'nativewind';
+import { useTranslation } from 'react-i18next';
 
 const moodImages: Record<string, any> = {
     sad: require('../../assets/moods/sad.jpeg'),
@@ -30,27 +31,28 @@ const moodImages: Record<string, any> = {
     stressed: require('../../assets/moods/stressed.jpeg'),
 };
 
-const questions = [
-    { id: 'accomplished', title: '3 things you accomplished today:' },
-    { id: 'weighing', title: 'Something weighing you down:' },
-    { id: 'grateful', title: 'Feeling grateful for:' },
-    { id: 'notes', title: 'Additional Notes:' },
-];
-
 export default function EntryViewScreen() {
     const router = useRouter();
     const { id } = useLocalSearchParams();
     const { getEntryById, deleteEntry } = useJournal();
     const { colorScheme } = useColorScheme();
+    const { t, i18n } = useTranslation();
+
+    const questions = [
+        { id: 'accomplished', title: t('journal.questions.accomplished.title') },
+        { id: 'weighing', title: t('journal.questions.weighing.title') },
+        { id: 'grateful', title: t('journal.questions.grateful.title') },
+        { id: 'notes', title: t('journal.questions.notes.title') },
+    ];
 
     const entry = getEntryById(id as string);
 
     if (!entry) {
         return (
             <SafeAreaView className="flex-1 bg-sky-50 items-center justify-center">
-                <Text className="text-xl text-primaryLight">Entry not found</Text>
+                <Text className="text-xl text-primaryLight">{t('journal.entryNotFound')}</Text>
                 <TouchableOpacity onPress={() => router.back()} className="mt-4 p-4 bg-teal-400 rounded-full">
-                    <Text className="text-white font-bold">Go Back</Text>
+                    <Text className="text-white font-bold">{t('common.goBack')}</Text>
                 </TouchableOpacity>
             </SafeAreaView>
         );
@@ -58,12 +60,12 @@ export default function EntryViewScreen() {
 
     const handleDelete = () => {
         Alert.alert(
-            "Delete Entry",
-            "Are you sure you want to delete this journal entry?",
+            t('journal.deleteEntry'),
+            t('journal.confirmDelete'),
             [
-                { text: "Cancel", style: "cancel" },
+                { text: t('common.cancel'), style: "cancel" },
                 {
-                    text: "Delete",
+                    text: t('common.delete'),
                     style: "destructive",
                     onPress: async () => {
                         await deleteEntry(entry.id);
@@ -84,7 +86,8 @@ export default function EntryViewScreen() {
     const formatDate = (dateStr: string) => {
         const [year, month, day] = dateStr.split('-');
         const date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
-        return date.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+        const locale = i18n.language === 'nl' ? 'nl-NL' : 'en-US';
+        return date.toLocaleDateString(locale, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
     };
 
     return (

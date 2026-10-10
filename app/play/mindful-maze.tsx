@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, TouchableOpacity, Dimensions, Alert, Image } from 'react-native';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { View, Text, TouchableOpacity, useWindowDimensions, Alert, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { ArrowLeft, RefreshCw } from 'lucide-react-native';
@@ -10,11 +10,9 @@ import Animated, { useSharedValue, useAnimatedStyle, withSpring } from 'react-na
 import { Accelerometer } from 'expo-sensors';
 import { useColorScheme } from 'nativewind';
 import { useStats } from '../../hooks/useStats';
+import { useTranslation } from 'react-i18next';
 
-const { width, height } = Dimensions.get('window');
 const CELL_SIZE = 30;
-const COLS = Math.floor((width - 40) / CELL_SIZE); // Padding
-const ROWS = Math.floor((height * 0.6) / CELL_SIZE);
 
 type Cell = {
     x: number;
@@ -25,6 +23,11 @@ type Cell = {
 
 export default function MindfulMazeScreen() {
     const router = useRouter();
+    const { t } = useTranslation();
+    const { width, height } = useWindowDimensions();
+    const COLS = Math.max(7, Math.floor((Math.min(width, 420) - 40) / CELL_SIZE));
+    const ROWS = Math.max(8, Math.floor((Math.min(height, 680) * 0.5) / CELL_SIZE));
+
     const { colorScheme } = useColorScheme();
     const isDark = colorScheme === 'dark';
     const { updateEmotionalState } = useStats();
@@ -133,6 +136,7 @@ export default function MindfulMazeScreen() {
 
         setGrid(newGrid);
         setPlayerPos({ x: 0, y: 0 });
+        setGoalPos({ x: COLS - 1, y: ROWS - 1 });
         // Reset animation instantly (or close to it)
         playerX.value = 5;
         playerY.value = 5;
@@ -140,7 +144,7 @@ export default function MindfulMazeScreen() {
 
     useEffect(() => {
         generateMaze();
-    }, []);
+    }, [COLS, ROWS]);
 
     // Sync player pos with animation
     useEffect(() => {
@@ -243,7 +247,7 @@ export default function MindfulMazeScreen() {
                 >
                     <ArrowLeft color={isDark ? '#e2e8f0' : '#1E293B'} size={24} />
                 </TouchableOpacity>
-                <Text className="text-xl font-bold text-slate-800 dark:text-white">Mindful Maze</Text>
+                <Text className="text-xl font-bold text-slate-800 dark:text-white">{t('play.games.mindfulMaze')}</Text>
                 <TouchableOpacity
                     onPress={generateMaze}
                     className="w-10 h-10 bg-white/80 dark:bg-slate-800/80 rounded-full items-center justify-center shadow-sm"
@@ -308,7 +312,7 @@ export default function MindfulMazeScreen() {
                 </View>
 
                 <View className="mt-8 px-8">
-                    <Text className="text-slate-500 dark:text-slate-400 font-medium text-center">Tilt your phone to guide Cal through the maze.</Text>
+                    <Text className="text-slate-500 dark:text-slate-400 font-medium text-center">{t('play.mazeInstruction')}</Text>
                 </View>
 
             </View>

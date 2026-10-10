@@ -1,4 +1,4 @@
-import { View, Text, Image, TouchableOpacity, Dimensions } from 'react-native';
+import { View, Text, Image, TouchableOpacity, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { useState, useRef, useEffect } from 'react';
@@ -12,44 +12,44 @@ import ProgressHeader from '../../components/ProgressHeader';
 
 import { useNotifications } from '../../hooks/useNotifications';
 import SignaturePad from '../../components/SignaturePad';
-
-const { width } = Dimensions.get('window');
-
-const steps = [
-    {
-        id: 1,
-        image: require('../../assets/cal-cloud.png'),
-        title: "Take care of Cal",
-        description: "Take care of Cal and yourself by completing simple daily self care goals, collecting points as you go (and grow).",
-        ctaText: "Continue"
-    },
-    {
-        id: 2,
-        image: require('../../assets/cal-cloud.png'),
-        title: "Ready to commit?",
-        description: "Gve yourself the chance of anxiety relief by committing to Calm Elevation. Sign below.",
-        ctaText: "I commit myself!"
-    },
-    {
-        id: 'notifications',
-        image: require('../../assets/cal.png'),
-        title: "Stay Connected",
-        description: "Enable notifications to receive daily encouragement and reminders from Cal to keep your healing journey on track.",
-        ctaText: "Enable Notifications"
-    },
-    {
-        id: 3,
-        image: require('../../assets/cal-cloud.png'),
-        title: "Congratulations!",
-        description: "Stick with Cal as you explore Calm Elevation, learn to manage anxiety and return calm to your life. Be patient and kind. You got this.",
-        ctaText: "Get Started"
-    }
-];
+import { useTranslation } from 'react-i18next';
 
 export default function OnboardingFlow() {
+    const { t } = useTranslation();
     const { enableNotifications } = useNotifications();
     const [currentStep, setCurrentStep] = useState(0);
     const [hasSigned, setHasSigned] = useState(false);
+
+    const steps = [
+        {
+            id: 1,
+            image: require('../../assets/cal-cloud.png'),
+            title: t('onboarding.steps.step1.title'),
+            description: t('onboarding.steps.step1.description'),
+            ctaText: t('onboarding.steps.step1.cta')
+        },
+        {
+            id: 2,
+            image: require('../../assets/cal-cloud.png'),
+            title: t('onboarding.steps.step2.title'),
+            description: t('onboarding.steps.step2.description'),
+            ctaText: t('onboarding.steps.step2.cta')
+        },
+        {
+            id: 'notifications',
+            image: require('../../assets/cal.png'),
+            title: t('onboarding.steps.notifications.title'),
+            description: t('onboarding.steps.notifications.description'),
+            ctaText: t('onboarding.steps.notifications.cta')
+        },
+        {
+            id: 3,
+            image: require('../../assets/cal-cloud.png'),
+            title: t('onboarding.steps.step3.title'),
+            description: t('onboarding.steps.step3.description'),
+            ctaText: t('onboarding.steps.step3.cta')
+        }
+    ];
 
     const handleNext = async () => {
         const currentData = steps[currentStep];
@@ -108,36 +108,43 @@ export default function OnboardingFlow() {
                 />
 
                 {/* Content */}
-                <View className="flex-1 items-center justify-center px-8">
-                    <View className="mb-6 justify-center items-center">
-                        <Image
-                            source={currentData.image}
-                            className="h-[160px] w-[160px]"
-                            resizeMode="contain"
-                        />
-                    </View>
-
-                    <Text className="text-3xl font-bold font-sans text-primaryLight text-center mb-4 leading-tight">
-                        {currentData.title}
-                    </Text>
-
-                    <Text className="text-center font-sans text-primaryLight text-lg leading-6 min-h-[60px]">
-                        {currentData.description}
-                    </Text>
-
-                    {isSignatureStep && (
-                        <View className="w-full mt-4 flex-1">
-                            <SignaturePad
-                                onChange={setHasSigned}
-                                color="#254F51"
-                                style={{ height: 140 }}
+                <ScrollView
+                    className="flex-1"
+                    contentContainerStyle={{ flexGrow: 1 }}
+                    showsVerticalScrollIndicator={false}
+                    bounces={false}
+                >
+                    <View className="flex-1 items-center justify-center px-8 py-4">
+                        <View className="mb-4 justify-center items-center">
+                            <Image
+                                source={currentData.image}
+                                className="h-[140px] w-[140px]"
+                                resizeMode="contain"
                             />
-                            <Text className="text-center text-xs text-slate-400 mt-2">
-                                By signing, you agree to commit to your healing journey
-                            </Text>
                         </View>
-                    )}
-                </View>
+
+                        <Text className="text-3xl font-bold font-sans text-primaryLight text-center mb-3 leading-tight">
+                            {currentData.title}
+                        </Text>
+
+                        <Text className="text-center font-sans text-primaryLight text-base leading-6 min-h-[50px]">
+                            {currentData.description}
+                        </Text>
+
+                        {isSignatureStep && (
+                            <View className="w-full mt-3">
+                                <SignaturePad
+                                    onChange={setHasSigned}
+                                    color="#254F51"
+                                    style={{ height: 130 }}
+                                />
+                                <Text className="text-center text-xs text-slate-400 mt-2">
+                                    {t('onboarding.signingDisclaimer')}
+                                </Text>
+                            </View>
+                        )}
+                    </View>
+                </ScrollView>
 
                 {/* Footer */}
                 <View className="px-8 pb-12 pt-4">
