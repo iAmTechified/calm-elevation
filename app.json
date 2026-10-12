@@ -3,7 +3,7 @@
     "name": "Calm Elevation",
     "slug": "calm-elevation",
     "icon": "./assets/cal-cloud-icon.png",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "orientation": "portrait",
     "userInterfaceStyle": "automatic",
     "splash": {
@@ -21,7 +21,7 @@
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
       },
-      "buildNumber": "12"
+      "buildNumber": "13"
     },
     "android": {
       "adaptiveIcon": {
@@ -32,7 +32,7 @@
         "enabled": false
       },
       "package": "com.calmelevation.app",
-      "versionCode": 19,
+      "versionCode": 20,
       "blockedPermissions": [
         "android.permission.RECORD_AUDIO",
         "android.permission.ACTIVITY_RECOGNITION"
