@@ -12,3 +12,12 @@ ios/
 
 .env
 .env.*
+
+# Keystores & credentials
+*.jks
+*.p8
+*.p12
+*.key
+*service-account*.json
+pc-api-*.json
+google-service-account.json
