@@ -21,7 +21,7 @@
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
       },
-      "buildNumber": "11"
+      "buildNumber": "12"
     },
     "android": {
       "adaptiveIcon": {
@@ -32,7 +32,7 @@
         "enabled": false
       },
       "package": "com.calmelevation.app",
-      "versionCode": 18,
+      "versionCode": 19,
       "blockedPermissions": [
         "android.permission.RECORD_AUDIO",
         "android.permission.ACTIVITY_RECOGNITION"
